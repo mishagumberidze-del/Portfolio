@@ -1,0 +1,22 @@
+{
+  "completed_utc": "2026-11-02T08:57:40.561784+00:00",
+  "file_counts": {
+    "yellow": 12,
+    "green": 12,
+    "fhv": 12,
+    "hvfhv": 12
+  },
+  "verified_files": 56,
+  "total_source_bytes": 6688082712,
+  "disk_free_bytes_remaining": 48620384256,
+  "unexpected_parquet": [],
+  "partial_files": [],
+  "failures": [],
+  "row_totals": {
+    "yellow": 41169720,
+    "green": 660218,
+    "fhv": 17630326,
+    "hvfhv": 239470448
+  },
+  "full_decode": true
+}

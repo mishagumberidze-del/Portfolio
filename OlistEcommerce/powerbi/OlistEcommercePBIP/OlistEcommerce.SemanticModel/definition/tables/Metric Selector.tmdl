@@ -1,0 +1,20 @@
+/// Disconnected parameter used for dynamic metric selection.
+table 'Metric Selector'
+
+	column Metric
+		sourceColumn: [Metric]
+
+	partition 'Metric Selector' = calculated
+		mode: import
+		source = ```
+			DATATABLE(
+				"Metric", STRING,
+				{
+					{"Sales / GMV"},
+					{"Orders"},
+					{"Customers"},
+					{"Average Order Value"},
+					{"Units"}
+				}
+			)
+			```

@@ -1,0 +1,35 @@
+relationship 'Orders to Date'
+	fromColumn: Order.'Purchase Date Key'
+	toColumn: Date.'Date Key'
+
+relationship 'Orders to Customer'
+	fromColumn: Order.'Customer Key'
+	toColumn: Customer.'Customer Key'
+
+relationship 'Orders to Customer Geography'
+	fromColumn: Order.'Customer Geography Key'
+	toColumn: 'Customer Geography'.'Geography Key'
+
+relationship 'Order Items to Orders'
+	fromColumn: 'Order Item'.'Order Key'
+	toColumn: Order.'Order Key'
+
+relationship 'Order Items to Product'
+	fromColumn: 'Order Item'.'Product Key'
+	toColumn: Product.'Product Key'
+
+relationship 'Order Items to Seller'
+	fromColumn: 'Order Item'.'Seller Key'
+	toColumn: Seller.'Seller Key'
+
+relationship 'Seller to Seller Geography'
+	fromColumn: Seller.'Geography Key'
+	toColumn: 'Seller Geography'.'Geography Key'
+
+relationship 'Payments to Orders'
+	fromColumn: Payment.'Order Key'
+	toColumn: Order.'Order Key'
+
+relationship 'Reviews to Orders'
+	fromColumn: Review.'Order Key'
+	toColumn: Order.'Order Key'

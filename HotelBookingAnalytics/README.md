@@ -1,0 +1,31 @@
+# Hotel Booking Analytics
+
+A three-page Power BI report backed by Python validation and a relational SQL Server model.
+
+![Hotel Power BI overview](powerbi/qa/overview-page.png)
+
+## Business questions
+
+- How do volume, cancellations, ADR and stay patterns differ by hotel, channel and market segment?
+- Which operational patterns merit investigation, and which source issues could distort the interpretation?
+
+All 119,390 source rows are retained. The dataset has no reliable booking/customer ID, so source row lineage is used and customer identity is not fabricated. `ADR × non-canceled stay nights` is labelled as a room-value proxy; the data does not support reliable occupancy, RevPAR or audited revenue.
+
+## Review
+
+- [Model](docs/model.md) · [Findings](docs/findings.md) · [Data quality](docs/data_quality.md) · [QA](docs/qa.md)
+- [SQL model](sql/01_model.sql) · [Source reconciliation](sql/03_validate.sql)
+- [PBIP](powerbi/HotelBookingPBIP/HotelBooking.pbip) · [Self-contained report generator](powerbi/build_pbip.py)
+
+The report includes Executive Overview, Cancellation Patterns and Stay & Operations, with hotel/year/segment filters and a correctly grouped monthly trend. Cancellation comparisons are associations; some fields reflect later operational information.
+
+## Rebuild
+
+Download [Hotel Booking Demand](https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand) to `data/raw/hotel_bookings.csv`. Install Python dependencies and use the existing SQL Server Express instance with Microsoft `sqlcmd`/`bcp`.
+
+```powershell
+python -m pip install -r requirements.txt
+& .\build_all.ps1 -PythonPath python
+```
+
+Database: `Portfolio_HotelBookings`. Open the PBIP in Power BI Desktop, check `DataRoot` in `definition/expressions.tmdl`, refresh and save. Rebuilding sets the parameter for the current checkout and recreates the report source. Raw data and caches are excluded.

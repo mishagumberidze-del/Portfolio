@@ -1,0 +1,92 @@
+/* Final spacing rhythm shared by story, analytics and catalog. Imported last. */
+:root { --space-unit: 8px; --section-gap: 32px; --card-gap: 24px; }
+main, .page-stack, .music-home, .panel, .home-panel, .project-page { min-width: 0; }
+.page-stack, .music-home { gap: var(--section-gap); }
+.page-stack > h2, .page-stack > p { margin: 0; }
+.topbar { gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
+.topbar > div:first-child { min-width: 0; }
+.notice { align-items: center; flex-wrap: wrap; gap: 16px; line-height: 1.6; }
+main > .notice { margin-bottom: 24px; }
+.notice p { margin: 0; flex: 1 1 260px; }
+.notice form { flex: 0 0 auto; }
+.notice strong { display: inline; font-size: inherit; }
+.data-source-note { color: #c8d6cc; background: #15251d; border: 1px solid #365240; }
+.data-source-note strong { color: #b9f8ce; }
+.panel, .home-panel { padding: clamp(20px, 2.5vw, 32px); }
+.panel > p { line-height: 1.65; color: #b9c5bf; }
+.panel-heading, .section-intro, .story-toolbar { gap: 20px; flex-wrap: wrap; }
+.panel-heading h3, .section-intro h2 { margin: 0 0 8px; }
+.section-intro > div, .panel-heading > div { min-width: 0; }
+.home-columns, .home-grid, .dashboard-grid, .discovery-grid, .project-grid { gap: var(--card-gap); }
+.hero-actions, .rank-player, .race-speed, .artist-selector { gap: 16px; flex-wrap: wrap; }
+.artist-selector label { min-width: 0; }
+.artist-selector input, .artist-selector select { width: 100%; max-width: 100%; }
+.home-panel > h2 { margin: 8px 0 24px; }
+.home-panel > .eyebrow { margin: 0 0 8px; }
+.source-caption, .race-art-note { line-height: 1.7; margin: 20px 0 0; }
+.story-ranking li { gap: 16px; padding-block: 16px; }
+.story-ranking li > div { min-width: 0; }
+.story-ranking strong, .discovery-heading h3 { overflow-wrap: anywhere; }
+.discovery-heading > div:first-child { flex: 1; min-width: 0; }
+.compatibility { flex-shrink: 0; margin-left: 4px; }
+.discovery-body { padding: 28px; }
+.lab-explanation { margin-block: 24px; font-size: 14px; }
+.lab-track-meta { font-size: 12px; line-height: 1.6; gap: 16px; }
+.discovery-heading small { font-size: 12px; line-height: 1.5; display: block; }
+.story-card { padding: clamp(24px, 4vw, 56px); }
+.story-card-content { gap: 12px; }
+.story-card h2 { margin: 12px 0 24px; }
+.story-card .home-panel.compact-race, .story-card .home-panel.sound-journey { padding: 0; }
+.story-controls { gap: 16px; flex-wrap: wrap; }
+.story-bottom { padding-block: 24px; }
+.story-dialog .source-caption { font-size: 13px !important; line-height: 1.6 !important; }
+.month-spotlight, .heatmap-detail { gap: 24px; }
+.heatmap-detail > div { min-width: 0; }
+.chart-key { margin: 8px 0 16px; flex-wrap: wrap; }
+.table-scroll { overflow-x: auto; padding-bottom: 12px; }
+.table-scroll th { white-space: nowrap; }
+.table-scroll td { vertical-align: top; }
+.table-map strong { overflow-wrap: anywhere; }
+.flow { gap: 16px; padding-block: 16px; }
+button, input, select { max-width: 100%; }
+button:disabled { cursor: not-allowed; }
+summary { padding-block: 12px; cursor: pointer; }
+.catalog-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 24px; }
+.catalog-controls label:not(.checkbox-label) { display: grid; gap: 10px; flex: 1 1 260px; }
+.catalog-controls input[type=search] { width: 100%; padding: 14px; background: #242424; color: #fff; border: 1px solid #555; border-radius: 10px; min-width: 0; }
+.checkbox-label { display: flex; align-items: center; gap: 12px; min-height: 44px; }
+.catalog-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.3fr); gap: 24px; align-items: start; }
+.catalog-list { display: grid; gap: 8px; }
+.catalog-list button { background: #202421; color: #fff; border: 1px solid transparent; border-radius: 10px; padding: 16px; text-align: left; }
+.catalog-list button[aria-pressed=true] { border-color: #1ed760; background: #1c3525; }
+.catalog-list strong, .catalog-list span { display: block; overflow-wrap: anywhere; }
+.catalog-list span { color: #b5c2b9; margin-top: 8px; font-size: 14px; line-height: 1.5; }
+.catalog-detail h2 { overflow-wrap: anywhere; margin-top: 0; }
+.detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-block: 24px; }
+.detail-grid > div { background: #202421; padding: 16px; border-radius: 10px; }
+.detail-grid dt { color: #b9c8bf; font-size: 14px; line-height: 1.5; }
+.detail-grid dd { margin: 10px 0 0; font-size: 18px; overflow-wrap: anywhere; }
+.stored-features { border-top: 1px solid #ffffff20; padding-top: 24px; margin-top: 32px; }
+.catalog-detail > a { display: inline-flex; margin-top: 24px; }
+@media(max-width: 1100px) { .catalog-layout { grid-template-columns: 1fr; } .story-card .sound-axes { gap: 24px; } }
+@media(max-width: 760px) {
+  :root { --section-gap: 24px; --card-gap: 20px; }
+  .topbar h1 { font-size: clamp(24px, 7vw, 34px); overflow-wrap: anywhere; }
+  .section-intro, .story-toolbar { gap: 16px; }
+  .story-toolbar label { flex-wrap: wrap; }
+  .story-dialog { padding: 12px; }
+  .story-card, .story-card:has(.compact-race) { padding: 24px 18px; }
+  .story-card h2 { font-size: clamp(28px, 8vw, 39px); }
+  .story-controls > span { flex: 1 1 140px; }
+  .story-card p:not(.eyebrow) { font-size: 16px; }
+  .discovery-body { padding: 22px; }
+  .discovery-heading { flex-wrap: wrap; gap: 20px; }
+  .compatibility { text-align: left; margin-left: 0; }
+  .url-input input { min-width: 0; flex-basis: 180px; }
+  .sound-plot, .heatmap-scroll, .rank-chart, .era-table { max-width: 100%; }
+  .music-hero { padding: 24px; }
+  .music-hero h2 { font-size: clamp(36px, 10vw, 56px); }
+  .story-stat-grid > div { min-width: 0; }
+  .story-stat-grid strong { overflow-wrap: anywhere; }
+}
+@media(max-width: 400px) { .detail-grid { grid-template-columns: 1fr; } .race-body strong { font-size: 13px; } }

@@ -1,0 +1,46 @@
+/// Payment method and installment fact at order-payment-sequence grain.
+table Payment
+
+	column 'Payment Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: PaymentKey
+
+	column 'Order Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: OrderKey
+
+	column 'Payment Sequence'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: PaymentSequence
+
+	column 'Payment Type'
+		dataType: string
+		sourceColumn: PaymentType
+
+	column Installments
+		dataType: int64
+		formatString: 0
+		summarizeBy: average
+		sourceColumn: Installments
+
+	column 'Payment Value'
+		dataType: decimal
+		formatString: "R$ #,##0.00"
+		summarizeBy: sum
+		sourceColumn: PaymentValue
+
+	partition Payment = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\payment.tsv"), [Delimiter="#(tab)", Columns=6, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","PaymentKey"},{"Column2","OrderKey"},{"Column3","PaymentSequence"},{"Column4","PaymentType"},{"Column5","Installments"},{"Column6","PaymentValue"}}),
+				Payments = Table.TransformColumnTypes(Named, {{"PaymentKey", Int64.Type},{"OrderKey", Int64.Type},{"PaymentSequence", Int64.Type},{"PaymentType", type text},{"Installments", Int64.Type},{"PaymentValue", Currency.Type}}, "en-US")
+			in
+				Payments

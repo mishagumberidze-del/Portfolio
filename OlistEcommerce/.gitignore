@@ -1,0 +1,20 @@
+# Local datasets and generated load artifacts
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+logs/*
+!logs/.gitkeep
+_trash/
+
+# Power BI local/cache files
+*.pbix.autosave
+*.pbi\localSettings.json
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+/.tools/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/

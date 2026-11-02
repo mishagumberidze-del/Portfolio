@@ -1,0 +1,74 @@
+/// Order-line fact connecting products and sellers to orders.
+table 'Order Item'
+
+	column 'Order Item Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: OrderItemKey
+
+	column 'Order Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: OrderKey
+
+	column 'Item Number'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: OrderItemNumber
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+	column 'Seller Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: SellerKey
+
+	column 'Shipping Limit Date Time'
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: ShippingLimitDateTime
+
+	column 'Item Price'
+		dataType: decimal
+		isHidden
+		formatString: "R$ #,##0.00"
+		summarizeBy: sum
+		sourceColumn: ItemPrice
+
+	column 'Freight Value'
+		dataType: decimal
+		isHidden
+		formatString: "R$ #,##0.00"
+		summarizeBy: sum
+		sourceColumn: FreightValue
+
+	column 'Item Gross Value'
+		dataType: decimal
+		formatString: "R$ #,##0.00"
+		summarizeBy: sum
+		sourceColumn: ItemGrossValue
+
+	column 'Freight Ratio'
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: average
+		sourceColumn: FreightRatio
+
+	partition 'Order Item' = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\order_item.tsv"), [Delimiter="#(tab)", Columns=10, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","OrderItemKey"},{"Column2","OrderKey"},{"Column3","OrderItemNumber"},{"Column4","ProductKey"},{"Column5","SellerKey"},{"Column6","ShippingLimitDateTime"},{"Column7","ItemPrice"},{"Column8","FreightValue"},{"Column9","ItemGrossValue"},{"Column10","FreightRatio"}}),
+				OrderItems = Table.TransformColumnTypes(Named, {{"OrderItemKey", Int64.Type},{"OrderKey", Int64.Type},{"OrderItemNumber", Int64.Type},{"ProductKey", Int64.Type},{"SellerKey", Int64.Type},{"ShippingLimitDateTime", type datetime},{"ItemPrice", Currency.Type},{"FreightValue", Currency.Type},{"ItemGrossValue", Currency.Type},{"FreightRatio", type number}}, "en-US")
+			in
+				OrderItems

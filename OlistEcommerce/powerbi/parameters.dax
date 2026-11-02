@@ -1,0 +1,26 @@
+// Disconnected dynamic metric selector. Sort Metric by Sort Order.
+Metric Selector =
+DATATABLE(
+    "Metric", STRING,
+    "Sort Order", INTEGER,
+    {
+        {"Sales / GMV", 1},
+        {"Orders", 2},
+        {"Customers", 3},
+        {"Average Order Value", 4},
+        {"Units", 5}
+    }
+)
+
+// What-if style Top-N selector.
+Top N = GENERATESERIES(5, 50, 5)
+
+// Native field parameter version for visual axis/measure switching.
+Metric Fields = {
+    ("Sales / GMV", NAMEOF('Measures'[Sales / GMV]), 0),
+    ("Orders", NAMEOF('Measures'[Orders]), 1),
+    ("Customers", NAMEOF('Measures'[Customers]), 2),
+    ("Average Order Value", NAMEOF('Measures'[Average Order Value]), 3),
+    ("Units", NAMEOF('Measures'[Units]), 4)
+}
+

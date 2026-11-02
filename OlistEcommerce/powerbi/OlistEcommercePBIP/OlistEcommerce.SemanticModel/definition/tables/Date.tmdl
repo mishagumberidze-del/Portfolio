@@ -1,0 +1,99 @@
+/// Conformed calendar dimension loaded from SQL Server.
+table Date
+	dataCategory: Time
+
+	column 'Date Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: DateKey
+
+	column Date
+		dataType: dateTime
+		formatString: Short Date
+		summarizeBy: none
+		sourceColumn: Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: CalendarYear
+
+	column Quarter
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: CalendarQuarter
+
+	column 'Quarter Label'
+		dataType: string
+		sourceColumn: QuarterLabel
+
+	column 'Month Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: MonthNumber
+
+	column 'Month Name'
+		dataType: string
+		sortByColumn: 'Month Number'
+		sourceColumn: MonthName
+
+	column 'Year Month'
+		dataType: string
+		sortByColumn: 'Year Month Sort'
+		sourceColumn: YearMonth
+
+	column 'Year Month Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: YearMonthSort
+
+	column 'Week of Year'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: WeekOfYear
+
+	column 'Day of Month'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: DayOfMonth
+
+	column 'Day Name'
+		dataType: string
+		sourceColumn: DayName
+
+	column 'Is Weekend'
+		dataType: boolean
+		sourceColumn: IsWeekend
+
+	hierarchy Calendar
+
+		level Year
+			column: Year
+
+		level Quarter
+			column: 'Quarter Label'
+
+		level Month
+			column: 'Month Name'
+
+		level Date
+			column: Date
+
+	partition Date = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\date.tsv"), [Delimiter="#(tab)", Columns=13, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","DateKey"},{"Column2","Date"},{"Column3","CalendarYear"},{"Column4","CalendarQuarter"},{"Column5","QuarterLabel"},{"Column6","MonthNumber"},{"Column7","MonthName"},{"Column8","YearMonth"},{"Column9","YearMonthSort"},{"Column10","WeekOfYear"},{"Column11","DayOfMonth"},{"Column12","DayName"},{"Column13","IsWeekend"}}),
+				DateTable = Table.TransformColumnTypes(Named, {{"DateKey", Int64.Type},{"Date", type date},{"CalendarYear", Int64.Type},{"CalendarQuarter", Int64.Type},{"QuarterLabel", type text},{"MonthNumber", Int64.Type},{"MonthName", type text},{"YearMonth", type text},{"YearMonthSort", Int64.Type},{"WeekOfYear", Int64.Type},{"DayOfMonth", Int64.Type},{"DayName", type text},{"IsWeekend", type logical}}, "en-US")
+			in
+				DateTable

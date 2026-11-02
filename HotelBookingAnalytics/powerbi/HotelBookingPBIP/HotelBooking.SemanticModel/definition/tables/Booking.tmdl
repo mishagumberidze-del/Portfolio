@@ -1,0 +1,171 @@
+table Booking
+	lineageTag: 49974448-caac-40c9-95fa-c61479011440
+
+	column BookingId
+		dataType: int64
+		isHidden
+		lineageTag: 03fd7047-0814-4a9b-b679-05331e3792fc
+		summarizeBy: none
+		sourceColumn: BookingId
+
+	column ArrivalDateKey
+		dataType: int64
+		isHidden
+		lineageTag: 65c9700d-7854-47e3-8257-ea05a57817f9
+		summarizeBy: none
+		sourceColumn: ArrivalDateKey
+
+	column HotelName
+		dataType: string
+		lineageTag: bda3bf76-bf70-4664-9e76-57fb1db6eb08
+		summarizeBy: none
+		sourceColumn: HotelName
+
+	column SegmentName
+		dataType: string
+		lineageTag: c9d4e734-d604-4e87-8524-eb1a28a5cc79
+		summarizeBy: none
+		sourceColumn: SegmentName
+
+	column CustomerType
+		dataType: string
+		lineageTag: e2503521-783d-4451-ab24-3ff0c4f66f44
+		summarizeBy: none
+		sourceColumn: CustomerType
+
+	column DistributionChannel
+		dataType: string
+		lineageTag: f2453e93-f3d2-4442-93df-c9e9391c4e6b
+		summarizeBy: none
+		sourceColumn: DistributionChannel
+
+	column IsCanceled
+		dataType: int64
+		lineageTag: 22a89968-8a24-4a63-9f13-6f99e9fceb95
+		summarizeBy: none
+		sourceColumn: IsCanceled
+
+	column LeadTime
+		dataType: int64
+		lineageTag: ce75a198-440b-4efd-82dc-c698a76309a7
+		summarizeBy: none
+		sourceColumn: LeadTime
+
+	column StayNights
+		dataType: int64
+		lineageTag: 735a359d-c19c-4a46-b335-47d37cb295c1
+		summarizeBy: none
+		sourceColumn: StayNights
+
+	column ADR
+		dataType: double
+		lineageTag: c759535b-2f7a-456d-b055-58bc2d7e3392
+		summarizeBy: sum
+		sourceColumn: ADR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column RealizedRoomValue
+		dataType: double
+		lineageTag: 0bb7bf45-4172-4699-8998-26c4e2eef8e4
+		summarizeBy: sum
+		sourceColumn: RealizedRoomValue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GrossRoomValue
+		dataType: double
+		lineageTag: 5ff87580-9e11-45b7-b193-891c1d9cf1a1
+		summarizeBy: sum
+		sourceColumn: GrossRoomValue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column RoomChanged
+		dataType: int64
+		lineageTag: 05392176-67fc-485c-b9c5-b0b301f0fbdb
+		summarizeBy: none
+		sourceColumn: RoomChanged
+
+	column CountryCode
+		dataType: string
+		lineageTag: b53d50f4-b768-4729-8ff5-ce0ab6953a73
+		summarizeBy: none
+		sourceColumn: CountryCode
+
+	column IsRepeatedGuest
+		dataType: int64
+		lineageTag: 21a9c885-5db4-418e-9908-bdad927b3984
+		summarizeBy: none
+		sourceColumn: IsRepeatedGuest
+
+	column DepositType
+		dataType: string
+		lineageTag: 245584e7-057a-4d30-8f9a-0ed7cfee9e83
+		summarizeBy: none
+		sourceColumn: DepositType
+
+	column ReservationStatus
+		dataType: string
+		lineageTag: 8550640c-0c92-433a-9259-c7fe0016a5a9
+		summarizeBy: none
+		sourceColumn: ReservationStatus
+
+	column DataQualityFlag
+		dataType: int64
+		lineageTag: 4a5dd6bd-9ef0-4bd4-b4c5-bfefd06f491d
+		summarizeBy: none
+		sourceColumn: DataQualityFlag
+
+	column BookingChanges
+		dataType: int64
+		lineageTag: 7a8c642e-7cc2-40b0-b487-9937d941c89a
+		summarizeBy: none
+		sourceColumn: BookingChanges
+
+	column SpecialRequests
+		dataType: int64
+		lineageTag: 032f3367-2318-450e-b543-0ef81284af34
+		summarizeBy: none
+		sourceColumn: SpecialRequests
+
+	column LeadTimeBand
+		dataType: string
+		lineageTag: 39de77eb-c60d-4789-a478-f3478feb6564
+		summarizeBy: none
+		sourceColumn: LeadTimeBand
+
+	column StayBand
+		dataType: string
+		lineageTag: 18dfeeb1-e208-4eb1-ba5e-35b2281818b2
+		summarizeBy: none
+		sourceColumn: StayBand
+
+	column ReservedRoomType
+		dataType: string
+		lineageTag: d0ab7c4b-85ec-4fec-a588-c2bcf84db086
+		summarizeBy: none
+		sourceColumn: ReservedRoomType
+
+	column AssignedRoomType
+		dataType: string
+		lineageTag: e7640f44-6d7c-45c3-9797-e62ebf1de21d
+		summarizeBy: none
+		sourceColumn: AssignedRoomType
+
+	partition Booking = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(#"DataRoot" & "\booking.tsv"), [Delimiter="#(tab)", Columns=24, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+					Named = Table.RenameColumns(Source, {{"Column1","BookingId"},{"Column2","ArrivalDateKey"},{"Column3","HotelName"},{"Column4","SegmentName"},{"Column5","CustomerType"},{"Column6","DistributionChannel"},{"Column7","IsCanceled"},{"Column8","LeadTime"},{"Column9","StayNights"},{"Column10","ADR"},{"Column11","RealizedRoomValue"},{"Column12","GrossRoomValue"},{"Column13","RoomChanged"},{"Column14","CountryCode"},{"Column15","IsRepeatedGuest"},{"Column16","DepositType"},{"Column17","ReservationStatus"},{"Column18","DataQualityFlag"},{"Column19","BookingChanges"},{"Column20","SpecialRequests"},{"Column21","LeadTimeBand"},{"Column22","StayBand"},{"Column23","ReservedRoomType"},{"Column24","AssignedRoomType"}}),
+					Typed = Table.TransformColumnTypes(Named, {{"BookingId", Int64.Type},{"ArrivalDateKey", Int64.Type},{"HotelName", type text},{"SegmentName", type text},{"CustomerType", type text},{"DistributionChannel", type text},{"IsCanceled", Int64.Type},{"LeadTime", Int64.Type},{"StayNights", Int64.Type},{"ADR", type number},{"RealizedRoomValue", type number},{"GrossRoomValue", type number},{"RoomChanged", Int64.Type},{"CountryCode", type text},{"IsRepeatedGuest", Int64.Type},{"DepositType", type text},{"ReservationStatus", type text},{"DataQualityFlag", Int64.Type},{"BookingChanges", Int64.Type},{"SpecialRequests", Int64.Type},{"LeadTimeBand", type text},{"StayBand", type text},{"ReservedRoomType", type text},{"AssignedRoomType", type text}}, "en-US")
+				in
+					Typed
+

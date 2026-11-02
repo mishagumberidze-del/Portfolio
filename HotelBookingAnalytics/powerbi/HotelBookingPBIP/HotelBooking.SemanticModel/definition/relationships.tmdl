@@ -1,0 +1,4 @@
+relationship 'Booking to Date'
+	fromColumn: Booking.ArrivalDateKey
+	toColumn: Date.DateKey
+

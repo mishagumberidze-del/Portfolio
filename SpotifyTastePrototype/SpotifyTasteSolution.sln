@@ -1,0 +1,55 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{1553AED6-9F92-4E76-B1D3-5397C9606C29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyTaste.Api", "backend\SpotifyTaste.Api\SpotifyTaste.Api.csproj", "{5208F386-9413-46EA-BC84-5A380884BF19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyTaste.Application", "backend\SpotifyTaste.Application\SpotifyTaste.Application.csproj", "{402B7253-3718-49C9-A50A-5595E48E3DC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyTaste.Domain", "backend\SpotifyTaste.Domain\SpotifyTaste.Domain.csproj", "{5872D413-3363-42AA-ADBE-D27FDA8BF8E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyTaste.Infrastructure", "backend\SpotifyTaste.Infrastructure\SpotifyTaste.Infrastructure.csproj", "{F50EFB8B-F179-4A90-88CE-47106BFD7DC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyTaste.Tests", "backend\SpotifyTaste.Tests\SpotifyTaste.Tests.csproj", "{C7F9C103-2E6E-4F20-A81E-E996625F44DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5208F386-9413-46EA-BC84-5A380884BF19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5208F386-9413-46EA-BC84-5A380884BF19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5208F386-9413-46EA-BC84-5A380884BF19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5208F386-9413-46EA-BC84-5A380884BF19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{402B7253-3718-49C9-A50A-5595E48E3DC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{402B7253-3718-49C9-A50A-5595E48E3DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{402B7253-3718-49C9-A50A-5595E48E3DC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{402B7253-3718-49C9-A50A-5595E48E3DC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5872D413-3363-42AA-ADBE-D27FDA8BF8E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5872D413-3363-42AA-ADBE-D27FDA8BF8E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5872D413-3363-42AA-ADBE-D27FDA8BF8E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5872D413-3363-42AA-ADBE-D27FDA8BF8E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F50EFB8B-F179-4A90-88CE-47106BFD7DC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F50EFB8B-F179-4A90-88CE-47106BFD7DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F50EFB8B-F179-4A90-88CE-47106BFD7DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F50EFB8B-F179-4A90-88CE-47106BFD7DC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7F9C103-2E6E-4F20-A81E-E996625F44DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7F9C103-2E6E-4F20-A81E-E996625F44DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7F9C103-2E6E-4F20-A81E-E996625F44DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7F9C103-2E6E-4F20-A81E-E996625F44DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5208F386-9413-46EA-BC84-5A380884BF19} = {1553AED6-9F92-4E76-B1D3-5397C9606C29}
+		{402B7253-3718-49C9-A50A-5595E48E3DC9} = {1553AED6-9F92-4E76-B1D3-5397C9606C29}
+		{5872D413-3363-42AA-ADBE-D27FDA8BF8E6} = {1553AED6-9F92-4E76-B1D3-5397C9606C29}
+		{F50EFB8B-F179-4A90-88CE-47106BFD7DC2} = {1553AED6-9F92-4E76-B1D3-5397C9606C29}
+		{C7F9C103-2E6E-4F20-A81E-E996625F44DD} = {1553AED6-9F92-4E76-B1D3-5397C9606C29}
+	EndGlobalSection
+EndGlobal

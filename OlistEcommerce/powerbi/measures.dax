@@ -1,0 +1,225 @@
+// Create a calculated table first, hide its Value column, and use it as the measures home table.
+'KPI Measures' = { BLANK() }
+
+// Commercial sales exclude canceled and unavailable orders.
+Sales / GMV :=
+CALCULATE(
+    SUM('Order Item'[Item Price]),
+    KEEPFILTERS('Order'[Status] <> "canceled"),
+    KEEPFILTERS('Order'[Status] <> "unavailable")
+)
+
+Orders := DISTINCTCOUNT('Order'[Order Key])
+
+Order Status Share % := DIVIDE([Orders], CALCULATE([Orders], REMOVEFILTERS('Order'[Status])))
+
+Sales Orders :=
+CALCULATE(
+    [Orders],
+    KEEPFILTERS('Order'[Status] <> "canceled"),
+    KEEPFILTERS('Order'[Status] <> "unavailable")
+)
+
+Customers := DISTINCTCOUNT('Order'[Customer Key])
+
+Average Order Value := DIVIDE([Sales / GMV], [Sales Orders])
+
+Units :=
+CALCULATE(
+    COUNTROWS('Order Item'),
+    KEEPFILTERS('Order'[Status] <> "canceled"),
+    KEEPFILTERS('Order'[Status] <> "unavailable")
+)
+
+Items per Order := DIVIDE([Units], [Sales Orders])
+
+Repeat Customers :=
+CALCULATE(
+    DISTINCTCOUNT('Order'[Customer Key]),
+    KEEPFILTERS('Order'[Purchase Sequence] > 1)
+)
+
+Lifetime Repeat Customers :=
+CALCULATE(
+    DISTINCTCOUNT(Customer[Customer Key]),
+    REMOVEFILTERS('Date'),
+    Customer[Customer Type] = "Repeat"
+)
+
+Repeat Customer Rate := DIVIDE([Repeat Customers], [Customers])
+
+Customer Purchase Frequency := DIVIDE([Sales Orders], [Customers])
+
+Delivered Orders := CALCULATE([Orders], KEEPFILTERS('Order'[Status] = "delivered"))
+
+Cancelled Orders := CALCULATE([Orders], KEEPFILTERS('Order'[Status] = "canceled"))
+
+Delivery Rate := DIVIDE([Delivered Orders], [Orders])
+
+Cancellation Rate := DIVIDE([Cancelled Orders], [Orders])
+
+Average Delivery Days :=
+CALCULATE(AVERAGE('Order'[Delivery Days]), KEEPFILTERS('Order'[Status] = "delivered"))
+
+Delivered with Promise :=
+CALCULATE(
+    [Orders],
+    KEEPFILTERS('Order'[Status] = "delivered"),
+    KEEPFILTERS('Order'[Delivery Performance] <> "Not Delivered")
+)
+
+On-Time Orders :=
+CALCULATE(
+    [Orders],
+    KEEPFILTERS('Order'[Status] = "delivered"),
+    KEEPFILTERS('Order'[Delivery Performance] = "On Time")
+)
+
+On-Time Delivery % := DIVIDE([On-Time Orders], [Delivered with Promise])
+
+Average Delay Days :=
+CALCULATE(
+    AVERAGE('Order'[Delay Days]),
+    KEEPFILTERS('Order'[Delivery Performance] = "Late")
+)
+
+Average Promise Variance Days :=
+CALCULATE(
+    AVERAGE('Order'[Delay Days]),
+    KEEPFILTERS('Order'[Status] = "delivered"),
+    KEEPFILTERS(NOT ISBLANK('Order'[Delay Days]))
+)
+
+Freight Cost :=
+CALCULATE(
+    SUM('Order Item'[Freight Value]),
+    KEEPFILTERS('Order'[Status] <> "canceled"),
+    KEEPFILTERS('Order'[Status] <> "unavailable")
+)
+
+Freight Ratio := DIVIDE([Freight Cost], [Sales / GMV])
+
+Average Review Score := AVERAGE(Review[Review Score])
+
+Reviewed Orders := DISTINCTCOUNT(Review[Order Key])
+
+Review Coverage % := DIVIDE([Reviewed Orders], [Orders])
+
+Average Selling Price := DIVIDE([Sales / GMV], [Units])
+
+Revenue per Customer := DIVIDE([Sales / GMV], [Customers])
+
+Product Orders :=
+CALCULATE(
+    DISTINCTCOUNT('Order Item'[Order Key]),
+    KEEPFILTERS('Order'[Status] <> "canceled"),
+    KEEPFILTERS('Order'[Status] <> "unavailable")
+)
+
+Seller Orders :=
+CALCULATE(
+    DISTINCTCOUNT('Order Item'[Order Key]),
+    KEEPFILTERS('Order'[Status] <> "canceled"),
+    KEEPFILTERS('Order'[Status] <> "unavailable")
+)
+
+Active Sellers :=
+CALCULATE(
+    DISTINCTCOUNT('Order Item'[Seller Key]),
+    KEEPFILTERS('Order'[Status] <> "canceled"),
+    KEEPFILTERS('Order'[Status] <> "unavailable")
+)
+
+Seller Average Order Value := DIVIDE([Sales / GMV], [Seller Orders])
+
+Customers in Item Context :=
+VAR VisibleOrders = VALUES('Order Item'[Order Key])
+RETURN
+    CALCULATE(
+        DISTINCTCOUNT('Order'[Customer Key]),
+        TREATAS(VisibleOrders, 'Order'[Order Key]),
+        KEEPFILTERS('Order'[Status] <> "canceled"),
+        KEEPFILTERS('Order'[Status] <> "unavailable")
+    )
+
+Average Review Score in Item Context :=
+VAR VisibleOrders = VALUES('Order Item'[Order Key])
+RETURN
+    CALCULATE(
+        [Average Review Score],
+        TREATAS(VisibleOrders, Review[Order Key])
+    )
+
+On-Time Delivery % in Item Context :=
+VAR VisibleOrders = VALUES('Order Item'[Order Key])
+RETURN
+    CALCULATE(
+        [On-Time Delivery %],
+        TREATAS(VisibleOrders, 'Order'[Order Key])
+    )
+
+Average Delivery Days in Item Context :=
+VAR VisibleOrders = VALUES('Order Item'[Order Key])
+RETURN
+    CALCULATE(
+        [Average Delivery Days],
+        TREATAS(VisibleOrders, 'Order'[Order Key])
+    )
+
+Average Delivery Days in Review Context :=
+VAR VisibleOrders = VALUES(Review[Order Key])
+RETURN CALCULATE([Average Delivery Days], TREATAS(VisibleOrders, 'Order'[Order Key]))
+
+Average Delay Days in Review Context :=
+VAR VisibleOrders = VALUES(Review[Order Key])
+RETURN CALCULATE([Average Delay Days], TREATAS(VisibleOrders, 'Order'[Order Key]))
+
+On-Time Delivery % in Review Context :=
+VAR VisibleOrders = VALUES(Review[Order Key])
+RETURN CALCULATE([On-Time Delivery %], TREATAS(VisibleOrders, 'Order'[Order Key]))
+
+Category Contribution % := DIVIDE([Sales / GMV], CALCULATE([Sales / GMV], REMOVEFILTERS(Product[Category])))
+
+Sales Previous Month := CALCULATE([Sales / GMV], DATEADD('Date'[Date], -1, MONTH))
+
+Sales MoM % := DIVIDE([Sales / GMV] - [Sales Previous Month], [Sales Previous Month])
+
+Sales Previous Year := CALCULATE([Sales / GMV], SAMEPERIODLASTYEAR('Date'[Date]))
+
+Sales YoY % := DIVIDE([Sales / GMV] - [Sales Previous Year], [Sales Previous Year])
+
+Customer Rank by Sales := RANKX(ALLSELECTED(Customer[Customer Key]), [Sales / GMV],, DESC, DENSE)
+
+Seller Rank by Sales := RANKX(ALLSELECTED(Seller[Seller Key]), [Sales / GMV],, DESC, DENSE)
+
+Selected Top N := SELECTEDVALUE('Top N'[Value], 10)
+
+Seller in Top N := IF([Seller Rank by Sales] <= [Selected Top N], 1, 0)
+
+Seller Top N Sales := IF([Seller in Top N] = 1, [Sales / GMV])
+
+Customer in Top N := IF([Customer Rank by Sales] <= [Selected Top N], 1, 0)
+
+Selected Metric :=
+SWITCH(
+    SELECTEDVALUE('Metric Selector'[Metric], "Sales / GMV"),
+    "Sales / GMV", [Sales / GMV],
+    "Orders", [Orders],
+    "Customers", [Customers],
+    "Average Order Value", [Average Order Value],
+    "Units", [Units],
+    [Sales / GMV]
+)
+
+Selected Metric Title := SELECTEDVALUE('Metric Selector'[Metric], "Sales / GMV") & " trend"
+
+Active Cohort Customers := SUM('Cohort Retention'[Active Customers])
+
+Cohort Customers := MAX('Cohort Retention'[Cohort Customers])
+
+Retention Rate :=
+IF(
+    ISINSCOPE('Cohort Retention'[Cohort Month]) &&
+    ISINSCOPE('Cohort Retention'[Months Since First Purchase]),
+    DIVIDE([Active Cohort Customers], [Cohort Customers])
+)

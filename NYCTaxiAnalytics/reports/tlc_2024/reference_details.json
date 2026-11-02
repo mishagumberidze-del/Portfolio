@@ -1,0 +1,33 @@
+{
+  "zone_lookup_rows": 265,
+  "lookup_tail": [
+    {
+      "LocationID": "264",
+      "Borough": "Unknown",
+      "Zone": "N/A",
+      "service_zone": "N/A"
+    },
+    {
+      "LocationID": "265",
+      "Borough": "N/A",
+      "Zone": "Outside of NYC",
+      "service_zone": "N/A"
+    }
+  ],
+  "shapefile_features": 263,
+  "shapefile_bounds": [
+    913175.109008804,
+    120121.88125434518,
+    1067382.508405164,
+    272844.2940054685
+  ],
+  "shapefile_crs_wkt": "PROJCS[\"NAD_1983_StatePlane_New_York_Long_Island_FIPS_3104_Feet\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Lambert_Conformal_Conic\"],PARAMETER[\"False_Easting\",984250.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",-74.0],PARAMETER[\"Standard_Parallel_1\",41.0333333333333],PARAMETER[\"Standard_Parallel_2\",40.6666666666667],PARAMETER[\"Latitude_Of_Origin\",40.1666666666667],UNIT[\"US survey foot\",0.304800609601219]]",
+  "shapefile_members": [
+    "taxi_zones/",
+    "taxi_zones/taxi_zones.cpg",
+    "taxi_zones/taxi_zones.dbf",
+    "taxi_zones/taxi_zones.prj",
+    "taxi_zones/taxi_zones.shp",
+    "taxi_zones/taxi_zones.shx"
+  ]
+}

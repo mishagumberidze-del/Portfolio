@@ -1,0 +1,468 @@
+/// Dedicated measure table. Business logic is centralized here and documented per KPI.
+table 'KPI Measures'
+
+	/// Merchandise sales for all orders except canceled and unavailable orders; freight is excluded.
+	measure 'Sales / GMV' = ```
+			CALCULATE(
+				SUM('Order Item'[Item Price]),
+				KEEPFILTERS('Order'[Status] <> "canceled"),
+				KEEPFILTERS('Order'[Status] <> "unavailable")
+			)
+			```
+		formatString: "R$ #,##0.00;(-R$ #,##0.00);R$ 0.00"
+		displayFolder: Commercial
+
+	/// Distinct orders in the current filter context, regardless of status.
+	measure Orders = DISTINCTCOUNT('Order'[Order Key])
+		formatString: #,##0
+		displayFolder: Commercial
+
+	/// Share of orders for the visible status against all statuses in the active non-status filter context.
+	measure 'Order Status Share %' = DIVIDE([Orders], CALCULATE([Orders], REMOVEFILTERS('Order'[Status])))
+		formatString: 0.00%
+		displayFolder: Commercial
+
+	/// Distinct orders excluding canceled and unavailable statuses.
+	measure 'Sales Orders' = ```
+			CALCULATE(
+				[Orders],
+				KEEPFILTERS('Order'[Status] <> "canceled"),
+				KEEPFILTERS('Order'[Status] <> "unavailable")
+			)
+			```
+		formatString: #,##0
+		displayFolder: Commercial
+
+	/// Distinct customer_unique_id values represented by orders in context.
+	measure Customers = DISTINCTCOUNT('Order'[Customer Key])
+		formatString: #,##0
+		displayFolder: Customer
+
+	/// Merchandise sales divided by non-canceled, non-unavailable orders.
+	measure 'Average Order Value' = DIVIDE([Sales / GMV], [Sales Orders])
+		formatString: "R$ #,##0.00"
+		displayFolder: Commercial
+
+	/// Order-item rows on commercial orders; one row represents one sold item occurrence.
+	measure Units = ```
+			CALCULATE(
+				COUNTROWS('Order Item'),
+				KEEPFILTERS('Order'[Status] <> "canceled"),
+				KEEPFILTERS('Order'[Status] <> "unavailable")
+			)
+			```
+		formatString: #,##0
+		displayFolder: Commercial
+
+	/// Units divided by sales orders.
+	measure 'Items per Order' = DIVIDE([Units], [Sales Orders])
+		formatString: 0.00
+		displayFolder: Commercial
+
+	/// Customers whose visible order is their second or later lifetime purchase.
+	measure 'Repeat Customers' = ```
+			CALCULATE(
+				DISTINCTCOUNT('Order'[Customer Key]),
+				KEEPFILTERS('Order'[Purchase Sequence] > 1)
+			)
+			```
+		formatString: #,##0
+		displayFolder: Customer
+
+	/// Customers classified as repeat based on lifetime purchase count in the SQL Customer 360 view.
+	measure 'Lifetime Repeat Customers' = ```
+			CALCULATE(
+				DISTINCTCOUNT(Customer[Customer Key]),
+				KEEPFILTERS(Customer[Customer Type] = "Repeat")
+			)
+			```
+		formatString: #,##0
+		displayFolder: Customer
+
+	/// Repeat customers divided by distinct customers in the current context.
+	measure 'Repeat Customer Rate' = DIVIDE([Repeat Customers], [Customers])
+		formatString: 0.00%
+		displayFolder: Customer
+
+	/// Sales orders divided by distinct customers.
+	measure 'Customer Purchase Frequency' = DIVIDE([Sales Orders], [Customers])
+		formatString: 0.00
+		displayFolder: Customer
+
+	/// Merchandise sales divided by distinct customers.
+	measure 'Revenue per Customer' = DIVIDE([Sales / GMV], [Customers])
+		formatString: "R$ #,##0.00"
+		displayFolder: Customer
+
+	/// Distinct delivered orders.
+	measure 'Delivered Orders' = CALCULATE([Orders], KEEPFILTERS('Order'[Status] = "delivered"))
+		formatString: #,##0
+		displayFolder: Fulfilment
+
+	/// Distinct canceled orders.
+	measure 'Cancelled Orders' = CALCULATE([Orders], KEEPFILTERS('Order'[Status] = "canceled"))
+		formatString: #,##0
+		displayFolder: Fulfilment
+
+	/// Delivered orders divided by all orders.
+	measure 'Delivery Rate' = DIVIDE([Delivered Orders], [Orders])
+		formatString: 0.00%
+		displayFolder: Fulfilment
+
+	/// Canceled orders divided by all orders.
+	measure 'Cancellation Rate' = DIVIDE([Cancelled Orders], [Orders])
+		formatString: 0.00%
+		displayFolder: Fulfilment
+
+	/// Average elapsed calendar days from purchase to customer delivery for delivered orders.
+	measure 'Average Delivery Days' = ```
+			CALCULATE(
+				AVERAGE('Order'[Delivery Days]),
+				KEEPFILTERS('Order'[Status] = "delivered")
+			)
+			```
+		formatString: 0.0
+		displayFolder: Fulfilment
+
+	/// Delivered orders with an evaluable promised-versus-actual delivery outcome.
+	measure 'Delivered with Promise' = ```
+			CALCULATE(
+				[Orders],
+				KEEPFILTERS('Order'[Status] = "delivered"),
+				KEEPFILTERS('Order'[Delivery Performance] <> "Not Delivered")
+			)
+			```
+		formatString: #,##0
+		displayFolder: Fulfilment
+
+	/// Delivered orders received on or before the promised date.
+	measure 'On-Time Orders' = ```
+			CALCULATE(
+				[Orders],
+				KEEPFILTERS('Order'[Status] = "delivered"),
+				KEEPFILTERS('Order'[Delivery Performance] = "On Time")
+			)
+			```
+		formatString: #,##0
+		displayFolder: Fulfilment
+
+	/// Delivered orders received after the promised date.
+	measure 'Late Orders' = ```
+			CALCULATE(
+				[Orders],
+				KEEPFILTERS('Order'[Status] = "delivered"),
+				KEEPFILTERS('Order'[Delivery Performance] = "Late")
+			)
+			```
+		formatString: #,##0
+		displayFolder: Fulfilment
+
+	/// On-time orders divided by delivered orders with a comparable promise date.
+	measure 'On-Time Delivery %' = DIVIDE([On-Time Orders], [Delivered with Promise])
+		formatString: 0.00%
+		displayFolder: Fulfilment
+
+	/// Late orders divided by delivered orders with a comparable promise date.
+	measure 'Late Delivery %' = DIVIDE([Late Orders], [Delivered with Promise])
+		formatString: 0.00%
+		displayFolder: Fulfilment
+
+	/// Average positive actual-minus-promised days among late deliveries only.
+	measure 'Average Delay Days' = ```
+			CALCULATE(
+				AVERAGE('Order'[Delay Days]),
+				KEEPFILTERS('Order'[Delivery Performance] = "Late")
+			)
+			```
+		formatString: 0.0
+		displayFolder: Fulfilment
+
+	/// Average signed actual-minus-promised days; negative values indicate early delivery.
+	measure 'Average Promise Variance Days' = ```
+			CALCULATE(
+				AVERAGE('Order'[Delay Days]),
+				KEEPFILTERS('Order'[Status] = "delivered"),
+				KEEPFILTERS(NOT ISBLANK('Order'[Delay Days]))
+			)
+			```
+		formatString: 0.0
+		displayFolder: Fulfilment
+
+	/// Sum of order-item freight for commercial orders.
+	measure 'Freight Cost' = ```
+			CALCULATE(
+				SUM('Order Item'[Freight Value]),
+				KEEPFILTERS('Order'[Status] <> "canceled"),
+				KEEPFILTERS('Order'[Status] <> "unavailable")
+			)
+			```
+		formatString: "R$ #,##0.00"
+		displayFolder: Fulfilment
+
+	/// Freight cost divided by merchandise sales.
+	measure 'Freight Ratio' = DIVIDE([Freight Cost], [Sales / GMV])
+		formatString: 0.00%
+		displayFolder: Fulfilment
+
+	/// Arithmetic mean of available review scores.
+	measure 'Average Review Score' = AVERAGE(Review[Review Score])
+		formatString: 0.00
+		displayFolder: Experience
+
+	/// Distinct orders with a retained review.
+	measure 'Reviewed Orders' = DISTINCTCOUNT(Review[Order Key])
+		formatString: #,##0
+		displayFolder: Experience
+
+	/// Reviewed orders divided by all orders.
+	measure 'Review Coverage %' = DIVIDE([Reviewed Orders], [Orders])
+		formatString: 0.00%
+		displayFolder: Experience
+
+	/// Reviewed orders scoring one or two stars.
+	measure 'Low Review Orders' = ```
+			CALCULATE(
+				[Reviewed Orders],
+				KEEPFILTERS(Review[Review Score] <= 2)
+			)
+			```
+		formatString: #,##0
+		displayFolder: Experience
+
+	/// Merchandise sales divided by units.
+	measure 'Average Selling Price' = DIVIDE([Sales / GMV], [Units])
+		formatString: "R$ #,##0.00"
+		displayFolder: Product
+
+	/// Distinct commercial orders represented by the visible order-item rows.
+	measure 'Product Orders' = ```
+			CALCULATE(
+				DISTINCTCOUNT('Order Item'[Order Key]),
+				KEEPFILTERS('Order'[Status] <> "canceled"),
+				KEEPFILTERS('Order'[Status] <> "unavailable")
+			)
+			```
+		formatString: #,##0
+		displayFolder: Product
+
+	/// Category sales divided by sales with the category filter removed.
+	measure 'Category Contribution %' = ```
+			DIVIDE(
+				[Sales / GMV],
+				CALCULATE([Sales / GMV], REMOVEFILTERS(Product[Category]))
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Product
+
+	/// Distinct sellers represented by commercial order-item rows.
+	measure 'Active Sellers' = ```
+			CALCULATE(
+				DISTINCTCOUNT('Order Item'[Seller Key]),
+				KEEPFILTERS('Order'[Status] <> "canceled"),
+				KEEPFILTERS('Order'[Status] <> "unavailable")
+			)
+			```
+		formatString: #,##0
+		displayFolder: Seller
+
+	/// Distinct commercial orders represented by the visible seller order-item rows.
+	measure 'Seller Orders' = ```
+			CALCULATE(
+				DISTINCTCOUNT('Order Item'[Order Key]),
+				KEEPFILTERS('Order'[Status] <> "canceled"),
+				KEEPFILTERS('Order'[Status] <> "unavailable")
+			)
+			```
+		formatString: #,##0
+		displayFolder: Seller
+
+	/// Sales divided by distinct seller orders in the current seller/item context.
+	measure 'Seller Average Order Value' = DIVIDE([Sales / GMV], [Seller Orders])
+		formatString: "R$ #,##0.00"
+		displayFolder: Seller
+
+	/// Distinct customers associated with visible order-item rows via order key.
+	measure 'Customers in Item Context' = ```
+			VAR _visibleOrders = VALUES('Order Item'[Order Key])
+			RETURN
+				CALCULATE(
+					DISTINCTCOUNT('Order'[Customer Key]),
+					TREATAS(_visibleOrders, 'Order'[Order Key]),
+					KEEPFILTERS('Order'[Status] <> "canceled"),
+					KEEPFILTERS('Order'[Status] <> "unavailable")
+				)
+			```
+		formatString: #,##0
+		displayFolder: Context Bridges
+
+	/// Average review score for orders associated with visible order-item rows.
+	measure 'Average Review Score in Item Context' = ```
+			VAR _visibleOrders = VALUES('Order Item'[Order Key])
+			RETURN
+				CALCULATE(
+					[Average Review Score],
+					TREATAS(_visibleOrders, Review[Order Key])
+				)
+			```
+		formatString: 0.00
+		displayFolder: Context Bridges
+
+	/// On-time rate for orders associated with visible order-item rows.
+	measure 'On-Time Delivery % in Item Context' = ```
+			VAR _visibleOrders = VALUES('Order Item'[Order Key])
+			RETURN
+				CALCULATE(
+					[On-Time Delivery %],
+					TREATAS(_visibleOrders, 'Order'[Order Key])
+				)
+			```
+		formatString: 0.00%
+		displayFolder: Context Bridges
+
+	/// Average delivery duration for orders associated with visible order-item rows.
+	measure 'Average Delivery Days in Item Context' = ```
+			VAR _visibleOrders = VALUES('Order Item'[Order Key])
+			RETURN
+				CALCULATE(
+					[Average Delivery Days],
+					TREATAS(_visibleOrders, 'Order'[Order Key])
+				)
+			```
+		formatString: 0.0
+		displayFolder: Context Bridges
+
+	/// Average delivery duration for orders associated with the visible review rows.
+	measure 'Average Delivery Days in Review Context' = ```
+			VAR _visibleOrders = VALUES(Review[Order Key])
+			RETURN
+				CALCULATE(
+					[Average Delivery Days],
+					TREATAS(_visibleOrders, 'Order'[Order Key])
+				)
+			```
+		formatString: 0.0
+		displayFolder: Context Bridges
+
+	/// Average delivery delay for orders associated with the visible review rows.
+	measure 'Average Delay Days in Review Context' = ```
+			VAR _visibleOrders = VALUES(Review[Order Key])
+			RETURN
+				CALCULATE(
+					[Average Delay Days],
+					TREATAS(_visibleOrders, 'Order'[Order Key])
+				)
+			```
+		formatString: 0.0
+		displayFolder: Context Bridges
+
+	/// On-time delivery rate for orders associated with the visible review rows.
+	measure 'On-Time Delivery % in Review Context' = ```
+			VAR _visibleOrders = VALUES(Review[Order Key])
+			RETURN
+				CALCULATE(
+					[On-Time Delivery %],
+					TREATAS(_visibleOrders, 'Order'[Order Key])
+				)
+			```
+		formatString: 0.00%
+		displayFolder: Context Bridges
+
+	/// Sales in the immediately preceding month of the active Date context.
+	measure 'Sales Previous Month' = CALCULATE([Sales / GMV], DATEADD('Date'[Date], -1, MONTH))
+		formatString: "R$ #,##0.00"
+		displayFolder: Time Intelligence
+
+	/// Percentage change from previous-month sales.
+	measure 'Sales MoM %' = DIVIDE([Sales / GMV] - [Sales Previous Month], [Sales Previous Month])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Time Intelligence
+
+	/// Sales for the same period in the previous year.
+	measure 'Sales Previous Year' = CALCULATE([Sales / GMV], SAMEPERIODLASTYEAR('Date'[Date]))
+		formatString: "R$ #,##0.00"
+		displayFolder: Time Intelligence
+
+	/// Percentage change from same-period prior-year sales.
+	measure 'Sales YoY %' = DIVIDE([Sales / GMV] - [Sales Previous Year], [Sales Previous Year])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Time Intelligence
+
+	/// Customer rank by sales within the active selection.
+	measure 'Customer Rank by Sales' = RANKX(ALLSELECTED(Customer[Customer Key]), [Sales / GMV],, DESC, DENSE)
+		formatString: #,##0
+		displayFolder: Ranking
+
+	/// Seller rank by sales within the active selection.
+	measure 'Seller Rank by Sales' = RANKX(ALLSELECTED(Seller[Seller Key]), [Sales / GMV],, DESC, DENSE)
+		formatString: #,##0
+		displayFolder: Ranking
+
+	/// Selected Top-N threshold, defaulting to 10.
+	measure 'Selected Top N' = SELECTEDVALUE('Top N'[Value], 10)
+		formatString: 0
+		displayFolder: Ranking
+
+	/// Visual filter flag for sellers inside the selected Top-N.
+	measure 'Seller in Top N' = IF([Seller Rank by Sales] <= [Selected Top N], 1, 0)
+		formatString: 0
+		displayFolder: Ranking
+
+	/// Sales displayed only for sellers inside the selected Top-N threshold.
+	measure 'Seller Top N Sales' = IF([Seller in Top N] = 1, [Sales / GMV])
+		formatString: "R$ #,##0.00"
+		displayFolder: Ranking
+
+	/// Visual filter flag for customers inside the selected Top-N.
+	measure 'Customer in Top N' = IF([Customer Rank by Sales] <= [Selected Top N], 1, 0)
+		formatString: 0
+		displayFolder: Ranking
+
+	/// Metric value chosen from the disconnected metric selector.
+	measure 'Selected Metric' = ```
+			SWITCH(
+				SELECTEDVALUE('Metric Selector'[Metric], "Sales / GMV"),
+				"Sales / GMV", [Sales / GMV],
+				"Orders", [Orders],
+				"Customers", [Customers],
+				"Average Order Value", [Average Order Value],
+				"Units", [Units],
+				[Sales / GMV]
+			)
+			```
+		formatString: #,##0.00
+		displayFolder: Dynamic Metric
+
+	/// Dynamic chart title corresponding to the selected metric.
+	measure 'Selected Metric Title' = SELECTEDVALUE('Metric Selector'[Metric], "Sales / GMV") & " trend"
+		formatString: ""
+		displayFolder: Dynamic Metric
+
+	/// Active customers in the SQL-produced cohort matrix cell.
+	measure 'Active Cohort Customers' = SUM('Cohort Retention'[Active Customers])
+		formatString: #,##0
+		displayFolder: Cohort
+
+	/// Original cohort size; MAX avoids summing the repeated cohort-size value across activity months.
+	measure 'Cohort Customers' = MAX('Cohort Retention'[Cohort Customers])
+		formatString: #,##0
+		displayFolder: Cohort
+
+	/// Active customers divided by original cohort size at an individual cohort-period cell; totals are intentionally blank.
+	measure 'Retention Rate' = ```
+			IF(
+				ISINSCOPE('Cohort Retention'[Cohort Month]) &&
+				ISINSCOPE('Cohort Retention'[Months Since First Purchase]),
+				DIVIDE([Active Cohort Customers], [Cohort Customers])
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Cohort
+
+	column Value
+		isHidden
+		sourceColumn: [Value]
+
+	partition 'KPI Measures' = calculated
+		mode: import
+		source = ROW("Value", BLANK())

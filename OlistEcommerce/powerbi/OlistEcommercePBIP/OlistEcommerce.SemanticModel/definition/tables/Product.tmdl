@@ -1,0 +1,79 @@
+/// Product dimension with translated category labels.
+table Product
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+	column 'Product ID'
+		dataType: string
+		isHidden
+		sourceColumn: ProductId
+
+	/// Short presentation label; the full source identifier remains preserved in Product ID.
+	column 'Product Display ID'
+		dataType: string
+		sourceColumn: ProductDisplayId
+
+	column 'Category (Portuguese)'
+		dataType: string
+		sourceColumn: CategoryNamePortuguese
+
+	column Category
+		dataType: string
+		sourceColumn: CategoryNameEnglish
+
+	column 'Name Length'
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: average
+		sourceColumn: ProductNameLength
+
+	column 'Description Length'
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: average
+		sourceColumn: ProductDescriptionLength
+
+	column 'Photo Quantity'
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: average
+		sourceColumn: ProductPhotoQuantity
+
+	column 'Weight (g)'
+		dataType: decimal
+		formatString: #,##0.0
+		summarizeBy: average
+		sourceColumn: ProductWeightGrams
+
+	column 'Length (cm)'
+		dataType: decimal
+		formatString: 0.0
+		summarizeBy: average
+		sourceColumn: ProductLengthCm
+
+	column 'Height (cm)'
+		dataType: decimal
+		formatString: 0.0
+		summarizeBy: average
+		sourceColumn: ProductHeightCm
+
+	column 'Width (cm)'
+		dataType: decimal
+		formatString: 0.0
+		summarizeBy: average
+		sourceColumn: ProductWidthCm
+
+	partition Product = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\product.tsv"), [Delimiter="#(tab)", Columns=11, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","ProductKey"},{"Column2","ProductId"},{"Column3","CategoryNamePortuguese"},{"Column4","CategoryNameEnglish"},{"Column5","ProductNameLength"},{"Column6","ProductDescriptionLength"},{"Column7","ProductPhotoQuantity"},{"Column8","ProductWeightGrams"},{"Column9","ProductLengthCm"},{"Column10","ProductHeightCm"},{"Column11","ProductWidthCm"}}),
+				Typed = Table.TransformColumnTypes(Named, {{"ProductKey", Int64.Type},{"ProductId", type text},{"CategoryNamePortuguese", type text},{"CategoryNameEnglish", type text},{"ProductNameLength", Int64.Type},{"ProductDescriptionLength", Int64.Type},{"ProductPhotoQuantity", Int64.Type},{"ProductWeightGrams", type number},{"ProductLengthCm", type number},{"ProductHeightCm", type number},{"ProductWidthCm", type number}}, "en-US"),
+				Products = Table.AddColumn(Typed, "ProductDisplayId", each Text.Start([ProductId], 12) & "…", type text)
+			in
+				Products

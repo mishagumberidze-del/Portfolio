@@ -1,0 +1,51 @@
+/// SQL-produced cohort matrix grain: cohort month by activity month.
+table 'Cohort Retention'
+
+	column 'Cohort Month'
+		dataType: dateTime
+		formatString: MMM yyyy
+		summarizeBy: none
+		sourceColumn: CohortMonth
+
+	column 'Activity Month'
+		dataType: dateTime
+		formatString: MMM yyyy
+		summarizeBy: none
+		sourceColumn: ActivityMonth
+
+	column 'Months Since First Purchase'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: MonthsSinceFirstPurchase
+
+	column 'Active Customers'
+		dataType: int64
+		isHidden
+		formatString: #,##0
+		summarizeBy: sum
+		sourceColumn: ActiveCustomers
+
+	column 'Cohort Customers'
+		dataType: int64
+		isHidden
+		formatString: #,##0
+		summarizeBy: max
+		sourceColumn: CohortCustomers
+
+	column 'SQL Retention Rate'
+		dataType: decimal
+		isHidden
+		formatString: 0.0%
+		summarizeBy: max
+		sourceColumn: RetentionRate
+
+	partition 'Cohort Retention' = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\cohort_retention.tsv"), [Delimiter="#(tab)", Columns=6, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","CohortMonth"},{"Column2","ActivityMonth"},{"Column3","MonthsSinceFirstPurchase"},{"Column4","ActiveCustomers"},{"Column5","CohortCustomers"},{"Column6","RetentionRate"}}),
+				CohortRetention = Table.TransformColumnTypes(Named, {{"CohortMonth", type date},{"ActivityMonth", type date},{"MonthsSinceFirstPurchase", Int64.Type},{"ActiveCustomers", Int64.Type},{"CohortCustomers", Int64.Type},{"RetentionRate", type number}}, "en-US")
+			in
+				CohortRetention

@@ -1,0 +1,10 @@
+{
+  "source_rows": 298930712,
+  "in_year_rows": 298930636,
+  "excluded_outside_2024": 76,
+  "source_files": 48,
+  "sql_time_cells": 8064,
+  "sql_zone_cells": 24456,
+  "dashboard_bytes": 1469822,
+  "map_features": 263
+}

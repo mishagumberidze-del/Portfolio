@@ -1,0 +1,10 @@
+/// Disconnected What-If style parameter for ranking controls.
+table 'Top N'
+
+	column Value
+		formatString: 0
+		sourceColumn: [Value]
+
+	partition 'Top N' = calculated
+		mode: import
+		source = GENERATESERIES(5, 25, 5)

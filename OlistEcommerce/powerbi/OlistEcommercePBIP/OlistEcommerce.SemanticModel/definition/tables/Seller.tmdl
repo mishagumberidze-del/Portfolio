@@ -1,0 +1,35 @@
+/// Seller dimension at Olist seller_id grain.
+table Seller
+
+	column 'Seller Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: SellerKey
+
+	column 'Seller ID'
+		dataType: string
+		isHidden
+		sourceColumn: SellerId
+
+	/// Short presentation label; the full source identifier remains preserved in Seller ID.
+	column 'Seller Display ID'
+		dataType: string
+		sourceColumn: SellerDisplayId
+
+	column 'Geography Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: GeographyKey
+
+	partition Seller = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\seller.tsv"), [Delimiter="#(tab)", Columns=3, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","SellerKey"},{"Column2","SellerId"},{"Column3","GeographyKey"}}),
+				Typed = Table.TransformColumnTypes(Named, {{"SellerKey", Int64.Type},{"SellerId", type text},{"GeographyKey", Int64.Type}}, "en-US"),
+				Sellers = Table.AddColumn(Typed, "SellerDisplayId", each Text.Start([SellerId], 12) & "…", type text)
+			in
+				Sellers

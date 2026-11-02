@@ -1,0 +1,33 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode"]
+
+/// Folder populated exclusively by etl/export_powerbi.ps1 from clean SQL core/rpt objects.
+expression DataRoot = "C:\Portfolio\OlistEcommerce\data\processed\powerbi" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+
+ref table Date
+ref table Customer
+ref table 'Customer Geography'
+ref table Order
+ref table 'Order Item'
+ref table Product
+ref table Seller
+ref table 'Seller Geography'
+ref table Payment
+ref table Review
+ref table 'Cohort Retention'
+ref table 'Metric Selector'
+ref table 'Top N'
+ref table 'KPI Measures'
+
+ref cultureInfo en-US
+

@@ -1,0 +1,40 @@
+{
+  "source_rows": 541910,
+  "invoices": 25900,
+  "identified_purchasers": 4338,
+  "gross_value": 10666702.54,
+  "return_adjustment_value": 896812.49,
+  "net_value": 9769890.05,
+  "repeat_rate": 0.6558321807284463,
+  "identified_gross_share": 0.83544336848623,
+  "top_decile_gross_share": 0.613749417760967,
+  "ninety_day_repeat": [
+    {
+      "quarter": "2010Q4",
+      "count": 885,
+      "sum": 527,
+      "mean": 0.5954802259887005
+    },
+    {
+      "quarter": "2011Q1",
+      "count": 1249,
+      "sum": 560,
+      "mean": 0.44835868694955966
+    },
+    {
+      "quarter": "2011Q2",
+      "count": 826,
+      "sum": 329,
+      "mean": 0.3983050847457627
+    },
+    {
+      "quarter": "2011Q3",
+      "count": 410,
+      "sum": 191,
+      "mean": 0.4658536585365854
+    }
+  ],
+  "partial_month_excluded_from_retention": "2011-12",
+  "invoice_value_median": 303.04,
+  "invoice_value_mean": 480.8669276926397
+}

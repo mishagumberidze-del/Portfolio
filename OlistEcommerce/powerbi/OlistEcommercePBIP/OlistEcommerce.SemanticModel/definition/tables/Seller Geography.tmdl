@@ -1,0 +1,66 @@
+/// Seller origin geography role-playing dimension.
+table 'Seller Geography'
+
+	column 'Geography Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: GeographyKey
+
+	column 'ZIP Prefix'
+		dataType: int64
+		formatString: 00000
+		summarizeBy: none
+		sourceColumn: ZipCodePrefix
+
+	column City
+		dataType: string
+		dataCategory: City
+		sourceColumn: City
+
+	column State
+		dataType: string
+		dataCategory: StateOrProvince
+		sourceColumn: StateCode
+
+	column Latitude
+		dataType: decimal
+		formatString: 0.0000000
+		dataCategory: Latitude
+		summarizeBy: average
+		sourceColumn: Latitude
+
+	column Longitude
+		dataType: decimal
+		formatString: 0.0000000
+		dataCategory: Longitude
+		summarizeBy: average
+		sourceColumn: Longitude
+
+	column 'Source Point Count'
+		dataType: int64
+		isHidden
+		formatString: #,##0
+		summarizeBy: sum
+		sourceColumn: SourcePointCount
+
+	hierarchy Geography
+
+		level State
+			column: State
+
+		level City
+			column: City
+
+		level ZIP
+			column: 'ZIP Prefix'
+
+	partition 'Seller Geography' = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\geography.tsv"), [Delimiter="#(tab)", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","GeographyKey"},{"Column2","ZipCodePrefix"},{"Column3","City"},{"Column4","StateCode"},{"Column5","Latitude"},{"Column6","Longitude"},{"Column7","SourcePointCount"}}),
+				Geography = Table.TransformColumnTypes(Named, {{"GeographyKey", Int64.Type},{"ZipCodePrefix", Int64.Type},{"City", type text},{"StateCode", type text},{"Latitude", type number},{"Longitude", type number},{"SourcePointCount", Int64.Type}}, "en-US")
+			in
+				Geography

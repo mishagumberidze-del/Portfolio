@@ -1,0 +1,155 @@
+/// Order grain fact with customer behavior, value, and fulfilment attributes derived in SQL.
+table Order
+
+	column 'Order Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: OrderKey
+
+	column 'Order ID'
+		dataType: string
+		sourceColumn: OrderId
+
+	column 'Olist Customer ID'
+		dataType: string
+		isHidden
+		sourceColumn: OlistCustomerId
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+	column 'Customer Geography Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: CustomerGeographyKey
+
+	column 'Purchase Date Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: PurchaseDateKey
+
+	column Status
+		dataType: string
+		sourceColumn: OrderStatus
+
+	column 'Purchase Date Time'
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: PurchaseDateTime
+
+	column 'Approved Date Time'
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: ApprovedDateTime
+
+	column 'Carrier Handoff Date Time'
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: DeliveredCarrierDateTime
+
+	column 'Delivered Date Time'
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: DeliveredCustomerDateTime
+
+	column 'Estimated Delivery Date'
+		dataType: dateTime
+		formatString: Short Date
+		summarizeBy: none
+		sourceColumn: EstimatedDeliveryDate
+
+	column 'Delivery Days'
+		dataType: decimal
+		formatString: 0.0
+		summarizeBy: average
+		sourceColumn: DeliveryDays
+
+	column 'Delay Days'
+		dataType: int64
+		formatString: 0
+		summarizeBy: average
+		sourceColumn: DelayDays
+
+	column 'Delivery Performance'
+		dataType: string
+		sourceColumn: DeliveryPerformance
+
+	column 'Purchase Sequence'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: PurchaseSequence
+
+	column 'Days Since Prior Purchase'
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: average
+		sourceColumn: DaysSincePriorPurchase
+
+	column 'Customer Order Type'
+		dataType: string
+		sourceColumn: CustomerOrderType
+
+	column 'Cohort Month'
+		dataType: dateTime
+		formatString: MMM yyyy
+		summarizeBy: none
+		sourceColumn: CohortMonth
+
+	column 'Merchandise Value'
+		dataType: decimal
+		isHidden
+		formatString: "R$ #,##0.00"
+		summarizeBy: sum
+		sourceColumn: MerchandiseValue
+
+	column 'Freight Value'
+		dataType: decimal
+		isHidden
+		formatString: "R$ #,##0.00"
+		summarizeBy: sum
+		sourceColumn: FreightValue
+
+	column 'Gross Order Value'
+		dataType: decimal
+		formatString: "R$ #,##0.00"
+		summarizeBy: sum
+		sourceColumn: GrossOrderValue
+
+	column 'Item Quantity'
+		dataType: int64
+		formatString: #,##0
+		summarizeBy: sum
+		sourceColumn: ItemQuantity
+
+	column 'Freight Ratio'
+		dataType: decimal
+		formatString: 0.0%
+		summarizeBy: average
+		sourceColumn: FreightRatio
+
+	column 'Payment Value'
+		dataType: decimal
+		formatString: "R$ #,##0.00"
+		summarizeBy: sum
+		sourceColumn: PaymentValue
+
+	partition Order = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\order.tsv"), [Delimiter="#(tab)", Columns=25, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","OrderKey"},{"Column2","OrderId"},{"Column3","OlistCustomerId"},{"Column4","CustomerKey"},{"Column5","CustomerGeographyKey"},{"Column6","PurchaseDateKey"},{"Column7","OrderStatus"},{"Column8","PurchaseDateTime"},{"Column9","ApprovedDateTime"},{"Column10","DeliveredCarrierDateTime"},{"Column11","DeliveredCustomerDateTime"},{"Column12","EstimatedDeliveryDate"},{"Column13","DeliveryDays"},{"Column14","DelayDays"},{"Column15","DeliveryPerformance"},{"Column16","PurchaseSequence"},{"Column17","DaysSincePriorPurchase"},{"Column18","CustomerOrderType"},{"Column19","CohortMonth"},{"Column20","MerchandiseValue"},{"Column21","FreightValue"},{"Column22","GrossOrderValue"},{"Column23","ItemQuantity"},{"Column24","FreightRatio"},{"Column25","PaymentValue"}}),
+				Orders = Table.TransformColumnTypes(Named, {{"OrderKey", Int64.Type},{"OrderId", type text},{"OlistCustomerId", type text},{"CustomerKey", Int64.Type},{"CustomerGeographyKey", Int64.Type},{"PurchaseDateKey", Int64.Type},{"OrderStatus", type text},{"PurchaseDateTime", type datetime},{"ApprovedDateTime", type datetime},{"DeliveredCarrierDateTime", type datetime},{"DeliveredCustomerDateTime", type datetime},{"EstimatedDeliveryDate", type date},{"DeliveryDays", type number},{"DelayDays", Int64.Type},{"DeliveryPerformance", type text},{"PurchaseSequence", Int64.Type},{"DaysSincePriorPurchase", Int64.Type},{"CustomerOrderType", type text},{"CohortMonth", type date},{"MerchandiseValue", Currency.Type},{"FreightValue", Currency.Type},{"GrossOrderValue", Currency.Type},{"ItemQuantity", Int64.Type},{"FreightRatio", type number},{"PaymentValue", Currency.Type}}, "en-US")
+			in
+				Orders

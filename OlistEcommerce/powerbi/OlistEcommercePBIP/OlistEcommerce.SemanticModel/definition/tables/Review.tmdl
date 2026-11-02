@@ -1,0 +1,50 @@
+/// Latest usable customer review per order with normalized score grouping.
+table Review
+
+	column 'Review Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: ReviewKey
+
+	column 'Review ID'
+		dataType: string
+		sourceColumn: ReviewId
+
+	column 'Order Key'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: OrderKey
+
+	column 'Review Score'
+		dataType: int64
+		formatString: 0
+		summarizeBy: average
+		sourceColumn: ReviewScore
+
+	column 'Review Score Group'
+		dataType: string
+		sourceColumn: ReviewScoreGroup
+
+	column 'Review Creation Date'
+		dataType: dateTime
+		formatString: Short Date
+		summarizeBy: none
+		sourceColumn: ReviewCreationDate
+
+	column 'Review Answer Date Time'
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: ReviewAnswerDateTime
+
+	partition Review = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\review.tsv"), [Delimiter="#(tab)", Columns=7, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","ReviewKey"},{"Column2","ReviewId"},{"Column3","OrderKey"},{"Column4","ReviewScore"},{"Column5","ReviewScoreGroup"},{"Column6","ReviewCreationDate"},{"Column7","ReviewAnswerDateTime"}}),
+				Reviews = Table.TransformColumnTypes(Named, {{"ReviewKey", Int64.Type},{"ReviewId", type text},{"OrderKey", Int64.Type},{"ReviewScore", Int64.Type},{"ReviewScoreGroup", type text},{"ReviewCreationDate", type date},{"ReviewAnswerDateTime", type datetime}}, "en-US")
+			in
+				Reviews

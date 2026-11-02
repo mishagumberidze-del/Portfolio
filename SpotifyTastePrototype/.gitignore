@@ -1,0 +1,46 @@
+# Private Spotify exports and working copies
+*spotify*.zip
+**/Spotify Extended Streaming History/
+**/Spotify Account Data/
+**/Streaming_History_*.json
+**/StreamingHistory*.json
+**/endsong*.json
+**/YourLibrary*.json
+data/
+working-data/
+**/public/private-snapshot/
+**/personal-snapshot*.json
+**/personal-snapshot*.zip
+/.run/
+/cloudflare-demo.zip
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+!frontend/spotify-taste-web/.env.demo
+!frontend/spotify-taste-web/.env.personal
+appsettings.Local.json
+secrets.json
+
+# .NET
+**/bin/
+**/obj/
+**/TestResults/
+*.user
+*.suo
+*.mdf
+*.ldf
+
+# Frontend
+**/node_modules/
+**/dist/
+**/dist-personal/
+*.local
+
+# IDE / OS
+.vs/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

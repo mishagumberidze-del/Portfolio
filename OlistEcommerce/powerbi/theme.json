@@ -1,0 +1,25 @@
+{
+  "name": "Olist Executive",
+  "dataColors": ["#136F63", "#E09F3E", "#2F6690", "#9E2A2B", "#7A8B99", "#5C4D7D"],
+  "background": "#F6F8FA",
+  "foreground": "#17202A",
+  "tableAccent": "#136F63",
+  "textClasses": {
+    "title": {"fontFace": "Segoe UI Semibold", "fontSize": 16, "color": "#17202A"},
+    "header": {"fontFace": "Segoe UI Semibold", "fontSize": 11, "color": "#34495E"},
+    "label": {"fontFace": "Segoe UI", "fontSize": 10, "color": "#52616B"},
+    "callout": {"fontFace": "Segoe UI Semibold", "fontSize": 26, "color": "#17202A"}
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [{"color": {"solid": {"color": "#FFFFFF"}}, "transparency": 0}],
+        "border": [{"show": true, "color": {"solid": {"color": "#E2E8F0"}}, "radius": 6}],
+        "visualHeader": [{"show": false}],
+        "title": [{"fontFamily": "Segoe UI Semibold", "fontSize": 11, "color": {"solid": {"color": "#17202A"}}}]
+      }
+    },
+    "card": {"*": {"labels": [{"color": {"solid": {"color": "#17202A"}}, "fontSize": 25}], "categoryLabels": [{"color": {"solid": {"color": "#52616B"}}, "fontSize": 10}]}}
+  }
+}
+

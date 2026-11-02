@@ -1,0 +1,432 @@
+{
+  "yellow": [
+    {
+      "schema": [
+        {
+          "name": "VendorID",
+          "type": "int32",
+          "nullable": true
+        },
+        {
+          "name": "tpep_pickup_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "tpep_dropoff_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "passenger_count",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "trip_distance",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "RatecodeID",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "store_and_fwd_flag",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "PULocationID",
+          "type": "int32",
+          "nullable": true
+        },
+        {
+          "name": "DOLocationID",
+          "type": "int32",
+          "nullable": true
+        },
+        {
+          "name": "payment_type",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "fare_amount",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "extra",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "mta_tax",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "tip_amount",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "tolls_amount",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "improvement_surcharge",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "total_amount",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "congestion_surcharge",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "Airport_fee",
+          "type": "double",
+          "nullable": true
+        }
+      ],
+      "months": [
+        "2024-01",
+        "2024-02",
+        "2024-03",
+        "2024-04",
+        "2024-05",
+        "2024-06",
+        "2024-07",
+        "2024-08",
+        "2024-09",
+        "2024-10",
+        "2024-11",
+        "2024-12"
+      ]
+    }
+  ],
+  "green": [
+    {
+      "schema": [
+        {
+          "name": "VendorID",
+          "type": "int32",
+          "nullable": true
+        },
+        {
+          "name": "lpep_pickup_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "lpep_dropoff_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "store_and_fwd_flag",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "RatecodeID",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "PULocationID",
+          "type": "int32",
+          "nullable": true
+        },
+        {
+          "name": "DOLocationID",
+          "type": "int32",
+          "nullable": true
+        },
+        {
+          "name": "passenger_count",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "trip_distance",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "fare_amount",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "extra",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "mta_tax",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "tip_amount",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "tolls_amount",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "ehail_fee",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "improvement_surcharge",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "total_amount",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "payment_type",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "trip_type",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "congestion_surcharge",
+          "type": "double",
+          "nullable": true
+        }
+      ],
+      "months": [
+        "2024-01",
+        "2024-02",
+        "2024-03",
+        "2024-04",
+        "2024-05",
+        "2024-06",
+        "2024-07",
+        "2024-08",
+        "2024-09",
+        "2024-10",
+        "2024-11",
+        "2024-12"
+      ]
+    }
+  ],
+  "fhv": [
+    {
+      "schema": [
+        {
+          "name": "dispatching_base_num",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "pickup_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "dropOff_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "PUlocationID",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "DOlocationID",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "SR_Flag",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "Affiliated_base_number",
+          "type": "large_string",
+          "nullable": true
+        }
+      ],
+      "months": [
+        "2024-01",
+        "2024-02",
+        "2024-03",
+        "2024-04",
+        "2024-05",
+        "2024-06",
+        "2024-07",
+        "2024-08",
+        "2024-09",
+        "2024-10",
+        "2024-11",
+        "2024-12"
+      ]
+    }
+  ],
+  "hvfhv": [
+    {
+      "schema": [
+        {
+          "name": "hvfhs_license_num",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "dispatching_base_num",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "originating_base_num",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "request_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "on_scene_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "pickup_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "dropoff_datetime",
+          "type": "timestamp[us]",
+          "nullable": true
+        },
+        {
+          "name": "PULocationID",
+          "type": "int32",
+          "nullable": true
+        },
+        {
+          "name": "DOLocationID",
+          "type": "int32",
+          "nullable": true
+        },
+        {
+          "name": "trip_miles",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "trip_time",
+          "type": "int64",
+          "nullable": true
+        },
+        {
+          "name": "base_passenger_fare",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "tolls",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "bcf",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "sales_tax",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "congestion_surcharge",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "airport_fee",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "tips",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "driver_pay",
+          "type": "double",
+          "nullable": true
+        },
+        {
+          "name": "shared_request_flag",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "shared_match_flag",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "access_a_ride_flag",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "wav_request_flag",
+          "type": "large_string",
+          "nullable": true
+        },
+        {
+          "name": "wav_match_flag",
+          "type": "large_string",
+          "nullable": true
+        }
+      ],
+      "months": [
+        "2024-01",
+        "2024-02",
+        "2024-03",
+        "2024-04",
+        "2024-05",
+        "2024-06",
+        "2024-07",
+        "2024-08",
+        "2024-09",
+        "2024-10",
+        "2024-11",
+        "2024-12"
+      ]
+    }
+  ]
+}

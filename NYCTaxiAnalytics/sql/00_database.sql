@@ -1,0 +1,2 @@
+IF DB_ID(N'Portfolio_NYCTaxi') IS NULL CREATE DATABASE Portfolio_NYCTaxi;
+GO

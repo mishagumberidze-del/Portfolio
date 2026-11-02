@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- This private local prototype can build deterministically when NuGet audit is offline. -->
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+</Project>

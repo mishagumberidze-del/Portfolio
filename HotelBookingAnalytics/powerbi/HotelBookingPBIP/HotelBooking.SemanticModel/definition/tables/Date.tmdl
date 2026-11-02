@@ -1,0 +1,67 @@
+table Date
+	lineageTag: 73b9d528-3bb1-4125-83eb-ccf236259450
+
+	column DateKey
+		dataType: int64
+		isHidden
+		lineageTag: b4e40e00-2830-4951-b358-9e3886ed3092
+		summarizeBy: none
+		sourceColumn: DateKey
+
+	column CalendarDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6020307c-cf5a-4bdb-8d20-7fd6d7330bbd
+		summarizeBy: none
+		sourceColumn: CalendarDate
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column CalendarYear
+		dataType: int64
+		lineageTag: f73d4072-e415-47a0-9ee6-1cd17b43aa3e
+		summarizeBy: none
+		sourceColumn: CalendarYear
+
+	column CalendarMonth
+		dataType: int64
+		lineageTag: d67a51fe-441d-4965-89cd-2725782d0749
+		summarizeBy: none
+		sourceColumn: CalendarMonth
+
+	column MonthName
+		dataType: string
+		lineageTag: 799921a5-6c43-4a99-9bba-af48b1341132
+		summarizeBy: none
+		sourceColumn: MonthName
+
+	column QuarterNumber
+		dataType: int64
+		lineageTag: 34b80adc-d7be-4892-9343-0116795ddc7a
+		summarizeBy: none
+		sourceColumn: QuarterNumber
+
+	column YearMonth
+		dataType: string
+		lineageTag: 07e3bcca-40ba-44d8-86b1-b1983fd401a4
+		summarizeBy: none
+		sourceColumn: YearMonth
+		sortByColumn: YearMonthSort
+
+	column YearMonthSort
+		dataType: int64
+		isHidden
+		lineageTag: dd3a20ca-d926-49d8-ae69-abe65fe6770c
+		summarizeBy: none
+		sourceColumn: YearMonthSort
+
+	partition Date = m
+		mode: import
+		source =
+				let
+					Source = Csv.Document(File.Contents(#"DataRoot" & "\date.tsv"), [Delimiter="#(tab)", Columns=8, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+					Named = Table.RenameColumns(Source, {{"Column1","DateKey"},{"Column2","CalendarDate"},{"Column3","CalendarYear"},{"Column4","CalendarMonth"},{"Column5","MonthName"},{"Column6","QuarterNumber"},{"Column7","YearMonth"},{"Column8","YearMonthSort"}}),
+					Typed = Table.TransformColumnTypes(Named, {{"DateKey", Int64.Type},{"CalendarDate", type date},{"CalendarYear", Int64.Type},{"CalendarMonth", Int64.Type},{"MonthName", type text},{"QuarterNumber", Int64.Type},{"YearMonth", type text},{"YearMonthSort", Int64.Type}}, "en-US")
+				in
+					Typed
+

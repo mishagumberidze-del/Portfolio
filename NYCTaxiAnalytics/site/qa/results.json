@@ -1,0 +1,24 @@
+{
+  "narrow": {
+    "status": "pass",
+    "filter_combinations": 65,
+    "geometry_features": 263,
+    "download": true,
+    "layout": {
+      "viewport": 504,
+      "scrollWidth": 504,
+      "wide": 0
+    }
+  },
+  "desktop": {
+    "status": "pass",
+    "filter_combinations": 65,
+    "geometry_features": 263,
+    "download": true,
+    "layout": {
+      "viewport": 1422,
+      "scrollWidth": 1422,
+      "wide": 0
+    }
+  }
+}
