@@ -36,3 +36,4 @@
 *.parquet
 *.user
 *.tsbuildinfo
+/qa-portfolio.html

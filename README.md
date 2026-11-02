@@ -1,5 +1,9 @@
 # Mikheil Gumberidze — Analytics & Data Applications
 
+## [Open the portfolio website →](https://mishagumberidze-del.github.io/Portfolio/)
+
+Browse project previews, Power BI report galleries, case studies and live HTML dashboards without installing anything.
+
 A starter portfolio of five projects covering **SQL Server, Python, Power BI, statistics, geospatial analytics, and React/.NET applications**. Each project connects a business or product question to a data model, a repeatable pipeline, and a report or application.
 
 ## Start here
@@ -7,10 +11,10 @@ A starter portfolio of five projects covering **SQL Server, Python, Power BI, st
 | Project | What to look for | Review the result | Explore the implementation |
 |---|---|---|---|
 | **Olist E-Commerce** | Customer identity, cohorts/RFM, delivery analysis, star schema and 59 DAX measures | [Power BI preview](assets/olist-overview.png) | [Project guide](OlistEcommerce/README.md) · [SQL analysis](OlistEcommerce/sql/06_portfolio_analysis.sql) |
-| **NYC in Motion** | Streaming 298.9M records into a compact SQL aggregate model; interactive zone mapping | [Dashboard preview](assets/taxi-dashboard.png) · [HTML dashboard](NYCTaxiAnalytics/site/index.html) | [Project guide](NYCTaxiAnalytics/README.md) · [Pipeline](NYCTaxiAnalytics/etl/prepare_analytics.py) |
+| **NYC in Motion** | Streaming 298.9M records into a compact SQL aggregate model; interactive zone mapping | [Live dashboard](https://mishagumberidze-del.github.io/Portfolio/NYCTaxiAnalytics/site/index.html) · [Preview](assets/taxi-dashboard.png) | [Project guide](NYCTaxiAnalytics/README.md) · [Pipeline](NYCTaxiAnalytics/etl/prepare_analytics.py) |
 | **Spotify Taste** | React/TypeScript UI, ASP.NET API, relational listening history, explainable preference scoring and discovery | [UI preview](assets/spotify-demo.png) · [Hosted read-only edition](https://spotify-taste-demo.pages.dev/) | [Application guide](SpotifyTastePrototype/README.md) · [Backend](SpotifyTastePrototype/backend) |
 | **Hotel Booking Analytics** | Commercial KPIs, cancellation patterns, meaningful data-quality rules and a three-page Power BI report | [Power BI preview](assets/hotel-overview.png) | [Project guide](HotelBookingAnalytics/README.md) · [DAX/model](HotelBookingAnalytics/powerbi/HotelBookingPBIP/HotelBooking.SemanticModel/definition/tables) |
-| **Online Retail** | Customer concentration, RFM, cohorts, equal-follow-up repeat analysis and statistical interpretation | [Report preview](assets/retail-overview.png) · [HTML report](OnlineRetailPython/report/online_retail_analysis.html) | [Project guide](OnlineRetailPython/README.md) · [Python analysis](OnlineRetailPython/report/build_report.py) |
+| **Online Retail** | Customer concentration, RFM, cohorts, equal-follow-up repeat analysis and statistical interpretation | [Live report](https://mishagumberidze-del.github.io/Portfolio/OnlineRetailPython/report/online_retail_analysis.html) · [Preview](assets/retail-overview.png) | [Project guide](OnlineRetailPython/README.md) · [Python analysis](OnlineRetailPython/report/build_report.py) |
 
 ![Olist customer and e-commerce Power BI overview](assets/olist-overview.png)
 
@@ -24,7 +28,7 @@ A starter portfolio of five projects covering **SQL Server, Python, Power BI, st
 
 ## View or run the work
 
-**No setup needed for previews.** Open the images above to inspect the reports immediately. GitHub displays HTML as source: use **Download raw file**, save it as `.html`, then open it in a browser. The Taxi dashboard and Retail report are self-contained and work offline.
+**No setup needed to browse.** The [portfolio website](https://mishagumberidze-del.github.io/Portfolio/) presents all five projects. Taxi and Retail open directly as live pages. Power BI report pages are available as full-size gallery images. The Taxi dashboard and Retail report can also be downloaded as self-contained HTML files for offline use.
 
 **Power BI:** open the `.pbip` projects in Power BI Desktop. Source datasets and caches are excluded, so acquire the public datasets and run the documented pipelines before refreshing. Change the `DataRoot` parameter to your local processed-export path.
 
@@ -35,5 +39,7 @@ A starter portfolio of five projects covering **SQL Server, Python, Power BI, st
 These are portfolio studies and application prototypes, not claims of paid client work or measured commercial impact. Project READMEs explain the data grain, metrics, verification and limitations. Raw datasets, personal Spotify exports/snapshots, credentials, dependencies and local runtime caches are excluded.
 
 This is a starter release; reports and project material will be refined over time. See [REVIEW_GUIDE.md](REVIEW_GUIDE.md) for a quick code tour and [DATA_SOURCES.md](DATA_SOURCES.md) for attribution.
+
+Website source is `index.html`, `assets/portfolio.css` and `assets/portfolio.js`. See [SITE.md](SITE.md) for free hosting and update instructions.
 
 [GitHub profile](https://github.com/mishagumberidze-del)
