@@ -5,7 +5,7 @@ Open `OlistEcommercePBIP/OlistEcommerce.pbip` in Power BI Desktop.
 ## Completed implementation
 
 - Five 1920×1080 business pages plus a customer drill-through page.
-- Import-mode semantic model with 14 tables, 124 columns, 59 DAX measures, and nine single-direction relationships.
+- Import-mode semantic model with 14 tables, 120 columns, 47 DAX measures, and nine single-direction relationships.
 - Dedicated `Date` and `KPI Measures` tables; hidden technical keys; role-playing customer and seller geography dimensions.
 - Dynamic trend metric selector, seller Top-N selector, Top-25 product detail filter, cohort matrix, cross-context DAX bridges, and customer drill-through.
 - Restrained navy/teal/gold theme with consistent headers, slicers, KPI cards, spacing, and typography.
@@ -28,6 +28,6 @@ The semantic-model parameter `DataRoot` points to the local processed-export fol
 - `theme.json`: source theme.
 - `model_relationships.md`: model-grain and relationship notes.
 - `measures.dax`: human-readable measure reference; canonical executable definitions live in `OlistEcommerce.SemanticModel/definition/tables/KPI Measures.tmdl`.
-- `qa/`: page screenshots captured from the refreshed Power BI Desktop report.
+- `qa/`: pre-audit visual previews from an earlier Power BI Desktop refresh. These images do not validate the reviewed source definitions.
 
-The PBIR validator reports zero structural errors. The only offline warnings are skipped online JSON-schema downloads. The TMDL model passes parser and live Analysis Services metadata validation.
+Earlier-build PBIR and TMDL validation is recorded in the project history. It does not replace a Power BI Desktop refresh and visual review of the current audited definitions.

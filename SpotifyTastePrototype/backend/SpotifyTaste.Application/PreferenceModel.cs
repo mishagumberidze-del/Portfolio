@@ -49,7 +49,7 @@ public static class PreferenceModel
         return new(positive, negative, recency, repeatWeight, completion, skipPenalty, savedBoost, Math.Clamp(score, 0, 10));
     }
 
-    public static double WeightedSimilarity(TrackFeatureVector candidate, IEnumerable<(TrackFeatureVector Vector, double Weight)> examples)
+    public static double? WeightedSimilarity(TrackFeatureVector candidate, IEnumerable<(TrackFeatureVector Vector, double Weight)> examples)
     {
         var weighted = 0d;
         var total = 0d;
@@ -60,7 +60,7 @@ public static class PreferenceModel
             weighted += similarity * weight;
             total += weight;
         }
-        return total == 0 ? 0.5 : Math.Clamp(weighted / total, 0, 1);
+        return total == 0 ? null : Math.Clamp(weighted / total, 0, 1);
     }
 
     public static double FeatureSimilarity(TrackFeatureVector left, TrackFeatureVector right)

@@ -129,7 +129,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'New vs repeat customer sales'"
+                  "Value": "'First vs repeat commercial purchases'"
                 }
               }
             },

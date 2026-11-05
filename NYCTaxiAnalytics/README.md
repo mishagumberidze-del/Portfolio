@@ -2,15 +2,17 @@
 
 Streaming Python + SQL Server + custom JavaScript/geospatial analytics across **298,930,712 source records** from all 48 monthly TLC files.
 
-![Taxi dashboard](site/qa/desktop.png)
+![Current reviewed Taxi dashboard](site/qa/reviewed-desktop.jpg)
+
+> Current reviewed dashboard. All 65 filter states passed at 1,440 px desktop and 390 px mobile, including metric values, downloads and overflow checks. [Browser results](site/qa/browser-results-2026-11-04.json) · [Mobile preview](site/qa/reviewed-mobile.jpg)
 
 **[Download/open the interactive dashboard](site/index.html).** Save the raw file as `.html` and open it in a browser. The approximately 1.5 MB standalone file works offline.
 
 ## What to explore
 
 - Four service populations and twelve months, with 65 service/month combinations.
-- Monthly demand, weekday/hour heatmaps, pickup/dropoff maps for 263 zones, top directed routes and trip-length distributions.
-- Explicit eligibility denominators, unavailable FHV metrics, quality profiles and filtered CSV downloads.
+- Trips per calendar day, weekday/hour demand normalized by matching calendar days, pickup/dropoff maps for 263 zones, top directed routes and trip-length distributions.
+- Three headline KPIs show recorded pickups, mean eligible trip duration and mean eligible reported distance. Quality profiles use field-eligible denominators, show FHV metrics as unavailable, and support filtered CSV downloads.
 
 ## Scale and model choices
 

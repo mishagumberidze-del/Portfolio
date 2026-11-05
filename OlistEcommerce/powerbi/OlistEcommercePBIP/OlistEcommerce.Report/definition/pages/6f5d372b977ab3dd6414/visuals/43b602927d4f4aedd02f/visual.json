@@ -23,11 +23,11 @@
                       "Entity": "Customer"
                     }
                   },
-                  "Property": "RFM Segment"
+                  "Property": "Completed Purchase Group"
                 }
               },
-              "queryRef": "Customer.RFM Segment",
-              "nativeQueryRef": "RFM Segment"
+              "queryRef": "Customer.Completed Purchase Group",
+              "nativeQueryRef": "Completed Purchase Group"
             }
           ]
         }
@@ -60,7 +60,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'RFM segment'"
+                  "Value": "'Completed purchases'"
                 }
               }
             }

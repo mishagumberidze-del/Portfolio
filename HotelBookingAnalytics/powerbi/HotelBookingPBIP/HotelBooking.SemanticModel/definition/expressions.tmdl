@@ -1,5 +1,1 @@
 expression DataRoot = "C:\Portfolio\HotelBookingAnalytics\data\processed\powerbi" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
-	lineageTag: dbad5b75-3d72-4b44-a8c8-22cdc95cc0ce
-
-	annotation PBI_ResultType = Text
-

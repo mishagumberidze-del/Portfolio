@@ -38,7 +38,8 @@ public sealed class AnalyticsService(SpotifyTasteDbContext dbContext, IOptions<P
         var savedIds = libraryAvailable ? await dbContext.UserSavedTracks.Select(x => x.TrackId).ToListAsync(cancellationToken) : [];
         var saved = savedIds.ToHashSet();
         var query = Filter(fromUtc, toUtc);
-        var identityByTrack = (await LoadTrackIdentitiesAsync(query, cancellationToken)).ToDictionary(x => x.TrackId);
+        var identityByTrack = (await LoadTrackIdentitiesAsync(query, cancellationToken, savedIds)).ToDictionary(x => x.TrackId);
+        var savedRecordings = identityByTrack.Values.Where(x => saved.Contains(x.TrackId)).Select(x => x.RecordingKey).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var rows = await query.GroupBy(x => new { x.TrackId, x.Track.Name, Album = x.Track.Album != null ? x.Track.Album.Name : null })
             .Select(group => new
             {
@@ -72,7 +73,7 @@ public sealed class AnalyticsService(SpotifyTasteDbContext dbContext, IOptions<P
                     Skips = group.Sum(x => x.Skips),
                     First = group.Min(x => x.First),
                     Last = group.Max(x => x.Last),
-                    Saved = group.Any(x => saved.Contains(x.TrackId)),
+                    Saved = savedRecordings.Contains(group.Key),
                 };
             })
             .OrderByDescending(x => x.TotalMs).ThenByDescending(x => x.Qualified)
@@ -193,10 +194,11 @@ public sealed class AnalyticsService(SpotifyTasteDbContext dbContext, IOptions<P
         return query;
     }
 
-    private async Task<IReadOnlyList<TrackIdentityData>> LoadTrackIdentitiesAsync(IQueryable<Domain.ListeningEvent> events, CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<TrackIdentityData>> LoadTrackIdentitiesAsync(IQueryable<Domain.ListeningEvent> events, CancellationToken cancellationToken, IReadOnlyCollection<long>? additionalTrackIds = null)
     {
+        additionalTrackIds ??= [];
         var trackIds = events.Select(x => x.TrackId).Distinct();
-        var rows = await dbContext.Tracks.AsNoTracking().Where(x => trackIds.Contains(x.Id)).Select(x => new
+        var rows = await dbContext.Tracks.AsNoTracking().Where(x => trackIds.Contains(x.Id) || additionalTrackIds.Contains(x.Id)).Select(x => new
         {
             x.Id,
             x.Isrc,

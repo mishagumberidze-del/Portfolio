@@ -1,56 +1,39 @@
 table 'KPI Measures'
-	lineageTag: 2f4f99f9-4091-4e0f-a976-719163985c4f
 
-	measure Bookings = COUNTROWS(Booking)
+	measure 'Bookings' = COUNTROWS(Booking)
 		formatString: #,##0
-		lineageTag: f0dd8708-a878-4674-afd5-a84af84efa66
 
-	measure Cancellations = CALCULATE([Bookings], Booking[IsCanceled] = 1)
+	measure 'Cancellations' = CALCULATE([Bookings], KEEPFILTERS(Booking[IsCanceled] = 1))
 		formatString: #,##0
-		lineageTag: 98f1ce5b-8ab7-49ca-ae3f-2f7ebdd1559b
 
 	measure 'Cancellation Rate' = DIVIDE([Cancellations], [Bookings])
 		formatString: 0.0%
-		lineageTag: ea09eb9b-0499-4bc8-b7ab-64b9dd9bdac8
 
-	measure 'Gross Room Value' = SUM(Booking[GrossRoomValue])
+	measure 'Room Value Proxy' = CALCULATE(SUM(Booking[RealizedRoomValue]), KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0), KEEPFILTERS(Booking[ADR] >= 0))
 		formatString: #,##0.00
-		lineageTag: a2baed4d-c779-4088-95c6-08133dd67c26
 
-	measure 'Realized ADR' = CALCULATE(AVERAGE(Booking[ADR]), Booking[IsCanceled] = 0, Booking[StayNights] > 0, Booking[ADR] >= 0)
+	measure 'Stay-weighted ADR' = DIVIDE([Room Value Proxy], CALCULATE(SUM(Booking[StayNights]), KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0), KEEPFILTERS(Booking[ADR] >= 0)))
 		formatString: #,##0.00
-		lineageTag: 9af939b1-3ca0-4af3-958a-c8208c20eb5e
 
 	measure 'Average Lead Time' = AVERAGE(Booking[LeadTime])
 		formatString: #,##0.0
-		lineageTag: f62d543e-b8b3-4115-abc8-d2b2da5e26ff
 
-	measure 'Average Stay Nights' = AVERAGE(Booking[StayNights])
-		formatString: #,##0.0
-		lineageTag: a0ef32df-fee7-4331-89c0-05ca845e9031
-
-	measure 'Room Change Rate' = DIVIDE(CALCULATE([Bookings], Booking[RoomChanged] = 1), [Bookings])
-		formatString: 0.0%
-		lineageTag: 2018885f-764f-41b1-95e4-d60f4ce32673
-
-	measure 'Repeat Guest Share' = DIVIDE(CALCULATE([Bookings], Booking[IsRepeatedGuest] = 1), [Bookings])
-		formatString: 0.0%
-		lineageTag: 95ba1127-4d32-4d47-a782-caa6b2d24213
-
-	measure 'Flagged Bookings' = CALCULATE([Bookings], Booking[DataQualityFlag] = 1)
+	measure 'Stayed Bookings' = CALCULATE([Bookings], KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0))
 		formatString: #,##0
-		lineageTag: ca0e8fa5-8513-4a17-bfd1-204c17abdc53
 
-	measure 'Room Value Proxy' = SUM(Booking[RealizedRoomValue])
-		formatString: #,##0.00
-		lineageTag: 77aadac9-b347-4fae-94b7-70118d6d3b63
+	measure 'Stay Nights' = CALCULATE(SUM(Booking[StayNights]), KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0))
+		formatString: #,##0
+
+	measure 'Average Stay Nights' = CALCULATE(AVERAGE(Booking[StayNights]), KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0))
+		formatString: #,##0.0
+
+	measure 'Room Assignment Difference' = DIVIDE(CALCULATE([Stayed Bookings], KEEPFILTERS(Booking[RoomChanged] = 1)), [Stayed Bookings])
+		formatString: 0.0%
 
 	column Value
 		isHidden
-		lineageTag: a73ceccc-af78-4415-a2e3-b1c1363ce8c0
 		sourceColumn: [Value]
 
 	partition 'KPI Measures' = calculated
 		mode: import
 		source = ROW("Value", BLANK())
-

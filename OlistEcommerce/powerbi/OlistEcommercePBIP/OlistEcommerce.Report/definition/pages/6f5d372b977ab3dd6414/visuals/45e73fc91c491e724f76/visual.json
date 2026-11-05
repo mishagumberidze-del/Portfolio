@@ -142,7 +142,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Monthly customer retention cohort'"
+                  "Value": "'Monthly repeat activity · complete months · selected customers'"
                 }
               }
             },

@@ -72,14 +72,16 @@ CREATE OR ALTER VIEW rpt.MonthlyPerformance AS
 SELECT DATEFROMPARTS(CalendarYear,CalendarMonth,1) AS MonthStart, HotelName,
  COUNT(*) Bookings, SUM(CONVERT(int,IsCanceled)) Cancellations,
  CAST(AVG(CONVERT(float,IsCanceled)) AS decimal(8,4)) CancellationRate,
- SUM(RealizedRoomValue) RealizedRoomValue, SUM(GrossRoomValue) GrossRoomValue,
- CAST(AVG(CASE WHEN IsCanceled=0 AND StayNights>0 AND ADR>=0 THEN ADR END) AS decimal(12,2)) RealizedADR
+ SUM(CASE WHEN IsCanceled=0 AND StayNights>0 AND ADR>=0 THEN RealizedRoomValue ELSE 0 END) RoomValueProxy,
+ CAST(SUM(CASE WHEN IsCanceled=0 AND StayNights>0 AND ADR>=0 THEN RealizedRoomValue END)
+ / NULLIF(SUM(CASE WHEN IsCanceled=0 AND StayNights>0 AND ADR>=0 THEN StayNights END),0) AS decimal(12,2)) StayWeightedADR
 FROM rpt.BookingAnalysis GROUP BY CalendarYear,CalendarMonth,HotelName;
 GO
 CREATE OR ALTER VIEW rpt.SegmentPerformance AS
 SELECT HotelName, SegmentName, CustomerType, DistributionChannel,
  COUNT(*) Bookings, SUM(CONVERT(int,IsCanceled)) Cancellations,
- SUM(RealizedRoomValue) RealizedRoomValue,
- CAST(AVG(CASE WHEN IsCanceled=0 AND StayNights>0 AND ADR>=0 THEN ADR END) AS decimal(12,2)) RealizedADR
+ SUM(CASE WHEN IsCanceled=0 AND StayNights>0 AND ADR>=0 THEN RealizedRoomValue ELSE 0 END) RoomValueProxy,
+ CAST(SUM(CASE WHEN IsCanceled=0 AND StayNights>0 AND ADR>=0 THEN RealizedRoomValue END)
+ / NULLIF(SUM(CASE WHEN IsCanceled=0 AND StayNights>0 AND ADR>=0 THEN StayNights END),0) AS decimal(12,2)) StayWeightedADR
 FROM rpt.BookingAnalysis GROUP BY HotelName,SegmentName,CustomerType,DistributionChannel;
 GO

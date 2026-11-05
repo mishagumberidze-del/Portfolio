@@ -10,7 +10,7 @@
 
 1. Read the [Taxi streaming pipeline](NYCTaxiAnalytics/etl/prepare_analytics.py) and [aggregate model](NYCTaxiAnalytics/docs/model.md). It processes all 48 source files and retains file lineage while fitting the local SQL Server Express deployment.
 2. Inspect [SQL route ranking](NYCTaxiAnalytics/etl/export_dashboard.ps1) and [browser interaction tests](NYCTaxiAnalytics/tests/browser_qa.js).
-3. Read the [Retail report generator](OnlineRetailPython/report/build_report.py) for RFM, cohorts, a fixed 90-day repeat window, distribution checks and Wilson reference intervals. [Metric definitions](OnlineRetailPython/docs/model.md) explain the population and interpretation limits.
+3. Read the [Retail report generator](OnlineRetailPython/report/build_report.py) for customer concentration, purchase cohorts, a fixed 90-day repeat window and distribution checks. [Metric definitions](OnlineRetailPython/docs/model.md) explain the population and interpretation limits.
 
 ## Application review
 
@@ -20,7 +20,7 @@
 
 ## Starter-pack boundaries
 
-- Reports, source and screenshots are included. Large raw data, SQL database files and Power BI cache/PBIX files are not.
+- Reports, source, current NYC/Retail/Spotify demo screenshots and Power BI pre-audit visual previews are included. Older screenshots do not verify the audited calculations. Large raw data, SQL database files and Power BI cache/PBIX files are not.
 - Analytical aggregates in the Taxi/Retail HTML artifacts derive from public datasets. Spotify private snapshots are not included.
 - Existing project QA notes describe local verification; they do not imply that a hosted service or a fresh machine has been tested automatically.
 - Third-party packages and datasets retain their own terms. Dataset references are listed separately.

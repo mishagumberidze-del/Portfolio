@@ -7,14 +7,8 @@ model Model
 		returnErrorValuesAsNull
 
 annotation __PBI_TimeIntelligenceEnabled = 0
-
 annotation PBI_ProTooling = ["DevMode"]
-
-annotation PBI_QueryOrder = ["Date","Booking","DataRoot"]
-
 ref table Date
 ref table Booking
 ref table 'KPI Measures'
-
 ref cultureInfo en-US
-

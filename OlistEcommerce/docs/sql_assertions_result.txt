@@ -1,0 +1,5 @@
+Warning: Null value is eliminated by an aggregate or other SET operation.
+Warning: Null value is eliminated by an aggregate or other SET operation.
+TestStatus Customers Orders OrderItems LatestBatchRejectedRows
+---------- --------- ------ ---------- -----------------------
+PASS 96096 99441 112650 0

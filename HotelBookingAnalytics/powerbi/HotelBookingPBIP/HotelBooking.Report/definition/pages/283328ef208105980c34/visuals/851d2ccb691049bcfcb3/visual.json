@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Room value = ADR × non-canceled stay nights; source currency units. Comparisons are descriptive. Filters apply on this page.",
+                    "value": "Rates describe observed bookings, not causal effects. Deposit type may reflect later booking events. Lead time is in days. Filters apply on this page.",
                     "textStyle": {
                       "fontFamily": "Segoe UI Semibold",
                       "fontSize": "15px",

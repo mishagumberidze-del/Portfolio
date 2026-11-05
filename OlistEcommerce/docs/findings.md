@@ -1,15 +1,16 @@
 # Evidence-based findings
 
-All figures come from `Portfolio_Olist`; queries are in `sql/06_portfolio_analysis.sql`.
+Recomputed on 2026-11-04 from the refreshed, source-reconciled exports. SQL model assertions passed; see [validation evidence](qa.md). Figures describe the full observed history unless stated otherwise.
 
-- The observed history contains 99,441 orders from 96,096 real customers and R$13.49M in commercial merchandise GMV. Average order value is R$137.41 and commercial orders contain 1.141 item rows on average.
-- Only 2,997 customers placed more than one observed order, a lifetime repeat-customer rate of 3.12%. Repeat buyers averaged 80.08 days between purchases. The dataset therefore behaves much more like an acquisition-led marketplace snapshot than a high-frequency retail base.
-- Delivery performance is strong on incidence but consequential when it fails: 93.23% of delivered orders with usable promise dates arrived on time. On-time deliveries averaged a 4.29 review score, compared with 2.27 for late deliveries. This is association, not proof of causation.
-- Late delivered orders took 33.95 days on average versus 11.00 days for on-time orders.
-- São Paulo generated R$5.16M, about 38.3% of total commercial GMV. Rio de Janeiro was second at R$1.81M but had a materially lower average on-time rate (86.5%) than São Paulo (95.4%).
-- Health & beauty was the leading category at R$1.26M, followed by watches & gifts at R$1.20M and bed, bath & table at R$1.04M.
-- November 2017 was the highest-GMV month at R$1.00M. The dataset ends in October 2018 and the edge months are partial, so they should not be used for naive month-over-month conclusions.
-- Weighted Month-1 cohort retention is 0.46%; subsequent observed monthly retention is around 0.2–0.3%. Cohort cells correctly include zero-return cohorts and only compare cohorts old enough to reach each month.
-- The top ten sellers account for 13.2% of commercial GMV, indicating that sales are not dominated by a tiny seller group.
-- Freight equals 16.61% of merchandise GMV at the aggregate level.
+- The history contains **99,441 orders from 96,096 real customers**. The 98,207 commercial orders represent **R$13,494,400.74 merchandise GMV**, excluding canceled/unavailable orders and freight. Average order value is **R$137.41**, with 1.141 item rows per commercial order. The eight commercial orders without item records remain in the order denominator.
+- Of **94,990 commercial purchasing customers, 2,888** made more than one commercial purchase: an observed-window repeat rate of **3.04%**. Canceled and unavailable orders do not create a repeat purchase. This describes recorded purchases; it does not measure churn or lifetime loyalty.
+- **89,936 of 96,470 evaluable delivered orders arrived on time (93.23%)**. Eight other delivered orders lack the timestamps required for evaluation and are excluded from this denominator. On-time deliveries have a recorded review average of **4.29**, compared with **2.27** for late deliveries; this is association, not proof of causation. Late deliveries averaged **33.95 days**, versus **11.00 days** for on-time deliveries.
+- **625 of 99,441 orders were canceled (0.63%)**. The overall recorded review average is **4.09 out of 5**, across 99,224 reviews. Review averages describe respondents rather than every purchaser.
+- São Paulo generated **R$5,163,867.22**, about **38.3% of commercial GMV**. Rio de Janeiro generated **R$1,811,623.42**. Their on-time rates were **95.51% (38,674/40,494)** and **87.89% (10,855/12,350)** respectively. These rates weight eligible orders, not ZIP-level averages, and identify a delivery difference to investigate.
+- Health & beauty led category GMV at **R$1,255,695.13**, followed by watches & gifts at **R$1,198,185.21** and bed, bath & table at **R$1,035,964.06**. These are contribution measures; costs and margins are unavailable.
+- **November 2017** had the highest observed monthly commercial GMV, **R$1,003,862.14**. Commercial purchases span September 2016 to September 2018; the final commercial purchase is on September 3, 2018. Boundary months are partial and are not suitable for an unqualified month-over-month comparison.
+- Across cohorts with a fully observed first following month, **428 of 88,779 customers purchased in Month 1 (0.48%)**. The cohort denominator is fixed at first commercial purchase; it is not customers still active. The 254 exported cohort cells omit partial boundary months and include eligible zero-activity months. Different cohort ages have different eligible populations, so this figure is not a cumulative retention or churn rate.
+- The top ten sellers contributed **13.20% of commercial GMV**. This quantifies seller concentration without implying a target or an investment recommendation.
+- Commercial freight totaled **R$2,241,126.29**, or **16.61% of merchandise GMV**. This is the ratio of aggregate freight to aggregate GMV, not an average of order ratios.
 
+Power BI Desktop refresh and rendered DAX/filter behavior remain a separate validation step. These findings are verified against SQL/export data and do not claim that the native Power BI report was exercised.

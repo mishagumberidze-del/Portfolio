@@ -2,7 +2,9 @@
 
 A React/TypeScript application backed by an ASP.NET Core API and SQL Server, combining listening analytics, explainable preference scoring and recording-aware discovery.
 
-![Synthetic demo interface](../assets/spotify-demo.png)
+![Current synthetic overview](docs/qa/reviewed-demo-desktop.jpg)
+
+> Current fictional-event overview. Browser checks passed at 1,440 px desktop and 390 px mobile for the overview, last-30-day range, unavailable scorer and no page overflow. [Browser results](docs/qa/browser-results-2026-11-05.json) · [Mobile preview](docs/qa/reviewed-demo-mobile.jpg). This does not verify the separately hosted edition.
 
 [Hosted read-only portfolio edition](https://spotify-taste-demo.pages.dev/) · The hosted edition uses a separately managed snapshot; this repository contains synthetic demo data, not that snapshot.
 
@@ -17,7 +19,7 @@ Stack: **React 19, TypeScript, Vite, TanStack Query, Recharts, ASP.NET Core 8, E
 
 ## Run the synthetic demo
 
-The starter pack contains fictional demo responses and source code. Private streaming exports, liked-song snapshots, OAuth tokens and local settings are excluded.
+The demo derives its listening analytics from one coherent fictional event fixture. Fitted model results, recommendation scores, audio coverage, provider results and human evaluation are unavailable in this fixture; they are not fabricated. The reviewed source passed 149 backend tests and 23 frontend tests. Private streaming exports, liked-song snapshots, OAuth tokens and local settings are excluded.
 
 ```powershell
 cd frontend/spotify-taste-web
@@ -42,6 +44,6 @@ The development frontend proxies `/api` to the local API; a normal frontend buil
 
 ## Code tour
 
-[Database relationships](docs/database-schema.md) · [Preference model and recommendations](docs/model-and-recommendations.md) · [Stories and evaluation](docs/music-story-and-evaluation.md)
+[KPI usefulness](docs/kpi_usefulness.md) · [Database relationships](docs/database-schema.md) · [Preference model and recommendations](docs/model-and-recommendations.md) · [Stories and evaluation](docs/music-story-and-evaluation.md)
 
 [Domain](backend/SpotifyTaste.Domain) · [Application](backend/SpotifyTaste.Application) · [Infrastructure](backend/SpotifyTaste.Infrastructure) · [API](backend/SpotifyTaste.Api) · [Tests](backend/SpotifyTaste.Tests) · [React source](frontend/spotify-taste-web/src)

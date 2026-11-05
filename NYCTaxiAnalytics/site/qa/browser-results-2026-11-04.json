@@ -1,0 +1,30 @@
+{
+  "desktop": {
+    "status": "pass",
+    "filter_combinations": 65,
+    "geometry_features": 263,
+    "download": true,
+    "metrics": true,
+    "calendar_exposure": true,
+    "quality_denominators": true,
+    "layout": {
+      "viewport": 1440,
+      "scrollWidth": 1425,
+      "wide": 0
+    }
+  },
+  "mobile": {
+    "status": "pass",
+    "filter_combinations": 65,
+    "geometry_features": 263,
+    "download": true,
+    "metrics": true,
+    "calendar_exposure": true,
+    "quality_denominators": true,
+    "layout": {
+      "viewport": 390,
+      "scrollWidth": 375,
+      "wide": 0
+    }
+  }
+}

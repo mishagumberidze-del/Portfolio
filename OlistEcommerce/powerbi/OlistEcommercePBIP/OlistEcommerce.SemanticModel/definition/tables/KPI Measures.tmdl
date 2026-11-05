@@ -59,38 +59,30 @@ table 'KPI Measures'
 		formatString: 0.00
 		displayFolder: Commercial
 
-	/// Customers whose visible order is their second or later lifetime purchase.
+	/// Customers with a second or later commercial purchase in the visible period.
 	measure 'Repeat Customers' = ```
 			CALCULATE(
 				DISTINCTCOUNT('Order'[Customer Key]),
-				KEEPFILTERS('Order'[Purchase Sequence] > 1)
+				KEEPFILTERS('Order'[Purchase Sequence] > 1),
+				KEEPFILTERS('Order'[Status] <> "canceled"),
+				KEEPFILTERS('Order'[Status] <> "unavailable")
 			)
 			```
 		formatString: #,##0
 		displayFolder: Customer
 
-	/// Customers classified as repeat based on lifetime purchase count in the SQL Customer 360 view.
-	measure 'Lifetime Repeat Customers' = ```
-			CALCULATE(
-				DISTINCTCOUNT(Customer[Customer Key]),
-				KEEPFILTERS(Customer[Customer Type] = "Repeat")
-			)
-			```
-		formatString: #,##0
-		displayFolder: Customer
-
-	/// Repeat customers divided by distinct customers in the current context.
-	measure 'Repeat Customer Rate' = DIVIDE([Repeat Customers], [Customers])
+	/// Repeat commercial purchasers divided by commercial purchasers in the current context.
+	measure 'Repeat Customer Rate' = DIVIDE([Repeat Customers], [Sales Customers])
 		formatString: 0.00%
 		displayFolder: Customer
 
-	/// Sales orders divided by distinct customers.
-	measure 'Customer Purchase Frequency' = DIVIDE([Sales Orders], [Customers])
+	/// Commercial orders divided by distinct commercial purchasers.
+	measure 'Customer Purchase Frequency' = DIVIDE([Sales Orders], [Sales Customers])
 		formatString: 0.00
 		displayFolder: Customer
 
-	/// Merchandise sales divided by distinct customers.
-	measure 'Revenue per Customer' = DIVIDE([Sales / GMV], [Customers])
+	/// Commercial merchandise GMV divided by distinct commercial purchasers.
+	measure 'GMV per Sales Customer' = DIVIDE([Sales / GMV], [Sales Customers])
 		formatString: "R$ #,##0.00"
 		displayFolder: Customer
 
@@ -129,7 +121,7 @@ table 'KPI Measures'
 			CALCULATE(
 				[Orders],
 				KEEPFILTERS('Order'[Status] = "delivered"),
-				KEEPFILTERS('Order'[Delivery Performance] <> "Not Delivered")
+				KEEPFILTERS('Order'[Delivery Performance] IN {"On Time", "Late"})
 			)
 			```
 		formatString: #,##0
@@ -146,24 +138,8 @@ table 'KPI Measures'
 		formatString: #,##0
 		displayFolder: Fulfilment
 
-	/// Delivered orders received after the promised date.
-	measure 'Late Orders' = ```
-			CALCULATE(
-				[Orders],
-				KEEPFILTERS('Order'[Status] = "delivered"),
-				KEEPFILTERS('Order'[Delivery Performance] = "Late")
-			)
-			```
-		formatString: #,##0
-		displayFolder: Fulfilment
-
 	/// On-time orders divided by delivered orders with a comparable promise date.
 	measure 'On-Time Delivery %' = DIVIDE([On-Time Orders], [Delivered with Promise])
-		formatString: 0.00%
-		displayFolder: Fulfilment
-
-	/// Late orders divided by delivered orders with a comparable promise date.
-	measure 'Late Delivery %' = DIVIDE([Late Orders], [Delivered with Promise])
 		formatString: 0.00%
 		displayFolder: Fulfilment
 
@@ -171,18 +147,8 @@ table 'KPI Measures'
 	measure 'Average Delay Days' = ```
 			CALCULATE(
 				AVERAGE('Order'[Delay Days]),
-				KEEPFILTERS('Order'[Delivery Performance] = "Late")
-			)
-			```
-		formatString: 0.0
-		displayFolder: Fulfilment
-
-	/// Average signed actual-minus-promised days; negative values indicate early delivery.
-	measure 'Average Promise Variance Days' = ```
-			CALCULATE(
-				AVERAGE('Order'[Delay Days]),
 				KEEPFILTERS('Order'[Status] = "delivered"),
-				KEEPFILTERS(NOT ISBLANK('Order'[Delay Days]))
+				KEEPFILTERS('Order'[Delivery Performance] = "Late")
 			)
 			```
 		formatString: 0.0
@@ -211,21 +177,6 @@ table 'KPI Measures'
 
 	/// Distinct orders with a retained review.
 	measure 'Reviewed Orders' = DISTINCTCOUNT(Review[Order Key])
-		formatString: #,##0
-		displayFolder: Experience
-
-	/// Reviewed orders divided by all orders.
-	measure 'Review Coverage %' = DIVIDE([Reviewed Orders], [Orders])
-		formatString: 0.00%
-		displayFolder: Experience
-
-	/// Reviewed orders scoring one or two stars.
-	measure 'Low Review Orders' = ```
-			CALCULATE(
-				[Reviewed Orders],
-				KEEPFILTERS(Review[Review Score] <= 2)
-			)
-			```
 		formatString: #,##0
 		displayFolder: Experience
 
@@ -302,7 +253,9 @@ table 'KPI Measures'
 			RETURN
 				CALCULATE(
 					[Average Review Score],
-					TREATAS(_visibleOrders, Review[Order Key])
+					TREATAS(_visibleOrders, Review[Order Key]),
+					KEEPFILTERS('Order'[Status] <> "canceled"),
+					KEEPFILTERS('Order'[Status] <> "unavailable")
 				)
 			```
 		formatString: 0.00
@@ -368,54 +321,22 @@ table 'KPI Measures'
 		formatString: 0.00%
 		displayFolder: Context Bridges
 
-	/// Sales in the immediately preceding month of the active Date context.
-	measure 'Sales Previous Month' = CALCULATE([Sales / GMV], DATEADD('Date'[Date], -1, MONTH))
-		formatString: "R$ #,##0.00"
-		displayFolder: Time Intelligence
-
-	/// Percentage change from previous-month sales.
-	measure 'Sales MoM %' = DIVIDE([Sales / GMV] - [Sales Previous Month], [Sales Previous Month])
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Time Intelligence
-
-	/// Sales for the same period in the previous year.
-	measure 'Sales Previous Year' = CALCULATE([Sales / GMV], SAMEPERIODLASTYEAR('Date'[Date]))
-		formatString: "R$ #,##0.00"
-		displayFolder: Time Intelligence
-
-	/// Percentage change from same-period prior-year sales.
-	measure 'Sales YoY %' = DIVIDE([Sales / GMV] - [Sales Previous Year], [Sales Previous Year])
-		formatString: 0.00%;-0.00%;0.00%
-		displayFolder: Time Intelligence
-
-	/// Customer rank by sales within the active selection.
-	measure 'Customer Rank by Sales' = RANKX(ALLSELECTED(Customer[Customer Key]), [Sales / GMV],, DESC, DENSE)
-		formatString: #,##0
-		displayFolder: Ranking
-
-	/// Seller rank by sales within the active selection.
-	measure 'Seller Rank by Sales' = RANKX(ALLSELECTED(Seller[Seller Key]), [Sales / GMV],, DESC, DENSE)
-		formatString: #,##0
-		displayFolder: Ranking
-
 	/// Selected Top-N threshold, defaulting to 10.
 	measure 'Selected Top N' = SELECTEDVALUE('Top N'[Value], 10)
 		formatString: 0
 		displayFolder: Ranking
 
 	/// Visual filter flag for sellers inside the selected Top-N.
-	measure 'Seller in Top N' = IF([Seller Rank by Sales] <= [Selected Top N], 1, 0)
+	measure 'Seller in Top N' = ```
+			VAR TopSellers = TOPN([Selected Top N], ALLSELECTED(Seller), [Sales / GMV], DESC, Seller[Seller Key], ASC)
+			RETURN IF(NOT ISBLANK([Sales / GMV]) && CONTAINS(TopSellers, Seller[Seller Key], SELECTEDVALUE(Seller[Seller Key])), 1, 0)
+			```
 		formatString: 0
 		displayFolder: Ranking
 
 	/// Sales displayed only for sellers inside the selected Top-N threshold.
 	measure 'Seller Top N Sales' = IF([Seller in Top N] = 1, [Sales / GMV])
 		formatString: "R$ #,##0.00"
-		displayFolder: Ranking
-
-	/// Visual filter flag for customers inside the selected Top-N.
-	measure 'Customer in Top N' = IF([Customer Rank by Sales] <= [Selected Top N], 1, 0)
-		formatString: 0
 		displayFolder: Ranking
 
 	/// Metric value chosen from the disconnected metric selector.
@@ -433,18 +354,25 @@ table 'KPI Measures'
 		formatString: #,##0.00
 		displayFolder: Dynamic Metric
 
-	/// Dynamic chart title corresponding to the selected metric.
-	measure 'Selected Metric Title' = SELECTEDVALUE('Metric Selector'[Metric], "Sales / GMV") & " trend"
-		formatString: ""
-		displayFolder: Dynamic Metric
-
-	/// Active customers in the SQL-produced cohort matrix cell.
-	measure 'Active Cohort Customers' = SUM('Cohort Retention'[Active Customers])
+	/// Active commercial purchasers in the selected cohort/activity cell, preserving customer filters.
+	measure 'Active Cohort Customers' = ```
+			VAR _cohort = SELECTEDVALUE('Cohort Retention'[Cohort Month])
+			VAR _activity = SELECTEDVALUE('Cohort Retention'[Activity Month])
+			RETURN IF(NOT ISBLANK(_cohort) && NOT ISBLANK(_activity),
+				COALESCE(CALCULATE([Sales Customers], REMOVEFILTERS('Date'),
+					KEEPFILTERS(TREATAS({_cohort}, 'Order'[Cohort Month])),
+					TREATAS({YEAR(_activity) * 100 + MONTH(_activity)}, 'Date'[Year Month Sort])), 0))
+			```
 		formatString: #,##0
 		displayFolder: Cohort
 
-	/// Original cohort size; MAX avoids summing the repeated cohort-size value across activity months.
-	measure 'Cohort Customers' = MAX('Cohort Retention'[Cohort Customers])
+	/// Original commercial cohort population after customer filters, independent of the activity month.
+	measure 'Cohort Customers' = ```
+			VAR _cohort = SELECTEDVALUE('Cohort Retention'[Cohort Month])
+			RETURN IF(NOT ISBLANK(_cohort),
+				CALCULATE([Sales Customers], REMOVEFILTERS('Date'),
+					KEEPFILTERS(TREATAS({_cohort}, 'Order'[Cohort Month]))))
+			```
 		formatString: #,##0
 		displayFolder: Cohort
 
@@ -458,6 +386,16 @@ table 'KPI Measures'
 			```
 		formatString: 0.00%
 		displayFolder: Cohort
+
+	/// Customers with at least one non-canceled, non-unavailable purchase in context.
+	measure 'Sales Customers' = CALCULATE([Customers], KEEPFILTERS('Order'[Status] <> "canceled"), KEEPFILTERS('Order'[Status] <> "unavailable"))
+		formatString: #,##0
+		displayFolder: Customer
+
+	/// Retained review records; one order may have several reviews. Score-group shares use this additive count.
+	measure Reviews = COUNTROWS(Review)
+		formatString: #,##0
+		displayFolder: Experience
 
 	column Value
 		isHidden

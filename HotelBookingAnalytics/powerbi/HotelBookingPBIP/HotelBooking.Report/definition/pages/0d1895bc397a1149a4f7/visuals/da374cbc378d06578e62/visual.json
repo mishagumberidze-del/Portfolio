@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "da374cbc378d06578e62",
   "position": {
     "x": 24,
@@ -27,8 +27,25 @@
                 }
               },
               "queryRef": "Date.YearMonth",
-              "nativeQueryRef": "YearMonth",
-              "active": true
+              "nativeQueryRef": "YearMonth"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Bookings"
+                }
+              },
+              "queryRef": "KPI Measures.Bookings",
+              "nativeQueryRef": "Bookings"
             }
           ]
         },
@@ -63,24 +80,6 @@
               "nativeQueryRef": "Cancellation Rate"
             }
           ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Bookings"
-                }
-              },
-              "queryRef": "KPI Measures.Bookings",
-              "nativeQueryRef": "Bookings"
-            }
-          ]
         }
       },
       "sortDefinition": {
@@ -98,7 +97,8 @@
             },
             "direction": "Ascending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "visualContainerObjects": {
@@ -115,7 +115,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Monthly booking volume'"
+                  "Value": "'Bookings by arrival month'"
                 }
               }
             },

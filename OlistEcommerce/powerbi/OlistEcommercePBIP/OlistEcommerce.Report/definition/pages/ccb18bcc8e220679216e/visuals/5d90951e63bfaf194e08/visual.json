@@ -101,11 +101,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Sales MoM %"
+                  "Property": "Sales Orders"
                 }
               },
-              "queryRef": "KPI Measures.Sales MoM %",
-              "nativeQueryRef": "Sales MoM %"
+              "queryRef": "KPI Measures.Sales Orders",
+              "nativeQueryRef": "Sales Orders"
             }
           ]
         }

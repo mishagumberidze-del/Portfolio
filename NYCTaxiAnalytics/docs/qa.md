@@ -1,3 +1,11 @@
+# Calculation audit — 2026-11-04
+
+- `tests/verify_source_metrics.py` independently scanned all 298,930,712 original rows and verified all 48 source hashes, time metric numerators and denominators, zones, bands, quality flags and 65 complete top-route rankings against the dashboard exports.
+- Calendar exposure and service-capability denominator regression tests passed (`node --test tests/metrics.test.cjs`). `tests/verify_data.py` passed, including deterministic generation of the updated HTML.
+- The revised browser harness passed all 65 service/month states at 1440 px and 390 px, including weighted means, calendar exposure, quality denominators, keyboard map selection, reset and CSV download, with no page overflow. Current captures are `site/qa/reviewed-desktop.jpg` and `site/qa/reviewed-mobile.jpg`; results are in `site/qa/browser-results-2026-11-04.json`. Earlier captures below remain historical.
+
+## Earlier-build QA
+
 # QA — 2026-11-02
 
 - Original acquisition: 48 monthly Parquet files fully decoded in the existing source project, plus eight reference downloads; source inspection and manifests are retained in `reports/tlc_2024/`.

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "a608b9de38998172de26",
   "position": {
     "x": 946,
@@ -27,40 +27,7 @@
                 }
               },
               "queryRef": "Booking.ReservedRoomType",
-              "nativeQueryRef": "ReservedRoomType",
-              "active": true
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Bookings"
-                }
-              },
-              "queryRef": "KPI Measures.Bookings",
-              "nativeQueryRef": "Bookings"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Cancellation Rate"
-                }
-              },
-              "queryRef": "KPI Measures.Cancellation Rate",
-              "nativeQueryRef": "Cancellation Rate"
+              "nativeQueryRef": "ReservedRoomType"
             }
           ]
         },
@@ -74,11 +41,43 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Room Change Rate"
+                  "Property": "Room Assignment Difference"
                 }
               },
-              "queryRef": "KPI Measures.Room Change Rate",
-              "nativeQueryRef": "Room Change Rate"
+              "queryRef": "KPI Measures.Room Assignment Difference",
+              "nativeQueryRef": "Room Assignment Difference"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Stayed Bookings"
+                }
+              },
+              "queryRef": "KPI Measures.Stayed Bookings",
+              "nativeQueryRef": "Stayed Bookings"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Room Assignment Difference"
+                }
+              },
+              "queryRef": "KPI Measures.Room Assignment Difference",
+              "nativeQueryRef": "Room Assignment Difference"
             }
           ]
         }
@@ -98,7 +97,8 @@
             },
             "direction": "Ascending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "visualContainerObjects": {
@@ -115,7 +115,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Room changes by reserved room type'"
+                  "Value": "'Assigned vs reserved room type — non-canceled stays'"
                 }
               }
             },

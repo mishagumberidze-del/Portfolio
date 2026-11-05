@@ -20,16 +20,22 @@ The immutable Parquet files retain complete source fields and trip-level rows. S
 ## Rules
 
 - **Population:** actual pickup timestamp falls in `[2024-01-01, 2025-01-01)`. 76 out-of-year pickups are kept in source audits and excluded from year charts.
+- **Calendar exposure:** monthly chart values are pickups divided by calendar days in each month. Heatmap cells are weekday/hour totals divided by occurrences of that weekday in the selected period. Leap-year 2024 has 366 days; zero-trip dates remain in the denominator. Tooltips retain the original totals.
 - **Duration:** dropoff minus pickup; eligible when >0 seconds and <=14,400 seconds. No timezone or DST correction is inferred from naive local source clocks.
 - **Distance:** source reported miles, >0 and <=200. Not available in FHV. FHV is not included in distance denominators.
-- **Speed:** ratio of total miles to total elapsed hours among valid duration/distance pairs whose implied speed is <=100 mph. No straight-line distance is inferred.
+- **Speed screening:** implied speeds above 100 mph among duration/distance-eligible pairs are quality flags. Legacy matched-distance/time aggregates remain in the analytical exports for audit, but speed is no longer a headline dashboard KPI: route and service mix prevent it from measuring congestion or operator performance. No straight-line distance is inferred.
 - **Base fare:** source `fare_amount` for Yellow/Green and `base_passenger_fare` for high-volume FHV; eligible when nonnegative and <=$1,000. Their meanings differ, so only a selected service's average is shown. Missing FHV fare is not zero.
 - **Zones:** null/unmatched source IDs become explicit aggregate zone 0; IDs 264/265 are preserved. Counts are not lost through joins to physical polygons.
 - **Bands:** upper bounds are inclusive. Duration bands end at 10,20,40,60,240 minutes; distance bands end at 1,3,5,10,200 miles.
-- **Projected duplicate candidates:** identical selected analytical fields within one batch. This is a bounded quality indicator, not a global exact-duplicate count. All candidates remain in every total.
+- **Projected duplicate candidates:** legacy pipeline audit counts are retained, but are no longer displayed as a dashboard metric: identical selected fields in one batch cannot establish duplicate trips. All candidates remain in every total.
 - **Quality scope:** all source-file rows, including out-of-year rows. Flags overlap; they must not be summed as rejected trips. Dashboard filtering selects source partition month for this panel, while demand charts use actual pickup month.
+- **Quality denominators:** duration and zone checks use all selected source rows. Distance, speed and fare checks use only selected rows from services reporting those fields, excluding FHV. Screening boundaries are analytical choices, not proof that records beyond the limits are erroneous.
 - **Precision:** source numeric doubles are aggregated as floating-point, preserving their source scale. Dashboard SQL exports round additive continuous numerators to three decimal places; count reconciliations are exact. No financial-cent reconciliation is claimed for differing service populations.
 
 ## Geography
 
 The official SHP/DBF records are paired in file order and joined by LocationID. Polygon boundaries retain the supplied NAD83 New York Long Island US-survey-foot coordinates; SVG paths use a uniform projected scale with north up. Boundary simplification tolerance is 120 source feet (about 37 metres) for display only. No SRID relabeling or fabricated longitude/latitude is used. Holes and multipart boundaries use SVG even-odd filling. The original archive remains unchanged.
+
+## Why these headline measures are retained
+
+Recorded pickups establish the scale of the selected submission population; the per-calendar-day note supports period comparisons. Eligible mean duration and reported distance describe the journey mix. Service/month filters, calendar-normalized timing and zone/route rankings locate patterns to investigate. These are descriptive metrics, without invented targets or claims of unmet demand, transport market share, congestion reduction or operational impact. Coverage and screening results explain whether comparisons are supported by the records.

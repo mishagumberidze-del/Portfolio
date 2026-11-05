@@ -1,4 +1,4 @@
-/// Latest usable customer review per order with normalized score grouping.
+/// Every retained source review/order pair; orders may have multiple reviews. Score bands are not NPS categories.
 table Review
 
 	column 'Review Key'

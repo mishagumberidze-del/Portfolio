@@ -10,4 +10,4 @@ Relevant files include [MusicStory.tsx](../frontend/spotify-taste-web/src/MusicS
 
 The backend represents recommendation sessions, candidates, feedback and evaluation items separately. Automated validation and stored metrics do not stand in for real user feedback. Recording-held-out checks address an important source of catalog leakage, but do not establish general recommendation quality for unrelated users.
 
-The repository's synthetic mode is a UI demonstration. Private account exports and snapshot payloads are excluded. The API-backed edition requires an authorized local data source; maintenance and write operations remain restricted by explicit application policy.
+The repository's synthetic mode derives listening totals, rankings and calendar context from one coherent fictional event fixture. It reports model-dependent results and human evaluation as unavailable. Private account exports and snapshot payloads are excluded. The API-backed edition requires an authorized local data source; maintenance and write operations remain restricted by explicit application policy.

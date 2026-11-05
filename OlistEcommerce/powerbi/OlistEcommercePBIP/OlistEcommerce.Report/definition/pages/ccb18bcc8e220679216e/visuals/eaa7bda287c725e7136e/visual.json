@@ -23,53 +23,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Repeat Customer Rate"
-                }
-              },
-              "queryRef": "KPI Measures.Repeat Customer Rate",
-              "nativeQueryRef": "Repeat Customer Rate"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Delivery Rate"
-                }
-              },
-              "queryRef": "KPI Measures.Delivery Rate",
-              "nativeQueryRef": "Delivery Rate"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
                   "Property": "Cancellation Rate"
                 }
               },
               "queryRef": "KPI Measures.Cancellation Rate",
               "nativeQueryRef": "Cancellation Rate"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Average Delivery Days"
-                }
-              },
-              "queryRef": "KPI Measures.Average Delivery Days",
-              "nativeQueryRef": "Average Delivery Days"
             },
             {
               "field": {
@@ -303,7 +261,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Customer & fulfilment health'"
+                  "Value": "'Fulfilment and experience — selected order population'"
                 }
               }
             },

@@ -95,7 +95,7 @@ public sealed class StoryBuilder
         var years = all.Select(e => e.At.Year).Distinct().OrderDescending().ToArray();
         var eras = years.Order().Select(y => new SoundEra(y, Profile(all.Where(e => e.At.Year == y).ToArray()))).ToArray();
         var facts = new List<StoryFact>();
-        var recurring = rows.GroupBy(e => recordings[e.TrackId]).Where(g => g.Count(Qualified) >= 3)
+        var recurring = rows.GroupBy(e => recordings[e.TrackId]).Where(g => g.Count(Qualified) >= 3 && recordingYears[g.Key] >= 2)
             .Select(g => new { Rows = g.ToArray(), Years = recordingYears[g.Key], First = firstRecording[g.Key] })
             .OrderByDescending(x => x.Years).ThenBy(x => x.First).FirstOrDefault();
         if (recurring is not null) facts.Add(new("A returning favorite", $"{tracks[recurring.Rows[0].TrackId].Name} appears in {recurring.Years} calendar years of your imported history, first recorded on {recurring.First:yyyy-MM-dd}."));

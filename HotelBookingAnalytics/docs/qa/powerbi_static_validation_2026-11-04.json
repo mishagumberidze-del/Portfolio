@@ -1,0 +1,95 @@
+{
+  "checked_at_utc": "2026-11-04T15:41:39.597257+00:00",
+  "scope": "Static TMDL/PBIR references, current exported TSV structure and relationship keys; expected values independently aggregated from current exports. Does not execute Power Query or DAX and does not verify rendered or interactive results.",
+  "result": "PASS",
+  "native_validation": {
+    "status": "not_verified",
+    "installed_app": "Microsoft Power BI Desktop 2.159.883.0 (Microsoft Store)",
+    "launch_result": "Computer Use app approval timed out",
+    "refresh_performed": false,
+    "dax_executed": false,
+    "new_report_screenshots": false,
+    "existing_screenshots": "Pre-audit previews; not proof of the current model."
+  },
+  "data_root": "C:\\Portfolio\\HotelBookingAnalytics\\data\\processed\\powerbi",
+  "tables": 3,
+  "measures": 10,
+  "unique_report_field_references": 20,
+  "relationship_checks": [
+    {
+      "name": "Booking to Date",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    }
+  ],
+  "pages": [
+    {
+      "name": "Executive Overview",
+      "visuals": 9,
+      "card_measures": [
+        "Bookings",
+        "Cancellation Rate",
+        "Room Value Proxy",
+        "Stay-weighted ADR"
+      ]
+    },
+    {
+      "name": "Cancellation Patterns",
+      "visuals": 9,
+      "card_measures": [
+        "Average Lead Time",
+        "Bookings",
+        "Cancellation Rate",
+        "Cancellations"
+      ]
+    },
+    {
+      "name": "Stay & Operations",
+      "visuals": 9,
+      "card_measures": [
+        "Average Stay Nights",
+        "Room Assignment Difference",
+        "Stay Nights",
+        "Stayed Bookings"
+      ]
+    }
+  ],
+  "exports": {
+    "booking.tsv": {
+      "rows": 119390,
+      "columns": 24,
+      "sha256": "d329309c125f193ede264ff9526c084325660db45a09eaf78d8a6d21e3d45faf"
+    },
+    "date.tsv": {
+      "rows": 793,
+      "columns": 8,
+      "sha256": "6476234900d6fcc1d3efd6f2b77c1b58ae3c25eaa87f852731bec41196262f31"
+    }
+  },
+  "expected_values_from_exports": {
+    "all": {
+      "bookings": 119390,
+      "cancellations": 44224,
+      "stayed_bookings": 74486,
+      "rate_eligible_nights": 255030,
+      "room_value_proxy": "25996324.21",
+      "stay_weighted_adr": "101.93"
+    },
+    "City Hotel": {
+      "bookings": 79330,
+      "cancellations": 33102,
+      "stayed_bookings": 45920,
+      "rate_eligible_nights": 135153,
+      "room_value_proxy": "14394410.18",
+      "stay_weighted_adr": "106.50"
+    },
+    "Resort Hotel": {
+      "bookings": 40060,
+      "cancellations": 11122,
+      "stayed_bookings": 28566,
+      "rate_eligible_nights": 119877,
+      "room_value_proxy": "11601914.03",
+      "stay_weighted_adr": "96.78"
+    }
+  }
+}

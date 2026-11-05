@@ -65,11 +65,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Realized ADR"
+                  "Property": "Stay-weighted ADR"
                 }
               },
-              "queryRef": "KPI Measures.Realized ADR",
-              "nativeQueryRef": "Realized ADR"
+              "queryRef": "KPI Measures.Stay-weighted ADR",
+              "nativeQueryRef": "Stay-weighted ADR"
             }
           ]
         }

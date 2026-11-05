@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "cc64fe85f404f490f7d5",
   "position": {
     "x": 24,
@@ -27,40 +27,7 @@
                 }
               },
               "queryRef": "Booking.StayBand",
-              "nativeQueryRef": "StayBand",
-              "active": true
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Bookings"
-                }
-              },
-              "queryRef": "KPI Measures.Bookings",
-              "nativeQueryRef": "Bookings"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Cancellation Rate"
-                }
-              },
-              "queryRef": "KPI Measures.Cancellation Rate",
-              "nativeQueryRef": "Cancellation Rate"
+              "nativeQueryRef": "StayBand"
             }
           ]
         },
@@ -74,11 +41,43 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Bookings"
+                  "Property": "Stayed Bookings"
                 }
               },
-              "queryRef": "KPI Measures.Bookings",
-              "nativeQueryRef": "Bookings"
+              "queryRef": "KPI Measures.Stayed Bookings",
+              "nativeQueryRef": "Stayed Bookings"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Stayed Bookings"
+                }
+              },
+              "queryRef": "KPI Measures.Stayed Bookings",
+              "nativeQueryRef": "Stayed Bookings"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Average Stay Nights"
+                }
+              },
+              "queryRef": "KPI Measures.Average Stay Nights",
+              "nativeQueryRef": "Average Stay Nights"
             }
           ]
         }
@@ -98,7 +97,8 @@
             },
             "direction": "Ascending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "visualContainerObjects": {
@@ -115,7 +115,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Booking volume by stay length'"
+                  "Value": "'Non-canceled bookings by stay length'"
                 }
               }
             },

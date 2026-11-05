@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Room value = ADR × non-canceled stay nights; source currency units. Comparisons are descriptive. Filters apply on this page.",
+                    "value": "Room value and ADR use non-canceled positive-night stays with ADR ≥ 0. ADR is weighted by stay nights; source currency units. Filters apply on this page.",
                     "textStyle": {
                       "fontFamily": "Segoe UI Semibold",
                       "fontSize": "15px",

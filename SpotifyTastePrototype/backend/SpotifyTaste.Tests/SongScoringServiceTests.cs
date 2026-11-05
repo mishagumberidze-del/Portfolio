@@ -123,6 +123,9 @@ public sealed class SongScoringServiceTests
         var result = await fixture.Scorer.ScoreExternalAsync(fixture.UnseenTwin);
 
         Assert.Equal(5, result.Components.SavedTrackMatch);
+        Assert.DoesNotContain("savedTrackMatch", result.AvailableSignals!);
+        Assert.DoesNotContain("historicalBehaviorMatch", result.AvailableSignals!);
+        Assert.Contains("featureMatch", result.AvailableSignals!);
         Assert.Contains(result.Explanations, x => x.Contains("signal is excluded", StringComparison.OrdinalIgnoreCase));
         Assert.True(result.PredictedLikeScore >= 9,
             $"A display-only neutral saved component must not depress available strong evidence; score={result.PredictedLikeScore:0.0}.");

@@ -8,7 +8,6 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$PythonPath = (Get-Command $PythonPath -ErrorAction Stop).Source
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $rawDir = Join-Path $projectRoot 'data\raw'
 $processedDir = Join-Path $projectRoot 'data\processed'

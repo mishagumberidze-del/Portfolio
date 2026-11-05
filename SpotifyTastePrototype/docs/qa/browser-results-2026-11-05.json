@@ -1,0 +1,29 @@
+{
+  "desktop": {
+    "events": true,
+    "fictional": true,
+    "scrollWidth": 1425,
+    "status": " Static demo · no backend",
+    "viewport": 1440
+  },
+  "mobile": {
+    "scrollWidth": 375,
+    "viewport": 390
+  },
+  "range": {
+    "calendarContext": false,
+    "selected": "last30",
+    "summary": [
+      "Listening minutes\n195",
+      "Active listening dates\n23",
+      "Listening events\n116",
+      "Qualified plays\n69",
+      "Unique recordings\n24",
+      "Unique artists\n12",
+      "Unique albums\n12",
+      "Saved library · all dates\n6"
+    ]
+  },
+  "scorerUnavailableVerified": true,
+  "scope": "Overview at desktop/mobile, Last 30 days filter, honest unavailable scorer; not all application screens."
+}

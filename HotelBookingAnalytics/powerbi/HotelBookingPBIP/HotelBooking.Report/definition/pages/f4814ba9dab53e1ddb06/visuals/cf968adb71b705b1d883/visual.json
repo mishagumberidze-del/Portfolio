@@ -51,11 +51,25 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Bookings"
+                  "Property": "Stayed Bookings"
                 }
               },
-              "queryRef": "KPI Measures.Bookings",
-              "nativeQueryRef": "Bookings"
+              "queryRef": "KPI Measures.Stayed Bookings",
+              "nativeQueryRef": "Stayed Bookings"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Stay Nights"
+                }
+              },
+              "queryRef": "KPI Measures.Stay Nights",
+              "nativeQueryRef": "Stay Nights"
             },
             {
               "field": {
@@ -79,11 +93,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Room Change Rate"
+                  "Property": "Room Assignment Difference"
                 }
               },
-              "queryRef": "KPI Measures.Room Change Rate",
-              "nativeQueryRef": "Room Change Rate"
+              "queryRef": "KPI Measures.Room Assignment Difference",
+              "nativeQueryRef": "Room Assignment Difference"
             },
             {
               "field": {
@@ -93,11 +107,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Realized ADR"
+                  "Property": "Stay-weighted ADR"
                 }
               },
-              "queryRef": "KPI Measures.Realized ADR",
-              "nativeQueryRef": "Realized ADR"
+              "queryRef": "KPI Measures.Stay-weighted ADR",
+              "nativeQueryRef": "Stay-weighted ADR"
             }
           ]
         }
@@ -156,7 +170,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Hotel and segment operations'"
+                  "Value": "'Hotel and segment operations — non-canceled stays'"
                 }
               }
             },

@@ -13,16 +13,16 @@ This document describes the implemented report. The reproducible definition sour
 ## 1. Executive Overview
 
 - Slicers: year, customer state, order status, dynamic trend metric.
-- Commercial KPIs: GMV, orders, customers, AOV, items/order.
-- Customer and fulfilment KPIs: repeat rate, delivery/cancellation rates, delivery days, on-time %, review score.
+- Three commercial KPIs: Sales / GMV, Sales Orders, and Average Order Value, using the same commercial population.
+- Three fulfilment and experience KPIs: Cancellation Rate, On-Time Delivery %, and Average Review Score, with their documented eligible populations.
 - Dynamic monthly trend, readable order-status count/share table, and customer-state sales ranking.
 
 ## 2. Customer Deep Dive
 
-- Slicers: customer type, RFM segment, home state.
-- Customer economics KPIs and new-versus-repeat revenue trend.
-- Revenue by SQL-derived RFM segment.
-- Cohort retention matrix by cohort month and months since first purchase; non-additive grand totals are suppressed.
+- Slicers: customer type, completed-purchase group, home state.
+- Commercial customer count, repeat customers/rate, purchase frequency, and GMV per commercial customer; first-versus-repeat commercial GMV trend.
+- GMV by factual completed-purchase count group (0, 1, 2, 3+ delivered purchases). These groups do not predict loyalty or churn.
+- Cohort retention matrix by first commercial purchase month and months since that purchase. Customer filters apply, partial boundary months are excluded, and non-additive grand totals are suppressed.
 - Customer value table supporting right-click drill-through.
 
 ## 3. Product & Sales
@@ -59,4 +59,5 @@ This document describes the implemented report. The reproducible definition sour
 - Top-N controls suppress nonselected sellers and the product detail is capped at 25 rows.
 - Product/seller order and customer context measures use the same non-canceled/non-unavailable commercial scope as GMV.
 - Currency and count series are not plotted on the same axis; skewed outcome distributions retain readable category values.
-- PBIR structure, TMDL structure, relationships, data refresh, and every report page were validated.
+- SQL assertions, source/export reconciliation, and generated PBIR/TMDL source checks passed on 2026-11-04; see `../docs/qa.md` for the evidence and scope.
+- Power BI Desktop refresh, rendered visuals, and interactive DAX/filter behavior remain to be validated in the native application. Historical screenshots do not validate the rebuilt definitions.

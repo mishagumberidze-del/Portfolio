@@ -41,11 +41,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Reviewed Orders"
+                  "Property": "Reviews"
                 }
               },
-              "queryRef": "KPI Measures.Reviewed Orders",
-              "nativeQueryRef": "Reviewed Orders"
+              "queryRef": "KPI Measures.Reviews",
+              "nativeQueryRef": "Reviews"
             }
           ]
         },
@@ -59,11 +59,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Sales / GMV"
+                  "Property": "Reviews"
                 }
               },
-              "queryRef": "KPI Measures.Sales / GMV",
-              "nativeQueryRef": "Sales / GMV"
+              "queryRef": "KPI Measures.Reviews",
+              "nativeQueryRef": "Reviews"
             },
             {
               "field": {
@@ -97,7 +97,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Review score mix'"
+                  "Value": "'Review mix (records; multiple per order)'"
                 }
               }
             },

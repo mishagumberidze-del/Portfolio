@@ -6,8 +6,8 @@ export type TimelinePoint = { period: string; listeningMinutes: number; uniqueAr
 export type BehaviorAnalytics = { listeningEvents: number; skipRate: number; shortListenRate: number; repeatRate: number; averageListenPercentage: number | null; completionRateEstimate: number | null; eventsWithKnownDuration: number }
 export type RankEvolution = { period: string; artistId: number; artist: string; rank: number; listeningMinutes: number; qualifiedPlays: number; artworkUrl?: string | null }
 export type Diagnostics = { databaseProvider: string; databaseName: string; spotifyDataFiles: string[]; historyRowsImported: number; savedLibraryAvailable: boolean; savedTrackCount: number; uniqueTracks: number; uniqueArtists: number; uniqueAlbums: number; tracksWithSpotifyIds: number; tracksMappedToReccoBeats: number; tracksWithFeatures: number; tracksMissingFeatures: number; reccoBeatsNotFound: number; preferenceModelVersion: string; candidateProvider: string; recommendationAlgorithmVersion: string }
-export type ModelValidation = { trackCount: number; positiveExamples: number; negativeExamples: number; meanPositiveScore: number; meanNegativeScore: number; pairwiseAccuracy: number; modelVersion: string; validationMethod: string }
-export type ScoreResult = { spotifyTrackId: string; track: string; artists: string[]; predictedLikeScore: number; confidence: string; components: { featureMatch: number; artistTasteMatch: number; recentTasteMatch: number; lifetimeTasteMatch: number; historicalBehaviorMatch: number; savedTrackMatch: number; explorationAdjustment: number }; explanations: string[]; knownRecording: boolean; historicalEvents: number }
+export type ModelValidation = { trackCount: number; positiveExamples: number; negativeExamples: number; meanPositiveScore: number | null; meanNegativeScore: number | null; pairwiseAccuracy: number | null; modelVersion: string; validationMethod: string }
+export type ScoreResult = { spotifyTrackId: string; track: string; artists: string[]; predictedLikeScore: number; confidence: string; components: { featureMatch: number; artistTasteMatch: number; recentTasteMatch: number; lifetimeTasteMatch: number; historicalBehaviorMatch: number; savedTrackMatch: number; explorationAdjustment: number }; explanations: string[]; knownRecording: boolean; historicalEvents: number; availableSignals?: string[] }
 export type Recommendation = { rank: number; track: string; artist: string; artworkUrl: string | null; predictedLikeScore: number; confidence: string; why: string; historicalStatus: string; spotifyUrl: string | null; band: string; candidateId: number; album: string | null; feedback: string | null }
 export type Discover = { savedLibraryAvailable: boolean; notSavedMessage: string | null; notSaved: Recommendation[]; neverHeard: Recommendation[] }
 
@@ -32,11 +32,12 @@ async function demoRequest<T>(path: string, init?: RequestInit): Promise<T> {
   else if (route === '/api/analytics/artist-evolution') result = data.evolutionFor(url.searchParams.get('grain') ?? 'year')
   else if (route === '/api/diagnostics') result = data.demoDiagnostics
   else if (route === '/api/model/rebuild') result = data.demoValidation
-  else if (route === '/api/scorer') result = data.demoScore
+  else if (route === '/api/scorer') throw new Error('Song scoring is unavailable in the analytics demo: no audio-feature model has been fitted.')
   else if (route === '/api/story') result = data.storyFor(url.searchParams.get('year') ? Number(url.searchParams.get('year')) : null)
   else if (route === '/api/discover' || route === '/api/discover/generate') result = data.demoDiscover
-  else if (route === '/api/evaluation' || route === '/api/evaluation/start' || route === '/api/evaluation/next') result = data.demoEvaluation
-  else if (route === '/api/feedback' && init?.method === 'POST') result = data.applyDemoFeedback(JSON.parse(String(init.body ?? '{}')))
+  else if (route === '/api/evaluation') result = data.demoEvaluation
+  else if (route === '/api/evaluation/start' || route === '/api/evaluation/next') throw new Error('There is no model-generated candidate cohort to evaluate in the analytics demo.')
+  else if (route === '/api/feedback' && init?.method === 'POST') result = data.applyDemoFeedback()
   else throw new Error(`No prepared demo response exists for ${route}.`)
   await Promise.resolve()
   return structuredClone(result) as T

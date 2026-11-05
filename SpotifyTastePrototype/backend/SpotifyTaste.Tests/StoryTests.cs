@@ -7,6 +7,15 @@ namespace SpotifyTaste.Tests;
 public sealed class StoryTests
 {
     [Fact]
+    public void Returning_favorite_requires_recurrence_in_multiple_calendar_years()
+    {
+        var rows = Enumerable.Range(1, 3).Select(i => new StoryEvent(1, At(2025, 1, i), 190000, false)).ToArray();
+        Assert.DoesNotContain(new StoryBuilder(rows, [Track(1)], [], new()).Build(2025).Facts, f => f.Title == "A returning favorite");
+        var spanning = rows.Append(new StoryEvent(1, At(2024), 190000, false)).ToArray();
+        Assert.Contains(new StoryBuilder(spanning, [Track(1)], [], new()).Build(2025).Facts, f => f.Title == "A returning favorite");
+    }
+
+    [Fact]
     public void Story_links_use_the_actual_representative_release_and_correct_resource_kind()
     {
         var first = Track(1); var deluxe = Track(2, album: "Album Deluxe");

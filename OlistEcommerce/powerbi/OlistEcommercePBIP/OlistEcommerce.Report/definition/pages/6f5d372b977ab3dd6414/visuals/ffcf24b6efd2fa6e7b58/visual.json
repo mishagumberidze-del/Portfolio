@@ -27,7 +27,7 @@
                     }
                   },
                   {
-                    "value": "   Value, repeat behavior, RFM and retention",
+                    "value": "   Who purchases again within the observed window? Not lifetime retention.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "12px",

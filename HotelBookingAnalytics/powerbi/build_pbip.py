@@ -81,6 +81,14 @@ def table_tmdl(name,cols,filename):
         if col in ('BookingId','ArrivalDateKey','DateKey','YearMonthSort'):
             result.insert(len(result)-1,'\t\tisHidden')
         if col == 'YearMonth': result.insert(len(result)-1,'\t\tsortByColumn: YearMonthSort')
+        if col in ('LeadTimeBand', 'StayBand'):
+            result.insert(len(result)-1,f'\t\tsortByColumn: {col}Sort')
+    if name == 'Booking':
+        for col, expression in [
+            ('LeadTimeBandSort', 'SWITCH(TRUE(), Booking[LeadTime] < 30, 1, Booking[LeadTime] < 90, 2, Booking[LeadTime] < 180, 3, 4)'),
+            ('StayBandSort', 'SWITCH(TRUE(), Booking[StayNights] = 0, 0, Booking[StayNights] <= 3, 1, Booking[StayNights] <= 7, 2, 3)'),
+        ]:
+            result += [f'\tcolumn {col} = {expression}', '\t\tdataType: int64', '\t\tisHidden', '\t\tsummarizeBy: none', '']
     names=",".join(f'{{{{"Column{i+1}","{col}"}}}}' for i,(col,_) in enumerate(cols))
     mtypes={"int64":"Int64.Type","string":"type text","decimal":"type number","dateTime":"type date"}
     types=",".join(f'{{{{"{col}", {mtypes[typ]}}}}}' for col,typ in cols)
@@ -98,16 +106,15 @@ table_tmdl("Date",date_cols,"date.tsv")
 (MODEL/"definition/relationships.tmdl").write_text("relationship 'Booking to Date'\n\tfromColumn: Booking.ArrivalDateKey\n\ttoColumn: Date.DateKey\n",encoding="utf-8")
 measures=[
  ("Bookings","COUNTROWS(Booking)","#,##0"),
- ("Cancellations","CALCULATE([Bookings], Booking[IsCanceled] = 1)","#,##0"),
+ ("Cancellations","CALCULATE([Bookings], KEEPFILTERS(Booking[IsCanceled] = 1))","#,##0"),
  ("Cancellation Rate","DIVIDE([Cancellations], [Bookings])","0.0%"),
- ("Room Value Proxy","SUM(Booking[RealizedRoomValue])","#,##0.00"),
- ("Gross Room Value","SUM(Booking[GrossRoomValue])","#,##0.00"),
- ("Realized ADR","CALCULATE(AVERAGE(Booking[ADR]), Booking[IsCanceled] = 0, Booking[StayNights] > 0, Booking[ADR] >= 0)","#,##0.00"),
+ ("Room Value Proxy","CALCULATE(SUM(Booking[RealizedRoomValue]), KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0), KEEPFILTERS(Booking[ADR] >= 0))","#,##0.00"),
+ ("Stay-weighted ADR","DIVIDE([Room Value Proxy], CALCULATE(SUM(Booking[StayNights]), KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0), KEEPFILTERS(Booking[ADR] >= 0)))","#,##0.00"),
  ("Average Lead Time","AVERAGE(Booking[LeadTime])","#,##0.0"),
- ("Average Stay Nights","AVERAGE(Booking[StayNights])","#,##0.0"),
- ("Room Change Rate","DIVIDE(CALCULATE([Bookings], Booking[RoomChanged] = 1), [Bookings])","0.0%"),
- ("Repeat Guest Share","DIVIDE(CALCULATE([Bookings], Booking[IsRepeatedGuest] = 1), [Bookings])","0.0%"),
- ("Flagged Bookings","CALCULATE([Bookings], Booking[DataQualityFlag] = 1)","#,##0")]
+ ("Stayed Bookings","CALCULATE([Bookings], KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0))","#,##0"),
+ ("Stay Nights","CALCULATE(SUM(Booking[StayNights]), KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0))","#,##0"),
+ ("Average Stay Nights","CALCULATE(AVERAGE(Booking[StayNights]), KEEPFILTERS(Booking[IsCanceled] = 0), KEEPFILTERS(Booking[StayNights] > 0))","#,##0.0"),
+ ("Room Assignment Difference","DIVIDE(CALCULATE([Stayed Bookings], KEEPFILTERS(Booking[RoomChanged] = 1)), [Stayed Bookings])","0.0%")]
 body=["table 'KPI Measures'",""]
 for name,formula,fmt in measures:
     body += [f"\tmeasure '{name}' = {formula}",f"\t\tformatString: {fmt}",""]
@@ -147,8 +154,8 @@ C=lambda x:("Booking",x,"Column")
 D=lambda x:("Date",x,"Column")
 pages=[
  ("Executive Overview",[
-  ("card","kpis","Commercial snapshot",24,40,1872,180,{"Data":[M("Bookings"),M("Cancellation Rate"),M("Room Value Proxy"),M("Realized ADR")]}),
-  ("line","trend","Monthly booking volume",24,244,1200,365,{"Category":[D("YearMonth")],"Y":[M("Bookings")]}),
+  ("card","kpis","Commercial snapshot",24,40,1872,180,{"Data":[M("Bookings"),M("Cancellation Rate"),M("Room Value Proxy"),M("Stay-weighted ADR")]}),
+  ("line","trend","Bookings by arrival month",24,244,1200,365,{"Category":[D("YearMonth")],"Y":[M("Bookings")]}),
   ("bar","hotel","Bookings by hotel",1245,244,651,365,{"Category":[C("HotelName")],"Y":[M("Bookings")]}),
   ("table","segment","Market segment performance",24,632,1872,415,{"Values":[C("SegmentName"),M("Bookings"),M("Cancellations"),M("Cancellation Rate"),M("Room Value Proxy")]}),
  ]),
@@ -156,13 +163,13 @@ pages=[
   ("card","kpis","Cancellation indicators",24,40,1872,180,{"Data":[M("Bookings"),M("Cancellations"),M("Cancellation Rate"),M("Average Lead Time")]}),
   ("bar","lead","Cancellation rate by lead-time band",24,245,900,340,{"Category":[C("LeadTimeBand")],"Y":[M("Cancellation Rate")]}),
   ("bar","deposit","Cancellation rate by deposit type",946,245,950,340,{"Category":[C("DepositType")],"Y":[M("Cancellation Rate")]}),
-  ("table","channel","Channel and customer type",24,607,1872,440,{"Values":[C("DistributionChannel"),C("CustomerType"),M("Bookings"),M("Cancellation Rate"),M("Realized ADR")]}),
+  ("table","channel","Channel and customer type",24,607,1872,440,{"Values":[C("DistributionChannel"),C("CustomerType"),M("Bookings"),M("Cancellation Rate"),M("Stay-weighted ADR")]}),
  ]),
  ("Stay & Operations",[
-  ("card","kpis","Operational snapshot",24,40,1872,180,{"Data":[M("Average Stay Nights"),M("Room Change Rate"),M("Repeat Guest Share"),M("Flagged Bookings")]}),
-  ("bar","stay","Booking volume by stay length",24,245,900,340,{"Category":[C("StayBand")],"Y":[M("Bookings")]}),
-  ("bar","room","Room changes by reserved room type",946,245,950,340,{"Category":[C("ReservedRoomType")],"Y":[M("Room Change Rate")]}),
-  ("table","ops","Hotel and segment operations",24,607,1872,440,{"Values":[C("HotelName"),C("SegmentName"),M("Bookings"),M("Average Stay Nights"),M("Room Change Rate"),M("Realized ADR")]}),
+  ("card","kpis","Stay volume and room assignment",24,40,1872,180,{"Data":[M("Stayed Bookings"),M("Stay Nights"),M("Average Stay Nights"),M("Room Assignment Difference")]}),
+  ("bar","stay","Non-canceled bookings by stay length",24,245,900,340,{"Category":[C("StayBand")],"Y":[M("Stayed Bookings")],"Tooltips":[M("Stayed Bookings"),M("Average Stay Nights")]}),
+  ("bar","room","Assigned vs reserved room type — non-canceled stays",946,245,950,340,{"Category":[C("ReservedRoomType")],"Y":[M("Room Assignment Difference")],"Tooltips":[M("Stayed Bookings"),M("Room Assignment Difference")]}),
+  ("table","ops","Hotel and segment operations — non-canceled stays",24,607,1872,440,{"Values":[C("HotelName"),C("SegmentName"),M("Stayed Bookings"),M("Stay Nights"),M("Average Stay Nights"),M("Room Assignment Difference"),M("Stay-weighted ADR")]}),
  ])]
 page_ids=[]
 for display,visuals in pages:
@@ -178,7 +185,11 @@ for display,visuals in pages:
         elif kind in ('line','bar'): y,h=381,300
         elif kind=='table': y,h=705,315
         make_visual(pid,key,kind,title,x,y,w,h,fields)
-    note='Room value = ADR × non-canceled stay nights; source currency units. Comparisons are descriptive. Filters apply on this page.'
+    note={
+        'Executive Overview': 'Room value and ADR use non-canceled positive-night stays with ADR ≥ 0. ADR is weighted by stay nights; source currency units. Filters apply on this page.',
+        'Cancellation Patterns': 'Rates describe observed bookings, not causal effects. Deposit type may reflect later booking events. Lead time is in days. Filters apply on this page.',
+        'Stay & Operations': 'Stay volume follows arrival cohorts; it is not nightly occupancy. Canceled/zero-night bookings are excluded. Room difference is assigned vs reserved type, not a recorded move.',
+    }[display]
     make_visual(pid,'note','textbox',note,24,1033,1872,38,{})
 write_json(PAGES/"pages.json",{"$schema":"https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.1.0/schema.json","pageOrder":page_ids,"activePageName":page_ids[0]})
 print(f"Built {DEST} with {len(pages)} pages and {sum(len(x[1])+5 for x in pages)} visuals")

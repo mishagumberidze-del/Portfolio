@@ -79,7 +79,7 @@ public interface IDiagnosticsService
     Task<DiagnosticsDto> GetAsync(CancellationToken cancellationToken = default);
 }
 
-public sealed record PreferenceValidationDto(int TrackCount, int PositiveExamples, int NegativeExamples, double MeanPositiveScore, double MeanNegativeScore, double PairwiseAccuracy, string ModelVersion, string ValidationMethod);
+public sealed record PreferenceValidationDto(int TrackCount, int PositiveExamples, int NegativeExamples, double? MeanPositiveScore, double? MeanNegativeScore, double? PairwiseAccuracy, string ModelVersion, string ValidationMethod);
 
 public interface IPreferenceModelService
 {
@@ -115,7 +115,7 @@ public interface ICandidateTrackProvider
 }
 
 public sealed record ScoreComponents(double FeatureMatch, double ArtistTasteMatch, double RecentTasteMatch, double LifetimeTasteMatch, double HistoricalBehaviorMatch, double SavedTrackMatch, double ExplorationAdjustment);
-public sealed record ScoreResult(string SpotifyTrackId, string Track, IReadOnlyList<string> Artists, double PredictedLikeScore, string Confidence, ScoreComponents Components, IReadOnlyList<string> Explanations, bool KnownRecording = false, int HistoricalEvents = 0);
+public sealed record ScoreResult(string SpotifyTrackId, string Track, IReadOnlyList<string> Artists, double PredictedLikeScore, string Confidence, ScoreComponents Components, IReadOnlyList<string> Explanations, bool KnownRecording = false, int HistoricalEvents = 0, IReadOnlyList<string>? AvailableSignals = null);
 
 public interface ISongScoringService
 {

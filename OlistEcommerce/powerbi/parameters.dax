@@ -15,12 +15,3 @@ DATATABLE(
 // What-if style Top-N selector.
 Top N = GENERATESERIES(5, 50, 5)
 
-// Native field parameter version for visual axis/measure switching.
-Metric Fields = {
-    ("Sales / GMV", NAMEOF('Measures'[Sales / GMV]), 0),
-    ("Orders", NAMEOF('Measures'[Orders]), 1),
-    ("Customers", NAMEOF('Measures'[Customers]), 2),
-    ("Average Order Value", NAMEOF('Measures'[Average Order Value]), 3),
-    ("Units", NAMEOF('Measures'[Units]), 4)
-}
-

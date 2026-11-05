@@ -7,7 +7,19 @@
   for(const service of [0,1,2,3,4])for(const month of [0,...Array.from({length:12},(_,i)=>202401+i)]){
    change('service',service);change('month',month);
    const count=Number(document.getElementById('trips').textContent.replaceAll(',',''));
-   assert(count===expected[`${service}-${month}`],`Count mismatch at ${service}/${month}: ${count}`);
+   const e=expected[`${service}-${month}`];
+   assert(count===e.n,`Count mismatch at ${service}/${month}: ${count}`);
+   const close=(id,value)=>assert(Math.abs(parseFloat(document.getElementById(id).textContent)-value)<=.051,`${id} mismatch at ${service}/${month}`);
+   close('duration',e.ds/e.dn/60);
+   if(e.mn)close('distance',e.mi/e.mn);
+   assert(!document.getElementById('speed'),'Mixed-route speed should not be a headline performance metric');
+   assert(document.getElementById('trips-note').textContent.includes(Math.round(e.n/e.days).toLocaleString('en-US')),'Daily average mismatch');
+   const mondayTitle=document.querySelector('#heatmap rect title').textContent;
+   assert(mondayTitle.includes(`${e.mondays} dates`),'Weekday exposure mismatch');
+   assert(mondayTitle.includes(Math.round(e.monday0/e.mondays).toLocaleString('en-US')+' pickups per Mon'),'Normalized heatmap value mismatch');
+   const quality=document.querySelector('[data-check="invalid_distance"]');
+   if(service!==3)assert(quality.textContent.includes(e.distanceQualityDenominator.toLocaleString('en-US')),'Distance quality denominator includes unavailable services');
+   assert(!document.getElementById('quality').textContent.includes('duplicate'),'Unproven duplicate count displayed');
    assert(document.querySelectorAll('#map path').length===263,'Missing zone geometry');
    assert(document.querySelectorAll('#routes tbody tr').length===10,'Incomplete top-route ranking');
    assert(!document.body.innerText.includes('NaN'),'NaN displayed');
@@ -37,6 +49,9 @@
   const layout={viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,
    wide:[...document.querySelectorAll('header,main,section,.panel')].filter(node=>node.getBoundingClientRect().right>innerWidth+1).length};
   assert(layout.scrollWidth<=layout.viewport+1&&layout.wide===0,'Page overflow');
-  document.documentElement.setAttribute('data-qa-result',JSON.stringify({status:'pass',filter_combinations:results.length,geometry_features:263,download:true,layout}));
- }catch(error){document.documentElement.setAttribute('data-qa-result',JSON.stringify({status:'failed',error:error.message,completed:results.length}));}
+  const report={status:'pass',filter_combinations:results.length,geometry_features:263,download:true,metrics:true,calendar_exposure:true,quality_denominators:true,layout};
+  document.documentElement.setAttribute('data-qa-result',JSON.stringify(report));
+  document.title='PASS: NYC calculation and browser checks';
+  const output=document.createElement('pre');output.id='qa-result';output.textContent=JSON.stringify(report,null,2);document.body.prepend(output);
+ }catch(error){const report={status:'failed',error:error.message,completed:results.length};document.documentElement.setAttribute('data-qa-result',JSON.stringify(report));document.title='FAILED: NYC browser checks';const output=document.createElement('pre');output.id='qa-result';output.textContent=JSON.stringify(report,null,2);document.body.prepend(output);}
 })();

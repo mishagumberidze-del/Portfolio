@@ -4,7 +4,7 @@
 
 - `stg`: nine source-shaped tables populated by BCP after Python validation.
 - `core`: typed relational dimensions/facts with surrogate keys and enforced referential integrity.
-- `rpt`: reusable analytical views for orders, customer/RFM, cohort retention, products, delivery, sellers, and geography.
+- `rpt`: reusable analytical views for orders, customer/completed-purchase groups, cohort retention, products, delivery, sellers, and geography.
 - `etl`: batch/file audit, rejected-record metadata, and SQL data-quality results.
 
 ## Core tables

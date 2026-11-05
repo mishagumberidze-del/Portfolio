@@ -1,0 +1,201 @@
+{
+  "checked_at_utc": "2026-11-04T15:42:31.951681+00:00",
+  "scope": "Static TMDL/PBIR references, current exported TSV structure and relationship keys; expected values independently aggregated from current exports. Does not execute Power Query or DAX and does not verify rendered or interactive results.",
+  "result": "PASS",
+  "native_validation": {
+    "status": "not_verified",
+    "installed_app": "Microsoft Power BI Desktop 2.159.883.0 (Microsoft Store)",
+    "launch_result": "Computer Use app approval timed out",
+    "refresh_performed": false,
+    "dax_executed": false,
+    "new_report_screenshots": false,
+    "existing_screenshots": "Pre-audit previews; not proof of the current model."
+  },
+  "data_root": "C:\\Portfolio\\OlistEcommerce\\data\\processed\\powerbi",
+  "tables": 14,
+  "measures": 47,
+  "unique_report_field_references": 70,
+  "relationship_checks": [
+    {
+      "name": "Orders to Date",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    },
+    {
+      "name": "Orders to Customer",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    },
+    {
+      "name": "Orders to Customer Geography",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    },
+    {
+      "name": "Order Items to Orders",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    },
+    {
+      "name": "Order Items to Product",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    },
+    {
+      "name": "Order Items to Seller",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    },
+    {
+      "name": "Seller to Seller Geography",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    },
+    {
+      "name": "Payments to Orders",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    },
+    {
+      "name": "Reviews to Orders",
+      "target_key_unique": true,
+      "source_keys_resolved": true
+    }
+  ],
+  "pages": [
+    {
+      "name": "Executive Overview",
+      "visuals": 11,
+      "card_measures": [
+        "Average Order Value",
+        "Average Review Score",
+        "Cancellation Rate",
+        "On-Time Delivery %",
+        "Sales / GMV",
+        "Sales Orders"
+      ]
+    },
+    {
+      "name": "Customer Deep Dive",
+      "visuals": 10,
+      "card_measures": [
+        "Customer Purchase Frequency",
+        "GMV per Sales Customer",
+        "Repeat Customer Rate",
+        "Repeat Customers",
+        "Sales Customers"
+      ]
+    },
+    {
+      "name": "Product & Sales",
+      "visuals": 8,
+      "card_measures": [
+        "Average Selling Price",
+        "Customers in Item Context",
+        "Product Orders",
+        "Sales / GMV",
+        "Units"
+      ]
+    },
+    {
+      "name": "Delivery & Experience",
+      "visuals": 10,
+      "card_measures": [
+        "Average Delay Days",
+        "Average Delivery Days",
+        "Average Review Score",
+        "Freight Cost",
+        "Freight Ratio",
+        "On-Time Delivery %"
+      ]
+    },
+    {
+      "name": "Seller & Geography",
+      "visuals": 8,
+      "card_measures": [
+        "Active Sellers",
+        "Average Review Score in Item Context",
+        "On-Time Delivery % in Item Context",
+        "Sales / GMV",
+        "Seller Average Order Value",
+        "Seller Orders"
+      ]
+    },
+    {
+      "name": "Customer Detail",
+      "visuals": 7,
+      "card_measures": [
+        "Average Order Value",
+        "Average Review Score",
+        "Customer Purchase Frequency",
+        "Orders",
+        "Sales / GMV"
+      ]
+    }
+  ],
+  "exports": {
+    "cohort_retention.tsv": {
+      "rows": 254,
+      "columns": 6,
+      "sha256": "79c958095fac25225774cd21101009df9d3041f3f751832c27398b11acd6c80e"
+    },
+    "geography.tsv": {
+      "rows": 19177,
+      "columns": 7,
+      "sha256": "0741a5cfea48092315c1d2c22cb7f1a59391e8b3d449049168e2b7e7c1d7823c"
+    },
+    "customer.tsv": {
+      "rows": 96096,
+      "columns": 19,
+      "sha256": "fa126581222fd0a675f43a556302e375e7424730ecd96f9ff8cd11e30a0679fa"
+    },
+    "date.tsv": {
+      "rows": 800,
+      "columns": 13,
+      "sha256": "3fe83153225ac891681c123e1255e02dcbabb4c064a186fa3030c70bed85cd72"
+    },
+    "order_item.tsv": {
+      "rows": 112650,
+      "columns": 10,
+      "sha256": "1a601c0ddb31337fe0f2891245f5945b394c81ac3e8c84bc1deb2093116817f4"
+    },
+    "order.tsv": {
+      "rows": 99441,
+      "columns": 25,
+      "sha256": "0149a3b30f5af3f102d932c93e65e3af5880c27d9f86c8288d910ac3bd6ab753"
+    },
+    "payment.tsv": {
+      "rows": 103886,
+      "columns": 6,
+      "sha256": "9ac18540a142b71af2461cb250b753ff75244adfda385015d25246a7afd0015c"
+    },
+    "product.tsv": {
+      "rows": 32951,
+      "columns": 11,
+      "sha256": "f94c3a5ad6e7d1cafe383682215dec1d9691239e1e34dcdbe698704f01ca8659"
+    },
+    "review.tsv": {
+      "rows": 99224,
+      "columns": 7,
+      "sha256": "921ba1d1593442c7ef80b0f46ee1ec3382261e164dfe1c6f3cc22de241f6f010"
+    },
+    "seller.tsv": {
+      "rows": 3095,
+      "columns": 3,
+      "sha256": "9c0ba3b77bf7019d0b8887e0332e941edf91072e1a9545b85f5cd38d1707924c"
+    }
+  },
+  "expected_values_from_exports": {
+    "all": {
+      "orders": 99441,
+      "sales_orders": 98207,
+      "gmv_brl": "13494400.74",
+      "average_order_value_brl": "137.41",
+      "canceled_orders": 625,
+      "evaluable_delivered_orders": 96470,
+      "on_time_orders": 89936,
+      "review_records": 99224,
+      "average_review_score": "4.09"
+    }
+  }
+}

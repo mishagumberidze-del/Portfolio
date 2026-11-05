@@ -1,166 +1,146 @@
-import type { BehaviorAnalytics, Diagnostics, Discover, ModelValidation, Overview, RankEvolution, Recommendation, ScoreResult, TimelinePoint, TopAlbum, TopArtist, TopTrack } from './api'
-import type { Story } from './story-api'
+import type { BehaviorAnalytics, Diagnostics, Discover, ModelValidation, Overview, RankEvolution, TimelinePoint, TopAlbum, TopArtist, TopTrack } from './api'
+import type { Ranking, SoundAxis, Story } from './story-api'
 
-// Deliberately synthetic portfolio data. Names, identifiers and aggregates do not
-// come from the owner's Spotify export; only the response shapes mirror the API.
+// Fictional event fixture, never personal data. Every displayed count, duration,
+// rank and rate is aggregated from these events; no independent scaling factors.
 const artistNames = ['Neon Harbor', 'Paper Satellites', 'Mira Vale', 'Northbound Static', 'Juniper Room', 'Low Tide Cinema', 'Glass Atlas', 'Afterlight', 'Soft Geometry', 'Night Orchard', 'Echo District', 'Small Hours']
 const trackNames = ['Signals at Dawn', 'Borrowed Light', 'Parallel Lines', 'Slow Comet', 'Every Open Window', 'City in Reverse', 'Halfway Home', 'Blue Frequency', 'Paper Moons', 'Quiet Engines', 'Sunday Static', 'Last Train North']
-const albumNames = ['Weather Systems', 'Rooms in Motion', 'A Map of Maybe', 'Night Transit', 'The Long Way Round', 'Soft Focus', 'Signal Gardens', 'Open Late']
-const years = [2022, 2023, 2024, 2025, 2026]
-const yearMinutes = [18_420, 22_780, 27_340, 34_810, 25_960]
-
-export const demoTimeline: TimelinePoint[] = years.flatMap((year, yi) => Array.from({ length: 12 }, (_, month) => ({
-  period: `${year}-${String(month + 1).padStart(2, '0')}`,
-  listeningMinutes: Math.round(yearMinutes[yi] / 12 * (.7 + ((month * 7 + yi * 3) % 8) / 10)),
-  uniqueArtists: 120 + yi * 28 + (month * 11) % 55,
-  newArtists: Math.max(8, 42 - yi * 5 + (month * 3) % 13),
-  newTracks: Math.max(24, 132 - yi * 14 + (month * 17) % 48),
-}))).filter(point => point.period <= '2026-08')
-
-export const demoYearly: TimelinePoint[] = years.map((year, index) => ({
-  period: String(year), listeningMinutes: yearMinutes[index], uniqueArtists: 640 + index * 155,
-  newArtists: 510 - index * 62, newTracks: 1_480 - index * 145,
+const albumNames = ['Weather Systems', 'Rooms in Motion', 'A Map of Maybe', 'Night Transit', 'The Long Way Round', 'Soft Focus', 'Signal Gardens', 'Open Late', 'Small Worlds', 'After the Rain', 'Late Letters', 'Morning Lines']
+export const DEMO_AS_OF = '2026-08-29T00:00:00Z' // Exclusive end; last complete fixture date is August 28.
+export const demoCatalog = Array.from({ length: 24 }, (_, i) => ({
+  id: i + 1, name: trackNames[i % 12] + (i >= 12 ? ' II' : ''), artistId: Math.floor(i / 2) + 1,
+  albumId: Math.floor(i / 2) + 1, durationMs: i % 7 === 0 ? null : (160 + i % 8 * 20) * 1000, saved: i % 4 === 0,
 }))
-
-const topArtists: TopArtist[] = artistNames.map((artist, index) => ({
-  artistId: index + 1, artist, listeningMinutes: 5_840 - index * 325, qualifiedPlays: 1_430 - index * 91,
-  rawPlays: 1_610 - index * 96, uniqueTracks: 36 - index, skipRate: Number((8 + index * .9).toFixed(1)),
-  firstListenUtc: `${2022 + index % 3}-0${index % 8 + 1}-12T10:00:00Z`, lastListenUtc: '2026-08-24T18:32:00Z',
-}))
-
-const topTracks: TopTrack[] = trackNames.map((track, index) => ({
-  trackId: index + 1, track, artist: artistNames[index], album: albumNames[index % albumNames.length],
-  rawEvents: 286 - index * 13, qualifiedPlays: 248 - index * 12, listeningMinutes: 1_090 - index * 55,
-  averageListenSeconds: 228 - index * 3, skipRate: Number((4 + index * .8).toFixed(1)),
-  firstListenUtc: `${2022 + index % 3}-04-12T10:00:00Z`, lastListenUtc: '2026-08-26T21:10:00Z', saved: index < 8,
-}))
-
-const topAlbums: TopAlbum[] = albumNames.map((album, index) => ({
-  albumId: index + 1, album, artist: artistNames[index], listeningMinutes: 3_420 - index * 286,
-  qualifiedPlays: 790 - index * 58, uniqueTracks: 14 - index % 5,
-}))
-
-const rangeScale: Record<string, number> = { lifetime: 1, last365: .27, last90: .075, last30: .026, 'year:2026': .205, 'year:2025': .275, 'year:2024': .216, 'year:2023': .18, 'year:2022': .145, 'year:2021': 0 }
-const scaleFor = (range: string) => rangeScale[range] ?? 1
-const scaled = (value: number, factor: number) => Math.round(value * factor)
-
+type Event = { trackId: number; at: string; ms: number; skipped: boolean }
+export const demoEvents: Event[] = []
+const dayMs = 86_400_000
+for (let day = 0, at = Date.UTC(2022, 0, 3); at < Date.parse(DEMO_AS_OF); day++, at += dayMs) {
+  if (day % 4 === 0) continue
+  const era = new Date(at).getUTCFullYear() - 2022
+  const availableTracks = Math.min(24, 8 + era * 4)
+  for (let slot = 0; slot < 3 + day % 5; slot++) {
+    const track = demoCatalog[(day * 7 + slot * 3 + era) % availableTracks]
+    const duration = track.durationMs ?? 220_000
+    const ms = [5000, 20000, 60000, Math.round(duration * .9), duration][(day + slot) % 5]
+    demoEvents.push({ trackId: track.id, at: new Date(at + (8 + slot * 2) * 3_600_000).toISOString(), ms, skipped: (day + slot) % 11 === 0 })
+  }
+}
+const trackOf = (e: Event) => demoCatalog[e.trackId - 1]
+const sumMs = (rows: Event[]) => rows.reduce((n, e) => n + e.ms, 0)
+const unique = <T,>(values: T[]) => [...new Set(values)]
+const round = (n: number) => Math.round(n * 10) / 10
+const percent = (n: number, d: number) => d ? round(100 * n / d) : 0
+const qualified = (e: Event) => e.ms >= 30_000 || (trackOf(e).durationMs !== null && e.ms >= trackOf(e).durationMs! * .5)
+const skipped = (e: Event) => e.skipped || e.ms < 10_000
+const first = (rows: Event[]) => rows.length ? rows[0].at : null
+const last = (rows: Event[]) => rows.length ? rows[rows.length - 1].at : null
+function groups<K>(rows: Event[], key: (e: Event) => K) {
+  const result = new Map<K, Event[]>()
+  for (const row of rows) { const k = key(row); const values = result.get(k) ?? []; values.push(row); result.set(k, values) }
+  return result
+}
+const ranked = (rows: Event[], key: (e: Event) => number) => [...groups(rows, key)].sort((a, b) => sumMs(b[1]) - sumMs(a[1]) || b[1].filter(qualified).length - a[1].filter(qualified).length || a[0] - b[0])
+const limitRows = <T,>(rows: T[], limit: number) => rows.slice(0, Math.max(1, Math.min(500, Math.trunc(limit) || 20)))
+export function eventsFor(range: string): Event[] {
+  if (range === 'lifetime') return demoEvents
+  const year = /^year:(\d{4})$/.exec(range)?.[1]
+  if (year) return demoEvents.filter(e => e.at.startsWith(year + '-'))
+  const days = /^last(30|90|365)$/.exec(range)?.[1]
+  if (!days) return []
+  const start = Date.parse(DEMO_AS_OF) - Number(days) * dayMs
+  return demoEvents.filter(e => Date.parse(e.at) >= start && Date.parse(e.at) < Date.parse(DEMO_AS_OF))
+}
 export function overviewFor(range: string): Overview {
-  const factor = scaleFor(range)
+  const rows = eventsFor(range), ms = sumMs(rows)
   return {
-    totalListeningMinutes: scaled(129_310, factor), totalListeningHours: scaled(2_155, factor), totalListeningDays: scaled(1_018, Math.min(1, factor * 1.7)),
-    listeningEvents: scaled(46_280, factor), qualifiedPlays: scaled(34_940, factor), uniqueTracks: scaled(8_640, Math.sqrt(factor)),
-    uniqueArtists: scaled(2_180, Math.sqrt(factor)), uniqueAlbums: scaled(5_420, Math.sqrt(factor)), savedLibraryAvailable: true,
-    savedTracks: 612, earliestListenUtc: factor ? '2022-01-03T08:15:00Z' : null, latestListenUtc: factor ? '2026-08-28T21:42:00Z' : null,
+    totalListeningMinutes: Math.floor(ms / 60_000), totalListeningHours: round(ms / 3_600_000), totalListeningDays: unique(rows.map(e => e.at.slice(0, 10))).length,
+    listeningEvents: rows.length, qualifiedPlays: rows.filter(qualified).length, uniqueTracks: unique(rows.map(e => e.trackId)).length,
+    uniqueArtists: unique(rows.map(e => trackOf(e).artistId)).length, uniqueAlbums: unique(rows.map(e => trackOf(e).albumId)).length,
+    savedLibraryAvailable: true, savedTracks: demoCatalog.filter(t => t.saved).length, earliestListenUtc: first(rows), latestListenUtc: last(rows),
   }
 }
-
-export function behaviorFor(range: string): BehaviorAnalytics {
-  const factor = scaleFor(range)
-  return { listeningEvents: scaled(46_280, factor), skipRate: 11.8, shortListenRate: 9.4, repeatRate: 70.4, averageListenPercentage: 81.2, completionRateEstimate: 67.6, eventsWithKnownDuration: scaled(39_740, factor) }
+function behavior(rows: Event[]): BehaviorAnalytics {
+  const known = rows.filter(e => trackOf(e).durationMs !== null)
+  return { listeningEvents: rows.length, skipRate: percent(rows.filter(skipped).length, rows.length), shortListenRate: percent(rows.filter(e => e.ms < 10_000).length, rows.length),
+    repeatRate: percent(rows.length - unique(rows.map(e => e.trackId)).length, rows.length), eventsWithKnownDuration: known.length,
+    averageListenPercentage: known.length ? round(known.reduce((n, e) => n + Math.min(125, 100 * e.ms / trackOf(e).durationMs!), 0) / known.length) : null,
+    completionRateEstimate: known.length ? percent(known.filter(e => e.ms >= trackOf(e).durationMs! * .9).length, known.length) : null }
 }
-
-export const tracksFor = (range: string, limit: number) => topTracks.slice(0, limit).map((row, i) => ({ ...row, listeningMinutes: scaled(row.listeningMinutes, Math.max(.08, scaleFor(range))), rawEvents: scaled(row.rawEvents, Math.max(.08, scaleFor(range))), qualifiedPlays: scaled(row.qualifiedPlays, Math.max(.08, scaleFor(range))), lastListenUtc: `2026-08-${String(28 - i).padStart(2, '0')}T18:00:00Z` }))
-export const artistsFor = (range: string, limit: number) => topArtists.slice(0, limit).map((row, i) => ({ ...row, listeningMinutes: scaled(row.listeningMinutes, Math.max(.08, scaleFor(range))), qualifiedPlays: scaled(row.qualifiedPlays, Math.max(.08, scaleFor(range))), rawPlays: scaled(row.rawPlays, Math.max(.08, scaleFor(range))), artistId: range === 'last90' && i < 3 ? [3, 1, 6][i] : row.artistId, artist: range === 'last90' && i < 3 ? [artistNames[2], artistNames[0], artistNames[5]][i] : row.artist }))
-export const albumsFor = (range: string, limit: number) => topAlbums.slice(0, limit).map(row => ({ ...row, listeningMinutes: scaled(row.listeningMinutes, Math.max(.08, scaleFor(range))), qualifiedPlays: scaled(row.qualifiedPlays, Math.max(.08, scaleFor(range))) }))
-
+export const behaviorFor = (range: string) => behavior(eventsFor(range))
+export function tracksFor(range: string, limit: number): TopTrack[] {
+  return limitRows(ranked(eventsFor(range), e => e.trackId).map(([id, rows]) => {
+    const track = demoCatalog[id - 1]
+    return { trackId: id, track: track.name, artist: artistNames[track.artistId - 1], album: albumNames[track.albumId - 1],
+      rawEvents: rows.length, qualifiedPlays: rows.filter(qualified).length, listeningMinutes: round(sumMs(rows) / 60_000), averageListenSeconds: round(sumMs(rows) / rows.length / 1000),
+      skipRate: percent(rows.filter(skipped).length, rows.length), firstListenUtc: first(rows)!, lastListenUtc: last(rows)!, saved: track.saved }
+  }), limit)
+}
+export function artistsFor(range: string, limit: number): TopArtist[] {
+  return limitRows(ranked(eventsFor(range), e => trackOf(e).artistId).map(([id, rows]) => ({ artistId: id, artist: artistNames[id - 1], listeningMinutes: round(sumMs(rows) / 60_000),
+    qualifiedPlays: rows.filter(qualified).length, rawPlays: rows.length, uniqueTracks: unique(rows.map(e => e.trackId)).length,
+    skipRate: percent(rows.filter(skipped).length, rows.length), firstListenUtc: first(rows)!, lastListenUtc: last(rows)! })), limit)
+}
+export function albumsFor(range: string, limit: number): TopAlbum[] {
+  return limitRows(ranked(eventsFor(range), e => trackOf(e).albumId).map(([id, rows]) => ({ albumId: id, album: albumNames[id - 1], artist: artistNames[id - 1],
+    listeningMinutes: round(sumMs(rows) / 60_000), qualifiedPlays: rows.filter(qualified).length, uniqueTracks: unique(rows.map(e => e.trackId)).length })), limit)
+}
+const firstTrack = new Map([...groups(demoEvents, e => e.trackId)].map(([id, rows]) => [id, rows[0].at]))
+const firstArtist = new Map([...groups(demoEvents, e => trackOf(e).artistId)].map(([id, rows]) => [id, rows[0].at]))
+function timeline(size: number): TimelinePoint[] {
+  return [...groups(demoEvents, e => e.at.slice(0, size))].map(([period, rows]) => ({ period, listeningMinutes: round(sumMs(rows) / 60_000),
+    uniqueArtists: unique(rows.map(e => trackOf(e).artistId)).length,
+    newArtists: unique(rows.map(e => trackOf(e).artistId)).filter(id => firstArtist.get(id)!.startsWith(period)).length,
+    newTracks: unique(rows.map(e => e.trackId)).filter(id => firstTrack.get(id)!.startsWith(period)).length }))
+}
+export const demoTimeline = timeline(7)
+export const demoYearly = timeline(4)
 export function evolutionFor(grain: string): RankEvolution[] {
-  const periods = grain === 'month' ? demoTimeline.slice(-8).map(x => x.period) : grain === 'quarter' ? ['2025 Q1', '2025 Q2', '2025 Q3', '2025 Q4', '2026 Q1', '2026 Q2'] : years.map(String)
-  return periods.flatMap((period, pi) => artistNames.slice(0, 6).map((artist, ai) => ({
-    period, artistId: ai + 1, artist, rank: (ai + pi * (ai % 2 ? 2 : 1)) % 6 + 1,
-    listeningMinutes: 980 - ai * 90 + pi * 35, qualifiedPlays: 220 - ai * 14 + pi * 5, artworkUrl: null,
-  })))
+  const period = (e: Event) => grain === 'year' ? e.at.slice(0, 4) : grain === 'quarter' ? `${e.at.slice(0, 4)}-Q${Math.ceil(Number(e.at.slice(5, 7)) / 3)}` : e.at.slice(0, 7)
+  return [...groups(demoEvents, period)].flatMap(([period, rows]) => ranked(rows, e => trackOf(e).artistId).map(([id, entries], i) => ({ period, artistId: id, artist: artistNames[id - 1],
+    rank: i + 1, listeningMinutes: round(sumMs(entries) / 60_000), qualifiedPlays: entries.filter(qualified).length, artworkUrl: null })))
 }
-
-export const demoDiagnostics: Diagnostics = {
-  databaseProvider: 'Static demo snapshot', databaseName: 'No runtime database', spotifyDataFiles: ['Sanitized synthetic portfolio dataset'],
-  historyRowsImported: 46_280, savedLibraryAvailable: true, savedTrackCount: 612, uniqueTracks: 8_640, uniqueArtists: 2_180,
-  uniqueAlbums: 5_420, tracksWithSpotifyIds: 9_050, tracksMappedToReccoBeats: 7_820, tracksWithFeatures: 7_814,
-  tracksMissingFeatures: 1_236, reccoBeatsNotFound: 1_236, preferenceModelVersion: 'preference-v1.1-saved-recordings',
-  candidateProvider: 'Prepared candidate snapshot', recommendationAlgorithmVersion: 'recommendation-v4-feedback',
+const unavailableAxes = (): SoundAxis[] => ['Energy', 'Danceability', 'Acousticness', 'Instrumentalness', 'Valence', 'Tempo'].map(name => ({ name, value: null, unit: name === 'Tempo' ? 'BPM' : '/100', coveragePercent: 0, personalPercentile: null }))
+function storyRankings(rows: Event[], kind: 'song' | 'artist' | 'album', previous: Event[]): Ranking[] {
+  const key = (e: Event) => kind === 'song' ? e.trackId : kind === 'artist' ? trackOf(e).artistId : trackOf(e).albumId
+  const prior = ranked(previous, key).map(([id]) => id)
+  return ranked(rows, key).slice(0, 5).map(([id, entries]) => {
+    const track = trackOf(entries[0]); const previousIndex = prior.indexOf(id)
+    const peakMonth = [...groups(entries, e => e.at.slice(0, 7))].sort((a, b) => sumMs(b[1]) - sumMs(a[1]) || a[0].localeCompare(b[0]))[0][0]
+    return { id, name: kind === 'song' ? track.name : kind === 'artist' ? artistNames[id - 1] : albumNames[id - 1], artist: kind === 'artist' ? null : artistNames[track.artistId - 1],
+      album: kind === 'song' ? albumNames[track.albumId - 1] : null, artworkUrl: null, totalMs: sumMs(entries), events: entries.length,
+      qualifiedPlays: entries.filter(qualified).length, firstListenUtc: kind === 'song' ? firstTrack.get(id)! : first(entries)!, peakMonth,
+      previousRank: previousIndex < 0 ? null : previousIndex + 1, spotifyUrl: null }
+  })
 }
-
-export const demoValidation: ModelValidation = { trackCount: 9_050, positiveExamples: 1_954, negativeExamples: 1_954, meanPositiveScore: 5.23, meanNegativeScore: 5.08, pairwiseAccuracy: .592, modelVersion: 'preference-v1.1-saved-recordings', validationMethod: 'Prepared recording-held-out demonstration' }
-
-export const demoScore: ScoreResult = {
-  spotifyTrackId: 'demo-track', track: 'Signals at Dawn (demo example)', artists: ['Neon Harbor'], predictedLikeScore: 8.4, confidence: 'High',
-  components: { featureMatch: 8.7, artistTasteMatch: 8.1, recentTasteMatch: 8.9, lifetimeTasteMatch: 8.3, historicalBehaviorMatch: 5, savedTrackMatch: 7.8, explorationAdjustment: .1 },
-  explanations: ['Strong audio-feature match with high-weight positive neighbors.', 'Recent listening is especially close to this candidate.', 'The prepared example has no direct listening history, so behavior is not blended in.'],
-  knownRecording: false, historicalEvents: 0,
-}
-
-const recommendations = trackNames.slice(0, 10).map((track, index) => ({
-  rank: index + 1, track, artist: artistNames[index], artworkUrl: null, predictedLikeScore: 8.9 - index * .24,
-  confidence: index < 5 ? 'High' : index < 8 ? 'Medium' : 'Exploratory', why: index < 5 ? 'Strong feature and lifetime-taste match, with support from recent listening.' : index < 8 ? 'Close to recent taste while adding some novelty.' : 'A wider feature-space pick included to keep discovery diverse.',
-  historicalStatus: 'Not present in prepared listening history', spotifyUrl: null, band: index < 5 ? 'HighConfidence' : index < 8 ? 'Discovery' : 'Wildcard', candidateId: index + 1, album: albumNames[index % albumNames.length], feedback: null,
-}))
-export const demoDiscover: Discover = { savedLibraryAvailable: true, notSavedMessage: null, neverHeard: recommendations, notSaved: recommendations.slice().reverse().map((x, i) => ({ ...x, rank: i + 1, candidateId: 101 + i, historicalStatus: 'Heard in demo history · not in prepared saved snapshot' })) }
-
-const soundAxes = (offset = 0) => [
-  { name: 'Energy', value: 67 + offset, unit: '/100', coveragePercent: 86, personalPercentile: 61 },
-  { name: 'Danceability', value: 59 + offset, unit: '/100', coveragePercent: 86, personalPercentile: 54 },
-  { name: 'Valence', value: 48 + offset, unit: '/100', coveragePercent: 85, personalPercentile: 46 },
-  { name: 'Acousticness', value: 31 - offset, unit: '/100', coveragePercent: 85, personalPercentile: 42 },
-  { name: 'Tempo', value: 121 + offset, unit: 'BPM', coveragePercent: 86, personalPercentile: 58 },
-]
-
 export function storyFor(selectedYear: number | null): Story {
-  const factor = selectedYear ? scaleFor(`year:${selectedYear}`) : 1
-  const rankings = trackNames.slice(0, 5).map((name, i) => ({ id: i + 1, name, artist: artistNames[i], album: albumNames[i], artworkUrl: null, totalMs: scaled((1_090 - i * 85) * 60_000, factor), events: scaled(286 - i * 18, factor), qualifiedPlays: scaled(248 - i * 16, factor), firstListenUtc: `${2022 + i % 2}-03-12T09:00:00Z`, peakMonth: 'October', previousRank: i < 4 ? i + 2 : null, spotifyUrl: null }))
-  const artistRankings = artistNames.slice(0, 5).map((name, i) => ({ ...rankings[i], id: 100 + i, name, artist: null, album: null }))
-  const albumRankings = albumNames.slice(0, 5).map((name, i) => ({ ...rankings[i], id: 200 + i, name, artist: artistNames[i], album: null }))
-  return {
-    year: selectedYear, availableYears: years, summary: { totalMs: scaled(7_758_600_000, factor), events: scaled(46_280, factor), qualifiedPlays: scaled(34_940, factor), activeDays: scaled(1_018, Math.min(1, factor * 1.7)), recordings: scaled(8_640, Math.sqrt(factor)), artists: scaled(2_180, Math.sqrt(factor)), albums: scaled(5_420, Math.sqrt(factor)), firstListenUtc: selectedYear ? `${selectedYear}-01-02T08:00:00Z` : '2022-01-03T08:15:00Z', lastListenUtc: selectedYear === 2026 || !selectedYear ? '2026-08-28T21:42:00Z' : `${selectedYear}-12-29T20:10:00Z` },
-    topArtists: artistRankings, topSongs: rankings, topAlbums: albumRankings,
-    journey: demoTimeline.filter(x => !selectedYear || x.period.startsWith(String(selectedYear))).map((x, i) => ({ period: x.period, totalMs: x.listeningMinutes * 60_000, definingArtist: artistNames[i % artistNames.length] })),
-    newRecordings: scaled(5_280, Math.sqrt(factor)), newArtists: scaled(1_620, Math.sqrt(factor)),
-    behavior: { skipRate: 12, repeatRate: 70, completionRateEstimate: 68, eventsWithKnownDuration: scaled(39_740, factor) },
-    soundProfile: soundAxes(), featureEvolution: years.map((year, i) => ({ year, axes: soundAxes(i - 2) })),
-    comparison: selectedYear && selectedYear > 2022 ? { year: selectedYear - 1, totalMs: scaled(7_758_600_000, scaleFor(`year:${selectedYear - 1}`)), changePercent: selectedYear === 2026 ? -25 : 14, note: selectedYear === 2026 ? 'The demo year ends in August, so it is partial.' : 'Listening grew in this prepared example.' } : null,
-    facts: [{ title: 'A long-running favorite', detail: 'Neon Harbor appears in every full demo year and remains near the top.' }, { title: 'A newer chapter', detail: 'Mira Vale rose quickly in the most recent 90-day snapshot.' }],
-    featureInsights: ['Energy rises gradually across the prepared annual profiles.', 'Acousticness moves in the opposite direction while coverage stays above the reporting threshold.'],
-  }
+  const rows = eventsFor(selectedYear === null ? 'lifetime' : `year:${selectedYear}`)
+  const previous = selectedYear === null ? [] : eventsFor(`year:${selectedYear - 1}`)
+  const previousMs = sumMs(previous), totalMs = sumMs(rows), stats = overviewFor(selectedYear === null ? 'lifetime' : `year:${selectedYear}`)
+  const months = [...groups(rows, e => e.at.slice(0, 7))].map(([period, entries]) => ({ period, totalMs: sumMs(entries), definingArtist: artistNames[ranked(entries, e => trackOf(e).artistId)[0][0] - 1] }))
+  const journey = selectedYear === null ? months : Array.from({ length: 12 }, (_, i) => {
+    const period = `${selectedYear}-${String(i + 1).padStart(2, '0')}`
+    return months.find(m => m.period === period) ?? { period, totalMs: 0, definingArtist: null }
+  })
+  const busiest = months.slice().sort((a, b) => b.totalMs - a.totalMs || a.period.localeCompare(b.period))[0]
+  return { year: selectedYear, availableYears: demoYearly.map(p => Number(p.period)).reverse(),
+    summary: { totalMs, events: rows.length, qualifiedPlays: stats.qualifiedPlays, activeDays: stats.totalListeningDays, recordings: stats.uniqueTracks, artists: stats.uniqueArtists, albums: stats.uniqueAlbums, firstListenUtc: first(rows), lastListenUtc: last(rows) },
+    topArtists: storyRankings(rows, 'artist', previous), topSongs: storyRankings(rows, 'song', previous), topAlbums: storyRankings(rows, 'album', previous), journey,
+    newRecordings: unique(rows.map(e => e.trackId)).filter(id => selectedYear === null || firstTrack.get(id)!.startsWith(String(selectedYear))).length,
+    newArtists: unique(rows.map(e => trackOf(e).artistId)).filter(id => selectedYear === null || firstArtist.get(id)!.startsWith(String(selectedYear))).length,
+    behavior: behavior(rows), soundProfile: unavailableAxes(), featureEvolution: demoYearly.map(p => ({ year: Number(p.period), axes: unavailableAxes() })), featureInsights: [],
+    comparison: previous.length && selectedYear !== null ? { year: selectedYear - 1, totalMs: previousMs, changePercent: previousMs ? round(100 * (totalMs - previousMs) / previousMs) : null, note: 'Fictional calendar-year event totals, not annualized. 2022 begins January 3 and 2026 ends August 28.' } : null,
+    facts: busiest ? [{ title: 'Busiest fixture month', detail: `${busiest.period} has the most listening in this selection: ${round(busiest.totalMs / 3_600_000)} hours. Its leading artist is ${busiest.definingArtist}.` }] : [] }
 }
-
-type DemoEvaluation = {
-  id: number; targetCount: number
-  items: { id: number; position: number; recommendation: Recommendation; rating: number | null; alreadyKnown: boolean }[]
-  metrics: { presented: number; rated: number; alreadyKnown: number; accepted: number; rejected: number; precisionAt10: number | null; averageRating: number | null; acceptanceRate: number | null; rejectionRate: number | null; bands: { band: string; rated: number; accepted: number; acceptanceRate: number | null }[] }
+export const demoDiagnostics: Diagnostics = {
+  databaseProvider: 'Fictional event fixture', databaseName: 'No runtime database', spotifyDataFiles: ['Deterministic fictional events through 2026-08-28'],
+  historyRowsImported: demoEvents.length, savedLibraryAvailable: true, savedTrackCount: demoCatalog.filter(t => t.saved).length,
+  uniqueTracks: firstTrack.size, uniqueArtists: firstArtist.size, uniqueAlbums: unique(demoCatalog.map(t => t.albumId)).length,
+  tracksWithSpotifyIds: 0, tracksMappedToReccoBeats: 0, tracksWithFeatures: 0, tracksMissingFeatures: demoCatalog.length,
+  reccoBeatsNotFound: 0, preferenceModelVersion: 'Not fitted in synthetic demo', candidateProvider: 'Unavailable in synthetic demo', recommendationAlgorithmVersion: 'Not run in synthetic demo',
 }
-
-export const demoEvaluation: DemoEvaluation = {
-  id: 1, targetCount: 50,
-  items: recommendations.slice(0, 10).map((recommendation, i) => ({ id: i + 1, position: i + 1, recommendation, rating: i < 4 ? [5, 4, 3, 2][i] : null, alreadyKnown: false })),
-  metrics: { presented: 10, rated: 4, alreadyKnown: 0, accepted: 2, rejected: 1, precisionAt10: null, averageRating: 3.5, acceptanceRate: .5, rejectionRate: .25, bands: [{ band: 'HighConfidence', rated: 4, accepted: 2, acceptanceRate: .5 }] },
-}
-
-type DemoFeedback = { candidateId: number; kind: string; rating?: number; evaluationItemId?: number }
-
-export function applyDemoFeedback(input: DemoFeedback) {
-  for (const item of [...demoDiscover.neverHeard, ...demoDiscover.notSaved]) {
-    if (item.candidateId === input.candidateId) item.feedback = input.kind
-  }
-  if (input.evaluationItemId) {
-    const evaluation = demoEvaluation
-    const item = evaluation.items.find(candidate => candidate.id === input.evaluationItemId)
-    if (item) {
-      item.alreadyKnown = input.kind === 'AlreadyKnow'
-      item.rating = input.kind === 'Rating' ? input.rating ?? null : null
-    }
-    const eligible = evaluation.items.filter(candidate => !candidate.alreadyKnown && candidate.rating !== null)
-    const ratings = eligible.map(candidate => candidate.rating as number)
-    const accepted = ratings.filter(rating => rating >= 4).length
-    const rejected = ratings.filter(rating => rating <= 2).length
-    evaluation.metrics = {
-      ...evaluation.metrics, rated: ratings.length, alreadyKnown: evaluation.items.filter(candidate => candidate.alreadyKnown).length,
-      accepted, rejected, averageRating: ratings.length ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length : null,
-      acceptanceRate: ratings.length ? accepted / ratings.length : null, rejectionRate: ratings.length ? rejected / ratings.length : null,
-      precisionAt10: eligible.length === 10 ? accepted / 10 : null,
-      bands: ['HighConfidence', 'Discovery', 'Wildcard'].map(band => {
-        const bandItems = eligible.filter(candidate => candidate.recommendation.band === band)
-        const bandAccepted = bandItems.filter(candidate => (candidate.rating ?? 0) >= 4).length
-        return { band, rated: bandItems.length, accepted: bandAccepted, acceptanceRate: bandItems.length ? bandAccepted / bandItems.length : null }
-      }).filter(band => band.rated),
-    }
-  }
-  return { saved: true, demoOnly: true }
-}
+// The fixture contains no measured audio features, fitted model or human ratings.
+// Returning unavailable evidence avoids inventing predictive accuracy or taste scores.
+export const demoValidation: ModelValidation = { trackCount: 0, positiveExamples: 0, negativeExamples: 0, meanPositiveScore: null, meanNegativeScore: null, pairwiseAccuracy: null, modelVersion: 'Not fitted', validationMethod: 'Unavailable: no model was fitted to the fictional fixture' }
+export const demoDiscover: Discover = { savedLibraryAvailable: true, notSavedMessage: 'Recommendations require a fitted model and a candidate provider; neither runs in this analytics demo.', neverHeard: [], notSaved: [] }
+export const demoEvaluation = null
+export function applyDemoFeedback() { throw new Error('No recommendation evaluation has been run in the analytics demo.') }

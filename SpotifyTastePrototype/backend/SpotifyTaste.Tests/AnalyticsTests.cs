@@ -8,6 +8,27 @@ namespace SpotifyTaste.Tests;
 public sealed class AnalyticsTests
 {
     [Fact]
+    public async Task Saved_recording_flag_includes_equivalent_unplayed_library_release_but_not_live_version()
+    {
+        await using var db = CreateContext();
+        var at = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var user = new User { SpotifyLibraryDataAvailable = true };
+        var artist = new Artist { Name = "Artist", NormalizedName = "ARTIST" };
+        var original = Track(new string('a', 22), "Song", new Album { Name = "Original" }, "USAAA2500001", 200000, artist, at);
+        var saved = Track(new string('b', 22), "Song", new Album { Name = "Original Deluxe" }, "USAAA2500001", 200000, artist, at);
+        var live = Track(new string('c', 22), "Song - Live", new Album { Name = "Live" }, "USAAA2500001", 200000, artist, at);
+        db.ListeningEvents.AddRange(Event(user, original, at, 'a'), Event(user, live, at, 'c'));
+        db.UserSavedTracks.Add(new UserSavedTrack { User = user, Track = saved });
+        await db.SaveChangesAsync();
+
+        var rows = await new AnalyticsService(db).GetTopTracksAsync(at, at.AddDays(1), 10);
+        Assert.True(rows.Single(x => x.Track == "Song").Saved);
+        Assert.False(rows.Single(x => x.Track == "Song - Live").Saved);
+        Assert.Equal(2, await db.ListeningEvents.CountAsync());
+        Assert.Single(db.UserSavedTracks);
+    }
+
+    [Fact]
     public async Task Artist_race_uses_stable_associated_artwork_without_altering_period_minutes()
     {
         await using var db = CreateContext();

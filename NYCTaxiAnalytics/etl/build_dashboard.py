@@ -87,7 +87,8 @@ payload={'tables':tables,'geometry':geometry,'mapHeight':height,'meta':{
     'version':manifest['pipeline_version'],'geometryCRS':'NAD83 / New York Long Island (US survey feet)'}}
 serialized=json.dumps(payload,separators=(',',':'),ensure_ascii=False).replace('<','\\u003c')
 template=(ROOT/'site/template.html').read_text(encoding='utf-8')
-html=template.replace('/*__APP_CSS__*/',(ROOT/'site/dashboard.css').read_text(encoding='utf-8-sig')).replace('/*__APP_JS__*/',(ROOT/'site/dashboard.js').read_text(encoding='utf-8-sig')).replace('__DASHBOARD_DATA__',serialized)
+javascript=(ROOT/'site/metrics.js').read_text(encoding='utf-8-sig')+'\n'+(ROOT/'site/dashboard.js').read_text(encoding='utf-8-sig')
+html=template.replace('/*__APP_CSS__*/',(ROOT/'site/dashboard.css').read_text(encoding='utf-8-sig')).replace('/*__APP_JS__*/',javascript).replace('__DASHBOARD_DATA__',serialized)
 (ROOT/'site/index.html').write_text(html,encoding='utf-8')
 summary={'source_rows':manifest['source_rows'],'in_year_rows':manifest['in_year_rows'],
     'excluded_outside_2024':manifest['source_rows']-manifest['in_year_rows'],

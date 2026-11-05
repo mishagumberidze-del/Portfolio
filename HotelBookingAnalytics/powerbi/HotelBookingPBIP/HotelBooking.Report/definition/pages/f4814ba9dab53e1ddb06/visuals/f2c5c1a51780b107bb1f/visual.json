@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Room value = ADR × non-canceled stay nights; source currency units. Comparisons are descriptive. Filters apply on this page.",
+                    "value": "Stay volume follows arrival cohorts; it is not nightly occupancy. Canceled/zero-night bookings are excluded. Room difference is assigned vs reserved type, not a recorded move.",
                     "textStyle": {
                       "fontFamily": "Segoe UI Semibold",
                       "fontSize": "15px",

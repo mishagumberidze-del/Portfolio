@@ -1,0 +1,29 @@
+{
+  "desktop": {
+    "headlines": [
+      "Gross positive line value\n10,666,703 CU\nPositive quantity × positive price",
+      "Returns & adjustments\n896,812 CU\n8.4% of gross; credits may relate to earlier sales",
+      "Net line value\n9,769,890 CU\nGross less returns/adjustments",
+      "90-day customer repeat rate\n47.7%\n1,607 of 3,370 eligible identified customers"
+    ],
+    "heatColors": 30,
+    "scrollWidth": 1425,
+    "viewport": 1440
+  },
+  "mobile": {
+    "charts": [
+      {
+        "content": 900,
+        "tabIndex": 0,
+        "width": 316
+      },
+      {
+        "content": 650,
+        "tabIndex": 0,
+        "width": 316
+      }
+    ],
+    "scrollWidth": 375,
+    "viewport": 390
+  }
+}

@@ -23,11 +23,11 @@
                       "Entity": "Customer"
                     }
                   },
-                  "Property": "RFM Segment"
+                  "Property": "Completed Purchase Group"
                 }
               },
-              "queryRef": "Customer.RFM Segment",
-              "nativeQueryRef": "RFM Segment"
+              "queryRef": "Customer.Completed Purchase Group",
+              "nativeQueryRef": "Completed Purchase Group"
             }
           ]
         },
@@ -87,11 +87,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Revenue per Customer"
+                  "Property": "GMV per Sales Customer"
                 }
               },
-              "queryRef": "KPI Measures.Revenue per Customer",
-              "nativeQueryRef": "Revenue per Customer"
+              "queryRef": "KPI Measures.GMV per Sales Customer",
+              "nativeQueryRef": "GMV per Sales Customer"
             }
           ]
         }
@@ -129,7 +129,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Revenue by RFM segment'"
+                  "Value": "'GMV by completed-purchase group'"
                 }
               }
             },

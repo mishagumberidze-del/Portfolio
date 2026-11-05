@@ -5,9 +5,30 @@
   "gross_value": 10666702.54,
   "return_adjustment_value": 896812.49,
   "net_value": 9769890.05,
-  "repeat_rate": 0.6558321807284463,
+  "ninety_day_repeat_rate": 0.4768545994065282,
+  "ninety_day_eligible_customers": 3370,
+  "ninety_day_repeat_customers": 1607,
   "identified_gross_share": 0.83544336848623,
   "top_decile_gross_share": 0.613749417760967,
+  "top_decile_customers": 434,
+  "customer_value_groups": [
+    {
+      "value_group": "Top gross-value decile",
+      "customers": 434,
+      "gross": 5469382.46,
+      "returns": 518038.21,
+      "net": 4951344.25
+    },
+    {
+      "value_group": "Other identified purchasers",
+      "customers": 3904,
+      "gross": 3442043.444,
+      "returns": 82892.64,
+      "net": 3359150.804
+    }
+  ],
+  "return_only_customers": 34,
+  "return_only_credit_value": 10411.24,
   "ninety_day_repeat": [
     {
       "quarter": "2010Q4",

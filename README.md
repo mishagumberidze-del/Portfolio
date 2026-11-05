@@ -10,20 +10,22 @@ A starter portfolio of five projects covering **SQL Server, Python, Power BI, st
 
 | Project | What to look for | Review the result | Explore the implementation |
 |---|---|---|---|
-| **Olist E-Commerce** | Customer identity, cohorts/RFM, delivery analysis, star schema and 59 DAX measures | [Power BI preview](assets/olist-overview.png) | [Project guide](OlistEcommerce/README.md) · [SQL analysis](OlistEcommerce/sql/06_portfolio_analysis.sql) |
-| **NYC in Motion** | Streaming 298.9M records into a compact SQL aggregate model; interactive zone mapping | [Live dashboard](https://mishagumberidze-del.github.io/Portfolio/NYCTaxiAnalytics/site/index.html) · [Preview](assets/taxi-dashboard.png) | [Project guide](NYCTaxiAnalytics/README.md) · [Pipeline](NYCTaxiAnalytics/etl/prepare_analytics.py) |
-| **Spotify Taste** | React/TypeScript UI, ASP.NET API, relational listening history, explainable preference scoring and discovery | [UI preview](assets/spotify-demo.png) · [Hosted read-only edition](https://spotify-taste-demo.pages.dev/) | [Application guide](SpotifyTastePrototype/README.md) · [Backend](SpotifyTastePrototype/backend) |
+| **Olist E-Commerce** | Customer identity, purchase cohorts, delivery analysis, star schema and 47 DAX measures | [Power BI preview](assets/olist-overview.png) | [Project guide](OlistEcommerce/README.md) · [SQL analysis](OlistEcommerce/sql/06_portfolio_analysis.sql) |
+| **NYC in Motion** | Streaming 298.9M records into a compact SQL aggregate model; interactive zone mapping | [Live dashboard](https://mishagumberidze-del.github.io/Portfolio/NYCTaxiAnalytics/site/index.html) · [Current preview](NYCTaxiAnalytics/site/qa/reviewed-desktop.jpg) | [Project guide](NYCTaxiAnalytics/README.md) · [Pipeline](NYCTaxiAnalytics/etl/prepare_analytics.py) |
+| **Spotify Taste** | React/TypeScript UI, ASP.NET API, relational listening history, explainable preference scoring and discovery | [Current synthetic overview](SpotifyTastePrototype/docs/qa/reviewed-demo-desktop.jpg) · [Hosted read-only edition](https://spotify-taste-demo.pages.dev/) | [Application guide](SpotifyTastePrototype/README.md) · [Backend](SpotifyTastePrototype/backend) |
 | **Hotel Booking Analytics** | Commercial KPIs, cancellation patterns, meaningful data-quality rules and a three-page Power BI report | [Power BI preview](assets/hotel-overview.png) | [Project guide](HotelBookingAnalytics/README.md) · [DAX/model](HotelBookingAnalytics/powerbi/HotelBookingPBIP/HotelBooking.SemanticModel/definition/tables) |
-| **Online Retail** | Customer concentration, RFM, cohorts, equal-follow-up repeat analysis and statistical interpretation | [Live report](https://mishagumberidze-del.github.io/Portfolio/OnlineRetailPython/report/online_retail_analysis.html) · [Preview](assets/retail-overview.png) | [Project guide](OnlineRetailPython/README.md) · [Python analysis](OnlineRetailPython/report/build_report.py) |
+| **Online Retail** | Customer concentration, purchase cohorts, fixed 90-day repeat analysis and statistical interpretation | [Live report](https://mishagumberidze-del.github.io/Portfolio/OnlineRetailPython/report/online_retail_analysis.html) · [Current preview](OnlineRetailPython/report/qa/reviewed-desktop.jpg) | [Project guide](OnlineRetailPython/README.md) · [Python analysis](OnlineRetailPython/report/build_report.py) |
 
-![Olist customer and e-commerce Power BI overview](assets/olist-overview.png)
+![Pre-audit Olist Power BI visual preview](assets/olist-overview.png)
+
+NYC, Retail and the Spotify synthetic overview have current browser-verified screenshots. Hotel and Olist screenshots are **pre-audit visual previews**. Current source definitions and generated reports incorporate the calculation review; older screenshots do not verify those changes.
 
 ## Skills demonstrated
 
 - **SQL and modeling:** staging/core/reporting layers, appropriate grains, PK/FK relationships, indexes, window functions, grouping sets, reconciliation, and load audit trails.
 - **Python and data engineering:** schema/type validation, repeatable imports, source hashing, bounded-memory Parquet processing, customer analysis, and generated analytical reports.
 - **Power BI:** semantic models, DAX measures, cohorts, customer drill-through, dynamic metrics, filtering and documented KPI definitions.
-- **Statistics and interpretation:** comparable follow-up windows, censoring, skewed-value distributions, model-based reference intervals, and explicit limits on causal conclusions.
+- **Statistics and interpretation:** comparable follow-up windows, censoring, skewed-value distributions, eligible populations, and explicit limits on causal conclusions.
 - **Application development:** React, TypeScript, Vite, ASP.NET Core, EF Core, testable domain/application layers, interactive charts and accessible geospatial interfaces.
 
 ## View or run the work
@@ -38,7 +40,7 @@ A starter portfolio of five projects covering **SQL Server, Python, Power BI, st
 
 These are portfolio studies and application prototypes, not claims of paid client work or measured commercial impact. Project READMEs explain the data grain, metrics, verification and limitations. Raw datasets, personal Spotify exports/snapshots, credentials, dependencies and local runtime caches are excluded.
 
-This is a starter release; reports and project material will be refined over time. See [REVIEW_GUIDE.md](REVIEW_GUIDE.md) for a quick code tour and [DATA_SOURCES.md](DATA_SOURCES.md) for attribution.
+The calculation and usefulness review records each metric’s purpose, population and limits. See [KPI_REVIEW.md](KPI_REVIEW.md), [CALCULATION_REVIEW.md](CALCULATION_REVIEW.md), [REVIEW_GUIDE.md](REVIEW_GUIDE.md) for a quick code tour and [DATA_SOURCES.md](DATA_SOURCES.md) for attribution.
 
 Website source is `index.html`, `assets/portfolio.css` and `assets/portfolio.js`. See [SITE.md](SITE.md) for free hosting and update instructions.
 

@@ -84,7 +84,7 @@ export default function App() {
           <span className="status-dot" aria-hidden="true" /> {connectionLabel}
         </div>
       </header>
-      {demoMode && <div className="notice demo-notice"><p><strong>Portfolio demo.</strong> You’re exploring prepared synthetic data. Scoring, discovery and ratings are illustrative and stay in this browser session.</p></div>}
+      {demoMode && <div className="notice demo-notice"><p><strong>Fictional listening history.</strong> Counts, rankings and rates come from one consistent set of example events through August 28, 2026. Audio profiles, predictions and evaluation results are unavailable because no features, fitted model or human ratings are supplied.</p></div>}
       {readOnlyMode && <div className="notice data-source-note"><p><strong>{snapshotMode ? 'Real listening history, shared by its owner.' : 'Your real Spotify data.'}</strong> {snapshotMode ? 'A fixed snapshot with interactive filters, charts and stories. This is the owner’s taste, not your Spotify account.' : 'Read-only SQL views.'} No sample songs or regenerated results.</p></div>}
       {sharedAccess && <div className="notice"><p>You’re exploring the owner’s taste, not your own Spotify account. Imports, ratings and model changes are local-only.</p><form method="post" action="/share/logout"><button className="secondary-button" type="submit">Lock shared view</button></form></div>}
       {view === 'story' && <MusicStory explore={() => setView('overview')} discover={() => setView('discover')} />}

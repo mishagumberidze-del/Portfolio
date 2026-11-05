@@ -1,4 +1,4 @@
-/// One row per customer_unique_id. Olist order-specific customer_id remains on Order.
+/// One row per customer_unique_id. Purchase history excludes canceled/unavailable orders; completed metrics use delivered orders.
 table Customer
 
 	column 'Customer Key'
@@ -57,16 +57,10 @@ table Customer
 		summarizeBy: sum
 		sourceColumn: PurchaseCount
 
-	column 'Purchase Frequency'
-		dataType: decimal
-		formatString: 0.00
-		summarizeBy: average
-		sourceColumn: CustomerPurchaseFrequency
-
 	column 'Avg Days Between Purchases'
 		dataType: decimal
 		formatString: 0.0
-		summarizeBy: average
+		summarizeBy: none
 		sourceColumn: AverageDaysBetweenPurchases
 
 	column 'Customer Type'
@@ -76,7 +70,7 @@ table Customer
 	column 'Recency Days'
 		dataType: int64
 		formatString: #,##0
-		summarizeBy: average
+		summarizeBy: none
 		sourceColumn: RecencyDays
 
 	column 'Completed Purchase Count'
@@ -100,50 +94,32 @@ table Customer
 	column 'Avg Delivery Days'
 		dataType: decimal
 		formatString: 0.0
-		summarizeBy: average
+		summarizeBy: none
 		sourceColumn: AverageDeliveryDays
 
 	column 'On-Time Rate'
 		dataType: decimal
 		formatString: 0.0%
-		summarizeBy: average
+		summarizeBy: none
 		sourceColumn: OnTimeRate
 
 	column 'Avg Review Score'
 		dataType: decimal
 		formatString: 0.00
-		summarizeBy: average
+		summarizeBy: none
 		sourceColumn: AverageReviewScore
 
-	column 'R Score'
-		dataType: int64
-		formatString: 0
-		summarizeBy: none
-		sourceColumn: RScore
-
-	column 'F Score'
-		dataType: int64
-		formatString: 0
-		summarizeBy: none
-		sourceColumn: FScore
-
-	column 'M Score'
-		dataType: int64
-		formatString: 0
-		summarizeBy: none
-		sourceColumn: MScore
-
-	column 'RFM Segment'
+	column 'Completed Purchase Group'
 		dataType: string
-		sourceColumn: RfmSegment
+		sourceColumn: CompletedPurchaseGroup
 
 	partition Customer = m
 		mode: import
 		source =
 			let
-				Source = Csv.Document(File.Contents(#"DataRoot" & "\customer.tsv"), [Delimiter="#(tab)", Columns=23, Encoding=65001, QuoteStyle=QuoteStyle.None]),
-				Named = Table.RenameColumns(Source, {{"Column1","CustomerKey"},{"Column2","CustomerUniqueId"},{"Column3","HomeGeographyKey"},{"Column4","City"},{"Column5","StateCode"},{"Column6","FirstPurchaseDateTime"},{"Column7","LastPurchaseDateTime"},{"Column8","CohortMonth"},{"Column9","PurchaseCount"},{"Column10","CustomerPurchaseFrequency"},{"Column11","AverageDaysBetweenPurchases"},{"Column12","CustomerType"},{"Column13","RecencyDays"},{"Column14","CompletedPurchaseCount"},{"Column15","CustomerSales"},{"Column16","CustomerFreight"},{"Column17","AverageDeliveryDays"},{"Column18","OnTimeRate"},{"Column19","AverageReviewScore"},{"Column20","RScore"},{"Column21","FScore"},{"Column22","MScore"},{"Column23","RfmSegment"}}),
-				Typed = Table.TransformColumnTypes(Named, {{"CustomerKey", Int64.Type},{"CustomerUniqueId", type text},{"HomeGeographyKey", Int64.Type},{"City", type text},{"StateCode", type text},{"FirstPurchaseDateTime", type datetime},{"LastPurchaseDateTime", type datetime},{"CohortMonth", type date},{"PurchaseCount", Int64.Type},{"CustomerPurchaseFrequency", type number},{"AverageDaysBetweenPurchases", type number},{"CustomerType", type text},{"RecencyDays", Int64.Type},{"CompletedPurchaseCount", Int64.Type},{"CustomerSales", Currency.Type},{"CustomerFreight", Currency.Type},{"AverageDeliveryDays", type number},{"OnTimeRate", type number},{"AverageReviewScore", type number},{"RScore", Int64.Type},{"FScore", Int64.Type},{"MScore", Int64.Type},{"RfmSegment", type text}}, "en-US"),
+				Source = Csv.Document(File.Contents(#"DataRoot" & "\customer.tsv"), [Delimiter="#(tab)", Columns=19, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				Named = Table.RenameColumns(Source, {{"Column1","CustomerKey"},{"Column2","CustomerUniqueId"},{"Column3","HomeGeographyKey"},{"Column4","City"},{"Column5","StateCode"},{"Column6","FirstPurchaseDateTime"},{"Column7","LastPurchaseDateTime"},{"Column8","CohortMonth"},{"Column9","PurchaseCount"},{"Column10","AverageDaysBetweenPurchases"},{"Column11","CustomerType"},{"Column12","RecencyDays"},{"Column13","CompletedPurchaseCount"},{"Column14","CustomerSales"},{"Column15","CustomerFreight"},{"Column16","AverageDeliveryDays"},{"Column17","OnTimeRate"},{"Column18","AverageReviewScore"},{"Column19","CompletedPurchaseGroup"}}),
+				Typed = Table.TransformColumnTypes(Named, {{"CustomerKey", Int64.Type},{"CustomerUniqueId", type text},{"HomeGeographyKey", Int64.Type},{"City", type text},{"StateCode", type text},{"FirstPurchaseDateTime", type datetime},{"LastPurchaseDateTime", type datetime},{"CohortMonth", type date},{"PurchaseCount", Int64.Type},{"AverageDaysBetweenPurchases", type number},{"CustomerType", type text},{"RecencyDays", Int64.Type},{"CompletedPurchaseCount", Int64.Type},{"CustomerSales", Currency.Type},{"CustomerFreight", Currency.Type},{"AverageDeliveryDays", type number},{"OnTimeRate", type number},{"AverageReviewScore", type number},{"CompletedPurchaseGroup", type text}}, "en-US"),
 				Customer360 = Table.AddColumn(Typed, "CustomerDisplayId", each Text.Start([CustomerUniqueId], 12) & "…", type text)
 			in
 				Customer360

@@ -59,7 +59,8 @@ public sealed class RecommendationService(
                 var score = candidate.Features is not null && scoringService is SongScoringService concrete
                     ? await concrete.ScoreExternalAsync(candidate, cancellationToken)
                     : await scoringService.ScoreAsync(candidate.SpotifyUrl ?? candidate.SpotifyTrackId!, cancellationToken);
-                scored.Add(new ScoredCandidate(candidate, score));
+                // A neutral fallback without any observed signal is not a recommendation.
+                if (score.AvailableSignals is not { Count: 0 }) scored.Add(new ScoredCandidate(candidate, score));
             }
             catch (Exception exception) when (exception is not OperationCanceledException)
             {

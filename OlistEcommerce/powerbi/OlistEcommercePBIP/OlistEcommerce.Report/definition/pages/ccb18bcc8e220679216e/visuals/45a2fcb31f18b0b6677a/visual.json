@@ -37,25 +37,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Orders"
+                  "Property": "Sales Orders"
                 }
               },
-              "queryRef": "KPI Measures.Orders",
-              "nativeQueryRef": "Orders"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Customers"
-                }
-              },
-              "queryRef": "KPI Measures.Customers",
-              "nativeQueryRef": "Customers"
+              "queryRef": "KPI Measures.Sales Orders",
+              "nativeQueryRef": "Sales Orders"
             },
             {
               "field": {
@@ -70,20 +56,6 @@
               },
               "queryRef": "KPI Measures.Average Order Value",
               "nativeQueryRef": "Average Order Value"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Items per Order"
-                }
-              },
-              "queryRef": "KPI Measures.Items per Order",
-              "nativeQueryRef": "Items per Order"
             }
           ]
         }
@@ -289,7 +261,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Commercial health'"
+                  "Value": "'Commercial value and volume — excludes canceled / unavailable'"
                 }
               }
             },

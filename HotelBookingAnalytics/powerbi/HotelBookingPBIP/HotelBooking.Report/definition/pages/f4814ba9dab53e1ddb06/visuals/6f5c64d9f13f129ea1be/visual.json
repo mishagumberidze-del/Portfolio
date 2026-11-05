@@ -23,6 +23,34 @@
                       "Entity": "KPI Measures"
                     }
                   },
+                  "Property": "Stayed Bookings"
+                }
+              },
+              "queryRef": "KPI Measures.Stayed Bookings",
+              "nativeQueryRef": "Stayed Bookings"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Stay Nights"
+                }
+              },
+              "queryRef": "KPI Measures.Stay Nights",
+              "nativeQueryRef": "Stay Nights"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
                   "Property": "Average Stay Nights"
                 }
               },
@@ -37,39 +65,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Room Change Rate"
+                  "Property": "Room Assignment Difference"
                 }
               },
-              "queryRef": "KPI Measures.Room Change Rate",
-              "nativeQueryRef": "Room Change Rate"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Repeat Guest Share"
-                }
-              },
-              "queryRef": "KPI Measures.Repeat Guest Share",
-              "nativeQueryRef": "Repeat Guest Share"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Flagged Bookings"
-                }
-              },
-              "queryRef": "KPI Measures.Flagged Bookings",
-              "nativeQueryRef": "Flagged Bookings"
+              "queryRef": "KPI Measures.Room Assignment Difference",
+              "nativeQueryRef": "Room Assignment Difference"
             }
           ]
         }
@@ -275,7 +275,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Operational snapshot'"
+                  "Value": "'Stay volume and room assignment'"
                 }
               }
             },

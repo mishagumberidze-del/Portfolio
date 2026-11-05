@@ -143,8 +143,18 @@ public sealed class SongScoringService : ISongScoringService
         var coverage = (candidate is null ? 0 : 1) + (positiveSimilarity?.Count >= 20 ? 1 : 0) + (recentPositiveSimilarity?.Count >= 20 ? 1 : 0) + (candidateArtistMs > 0 ? 1 : 0) + (observedBlendWeight >= 0.5 ? 1 : 0);
         var confidence = coverage >= 4 ? "High" : coverage >= 2 ? "Medium" : "Low";
         var components = new ScoreComponents(Round10(featureMatch), Round10(artistAffinity), Round10(recentTaste), Round10(lifetimeTaste), Round10(historicalBehavior), Round10(savedTrackSimilarity), Math.Round(exploration, 2));
+        var signals = new List<string>();
+        if (featureMatchValue.HasValue) signals.Add("featureMatch");
+        if (candidateArtistMs > 0 && artistAffinityValue.HasValue) signals.Add("artistTasteMatch");
+        if (recentTasteValue.HasValue) signals.Add("recentTasteMatch");
+        if (lifetimeTasteValue.HasValue) signals.Add("lifetimeTasteMatch");
+        if (knownRecording && historicalTrack?.Preference is not null) signals.Add("historicalBehaviorMatch");
+        if (savedSimilarityAvailable) signals.Add("savedTrackMatch");
+        var explanations = signals.Count == 0
+            ? new[] { "Insufficient evidence: no usable feature neighborhood, artist history, direct behavior or saved-track match is available. The neutral internal fallback is not a supported prediction." }
+            : Explain(components, signals, candidate is not null, libraryAvailable, knownRecording, historicalTrack?.EventCount ?? 0, observedBlendWeight);
         return new ScoreResult(external.SpotifyTrackId, external.Name, external.Artists, final, confidence, components,
-            Explain(components, candidate is not null, libraryAvailable, knownRecording, historicalTrack?.EventCount ?? 0, observedBlendWeight), knownRecording, historicalTrack?.EventCount ?? 0);
+            explanations, knownRecording, historicalTrack?.EventCount ?? 0, signals);
     }
 
     public async Task PrimeTrackCacheAsync(IEnumerable<string> spotifyTrackIds, CancellationToken cancellationToken = default)
@@ -396,7 +406,7 @@ public sealed class SongScoringService : ISongScoringService
 
     private static decimal? Decimal(double? value) => value.HasValue ? (decimal)value.Value : null;
 
-    private static IReadOnlyList<string> Explain(ScoreComponents components, bool hasFeatures, bool libraryAvailable, bool knownRecording, int eventCount, double observedBlendWeight)
+    private static IReadOnlyList<string> Explain(ScoreComponents components, IReadOnlyList<string> signals, bool hasFeatures, bool libraryAvailable, bool knownRecording, int eventCount, double observedBlendWeight)
     {
         var explanations = new List<string>();
         if (knownRecording && observedBlendWeight >= 0.5)
@@ -407,8 +417,11 @@ public sealed class SongScoringService : ISongScoringService
         if (!hasFeatures) explanations.Add("ReccoBeats metadata was found, but audio features were unavailable, so the score relies more on artist and history signals.");
         else if (components.FeatureMatch >= 7.5) explanations.Add("Strong match with the audio-feature profile of tracks you repeatedly listen to.");
         else if (components.FeatureMatch < 4.5) explanations.Add("Its audio characteristics sit outside your strongest historical preference neighborhoods.");
-        if (components.RecentTasteMatch - components.LifetimeTasteMatch >= 1) explanations.Add("It matches your last-90-day direction more closely than your lifetime taste.");
-        else if (components.LifetimeTasteMatch - components.RecentTasteMatch >= 1) explanations.Add("It fits your lifetime taste better than your recent listening direction.");
+        if (signals.Contains("recentTasteMatch") && signals.Contains("lifetimeTasteMatch"))
+        {
+            if (components.RecentTasteMatch - components.LifetimeTasteMatch >= 1) explanations.Add("It matches your last-90-day direction more closely than your lifetime taste.");
+            else if (components.LifetimeTasteMatch - components.RecentTasteMatch >= 1) explanations.Add("It fits your lifetime taste better than your recent listening direction.");
+        }
         if (components.ArtistTasteMatch >= 7.5) explanations.Add("The artist is strongly represented in your listening history.");
         else if (components.ArtistTasteMatch <= 4.6) explanations.Add("The artist is unfamiliar or lightly represented, increasing exploration uncertainty.");
         return explanations.Take(3).ToList();

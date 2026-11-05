@@ -1,0 +1,7 @@
+# Power BI validation — 2026-11-04
+
+Static checks passed for the current project: 14 tables, 47 measures, 6 pages, 54 visuals and 70 distinct report field references. DataRoot points to the local refreshed exports. All imported TSV rows match their declared column counts; all model source columns resolve, including the customer and seller display IDs added by Power Query. All nine relationships have unique dimension keys and no unmatched fact keys. Report references and visual bounds resolve against the current model and page sizes. Imported file hashes and row counts match the export manifest.
+
+Independent aggregation of those exports gives 99,441 total orders, 98,207 commercial orders, 13,494,400.74 BRL GMV, 137.41 BRL AOV, 625 canceled orders, 89,936 on-time deliveries out of 96,470 evaluable delivered orders, and a 4.09 average across 99,224 review records. Exact values, file hashes and check scope are in [the machine-readable evidence](powerbi_static_validation_2026-11-04.json).
+
+Power BI Desktop 2.159.883.0 is installed through the Microsoft Store. The attempted native launch returned **“Computer Use app approval timed out”**. No Desktop refresh, DAX execution, displayed headline value or interactive filter behavior was verified in this pass. Existing report screenshots are pre-audit previews; no fresh screenshots were created. Static source checks do not replace native DAX and report-render verification.

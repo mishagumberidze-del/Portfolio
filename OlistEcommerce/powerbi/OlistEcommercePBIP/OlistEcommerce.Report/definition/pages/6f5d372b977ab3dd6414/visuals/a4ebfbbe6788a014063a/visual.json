@@ -23,11 +23,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Customers"
+                  "Property": "Sales Customers"
                 }
               },
-              "queryRef": "KPI Measures.Customers",
-              "nativeQueryRef": "Customers"
+              "queryRef": "KPI Measures.Sales Customers",
+              "nativeQueryRef": "Sales Customers"
             },
             {
               "field": {
@@ -79,11 +79,11 @@
                       "Entity": "KPI Measures"
                     }
                   },
-                  "Property": "Revenue per Customer"
+                  "Property": "GMV per Sales Customer"
                 }
               },
-              "queryRef": "KPI Measures.Revenue per Customer",
-              "nativeQueryRef": "Revenue per Customer"
+              "queryRef": "KPI Measures.GMV per Sales Customer",
+              "nativeQueryRef": "GMV per Sales Customer"
             }
           ]
         }

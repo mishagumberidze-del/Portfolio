@@ -22,24 +22,26 @@ for(let month=1;month<=12;month++)$('month').insertAdjacentHTML('beforeend',`<op
 
 function monthlyChart(){
  const counts=aggregate(db.time.filter(row=>match(row,true)),'month');
- const maximum=Math.max(...counts.values(),1);const W=640,H=255,left=48,top=15,plotH=185,barW=30,gap=17;
+ const daily=new Map([...counts].map(([month,n])=>[month,n/taxiMetrics.calendarExposure(month).days]));
+ const maximum=Math.max(...daily.values(),1);const W=640,H=255,left=48,top=15,plotH=185,barW=30,gap=17;
  let content='';
  const axis=n=>maximum>=1e6?`${dec(n/1e6,1)}m`:`${dec(n/1e3,0)}k`;
  for(let i=0;i<4;i++){const y=top+plotH*i/3;content+=`<line x1="${left}" x2="630" y1="${y}" y2="${y}" stroke="#e4ebed"/><text x="${left-9}" y="${y+4}" text-anchor="end" fill="#71848d" font-size="10">${axis(maximum*(1-i/3))}</text>`;}
- for(let i=0;i<12;i++){const n=counts.get(202401+i)||0;const h=plotH*n/maximum;const x=left+9+i*(barW+gap);const selected=!state.month||state.month===202401+i;
- content+=`<g class="month-hit" data-month="${202401+i}" role="button" tabindex="0" aria-label="Explore ${monthNames[i]}: ${fmt(n)} pickups"><rect x="${x-5}" y="0" width="${barW+10}" height="${H}" fill="transparent"/>${title(`${monthNames[i]}: ${fmt(n)} pickups`)}<rect x="${x}" y="${top+plotH-h}" width="${barW}" height="${Math.max(h,1)}" rx="3" fill="${state.month===202401+i?'#edbb24':selected?'#16746e':'#c6d8d6'}"/><text x="${x+barW/2}" y="222" text-anchor="middle" fill="#71848d" font-size="10">${shortMonths[i]}</text></g>`;}
- $('monthly').innerHTML=svg(content,W,H,'Monthly recorded pickups for the selected service');
+ for(let i=0;i<12;i++){const n=counts.get(202401+i)||0;const rate=daily.get(202401+i)||0;const h=plotH*rate/maximum;const x=left+9+i*(barW+gap);const selected=!state.month||state.month===202401+i;
+ content+=`<g class="month-hit" data-month="${202401+i}" role="button" tabindex="0" aria-label="Explore ${monthNames[i]}: ${fmt(rate)} pickups per calendar day; ${fmt(n)} total"><rect x="${x-5}" y="0" width="${barW+10}" height="${H}" fill="transparent"/>${title(`${monthNames[i]}: ${fmt(rate)} pickups per calendar day; ${fmt(n)} total`)}<rect x="${x}" y="${top+plotH-h}" width="${barW}" height="${Math.max(h,1)}" rx="3" fill="${state.month===202401+i?'#edbb24':selected?'#16746e':'#c6d8d6'}"/><text x="${x+barW/2}" y="222" text-anchor="middle" fill="#71848d" font-size="10">${shortMonths[i]}</text></g>`;}
+ $('monthly').innerHTML=svg(content,W,H,'Mean daily recorded pickups by month for the selected service');
  $('monthly').querySelectorAll('.month-hit').forEach(node=>{const select=()=>{state.month=+node.dataset.month;state.zone=null;$('month').value=state.month;render();};node.addEventListener('click',select);node.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();select();}});});
- return counts;
+ return daily;
 }
 function heatmap(rows){
  const cells=new Map();for(const row of rows){const key=row.dow*24+row.hour;cells.set(key,(cells.get(key)||0)+row.n);}
- const maximum=Math.max(...cells.values(),1);let content='';const x0=40,y0=20,cw=24,ch=24;
+ const exposure=taxiMetrics.calendarExposure(state.month).weekdays;
+ const maximum=Math.max(...[...cells].map(([key,n])=>n/exposure[Math.floor(key/24)]),1);let content='';const x0=40,y0=20,cw=24,ch=24;
  for(let dow=0;dow<7;dow++){content+=`<text x="31" y="${y0+dow*ch+15}" text-anchor="end" font-size="10" fill="#71848d">${days[dow]}</text>`;
- for(let hour=0;hour<24;hour++){const n=cells.get(dow*24+hour)||0;const alpha=.08+.92*n/maximum;content+=`<rect x="${x0+hour*cw}" y="${y0+dow*ch}" width="21" height="21" rx="3" fill="rgba(22,116,110,${alpha})">${title(`${days[dow]}, ${String(hour).padStart(2,'0')}:00 — ${fmt(n)} pickups`)}</rect>`;}}
+ for(let hour=0;hour<24;hour++){const n=cells.get(dow*24+hour)||0;const rate=n/exposure[dow];const alpha=.08+.92*rate/maximum;content+=`<rect x="${x0+hour*cw}" y="${y0+dow*ch}" width="21" height="21" rx="3" fill="rgba(22,116,110,${alpha})">${title(`${days[dow]}, ${String(hour).padStart(2,'0')}:00 — ${fmt(rate)} pickups per ${days[dow]}; ${fmt(n)} total across ${exposure[dow]} dates`)}</rect>`;}}
  for(let hour=0;hour<24;hour+=3)content+=`<text x="${x0+hour*cw+9}" y="210" text-anchor="middle" font-size="10" fill="#71848d">${String(hour).padStart(2,'0')}</text>`;
  content+='<text x="614" y="239" text-anchor="end" font-size="10" fill="#71848d">NYC local clock · pickup hour</text>';
- $('heatmap').innerHTML=svg(content,640,255,'Total pickups by weekday and hour');
+ $('heatmap').innerHTML=svg(content,640,255,'Mean pickups per weekday occurrence and hour');
 }
 function geography(rows,total){
  const counts=aggregate(db.zone.filter(row=>match(row)&&row.role===state.role),'zone');
@@ -53,7 +55,7 @@ function geography(rows,total){
  const detail=()=>{const zone=zones.get(state.zone);const n=counts.get(state.zone)||0;$('zone-detail').innerHTML=zone?`<small>${esc(zone.borough)} · ZONE ${zone.id}</small><h3>${esc(zone.name)}</h3><strong>${fmt(n)}</strong><small>${percent(n,total)} of selected ${state.role==='PU'?'pickups':'dropoffs'}</small>`:'Select a zone on the map.';};
  const select=id=>{state.zone=id;detail();$('map').querySelectorAll('path').forEach(node=>node.classList.toggle('selected',+node.dataset.zone===id));};
  $('map').querySelectorAll('path').forEach(node=>{node.addEventListener('click',()=>select(+node.dataset.zone));node.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();select(+node.dataset.zone);}});});
- detail();$('map-coverage').textContent=`${percent(mapped,total)} of records have a mapped ${state.role==='PU'?'pickup':'dropoff'} zone. Unmapped and outside-NYC records remain in the overall count.`;
+ detail();$('map-coverage').textContent=`${percent(mapped,total)} of records have a mapped ${state.role==='PU'?'pickup':'dropoff'} zone. Records without a physical zone polygon remain in the overall count.`;
  $('role-word').textContent=state.role==='PU'?'begin':'end';
  $('zone-table').innerHTML=`<table><thead><tr><th></th><th>${state.role==='PU'?'Pickup':'Dropoff'} zone</th><th class="number">Trips</th></tr></thead><tbody>${ranked.slice(0,10).map(([id,n],i)=>`<tr><td class="rank">${String(i+1).padStart(2,'0')}</td><td><button class="zone-button" data-zone="${id}">${esc(zoneName(id))}</button><span class="borough">${esc(zones.get(id)?.borough)}</span><span class="mini-bar"><i style="width:${100*n/maximum}%"></i></span></td><td class="number">${fmt(n)}</td></tr>`).join('')}</tbody></table>`;
  $('zone-table').querySelectorAll('button').forEach(node=>node.addEventListener('click',()=>select(+node.dataset.zone)));
@@ -67,26 +69,29 @@ function bands(){
  const labels=state.band==='duration'?['0–10 min','10–20 min','20–40 min','40–60 min','60–240 min']:['0–1 mi','1–3 mi','3–5 mi','5–10 mi','10–200 mi'];
  if(!total){$('bands').innerHTML='<div class="empty">Distance is not reported for FHV.</div>';}
  else{const entries=[...counts].sort((a,b)=>a[0].localeCompare(b[0]));const maximum=Math.max(...entries.map(x=>x[1]),1);let content='';entries.forEach(([label,n],i)=>{const y=12+i*41;const width=390*n/maximum;content+=`<text x="112" y="${y+17}" text-anchor="end" font-size="12" fill="#63747e">${labels[+label.slice(0,2)-1]}</text><rect x="127" y="${y}" width="${width}" height="24" rx="3" fill="${i===0?'#e5bb37':'#16746e'}">${title(`${labels[+label.slice(0,2)-1]}: ${fmt(n)} trips`)}</rect><text x="${137+width}" y="${y+17}" font-size="11" fill="#435963">${percent(n,total)}</text>`;});$('bands').innerHTML=svg(content,640,230,'Trip length distribution');}
- $('band-note').textContent=`${fmt(total)} eligible ${state.band==='duration'?'duration':'distance'} records. Upper band boundaries are inclusive. Invalid or unavailable values are excluded from this distribution.`;
+ $('band-note').textContent=`${fmt(total)} eligible ${state.band==='duration'?'duration':'distance'} records. Upper band boundaries are inclusive. Values outside the screening rules or unavailable values are excluded from this distribution.`;
  const time=db.time.filter(row=>match(row));const n=sum(time,'fareN');const amount=sum(time,'fare');
  $('fare-note').textContent=!state.service?'Fare definitions differ by service. Select Yellow, Green or High-volume FHV to inspect its own base-fare measure. No combined fare metric is calculated.':state.service===3?'FHV dispatch records do not include distance, passenger counts, fares or tips. These fields remain unavailable.':`${state.service===4?'Base passenger':'Metered'} fare averages $${dec(amount/n,2)} across ${fmt(n)} eligible records. This measure excludes tips and other separately reported charges and is not profit.`;
 }
 function quality(){
- const sources=db.source.filter(row=>match(row));const raw=sum(sources,'n');const checks=aggregate(db.quality.filter(row=>match(row)),'check');
- const labels={outside_2024_pickup:'Pickup outside 2024',invalid_duration:'Invalid duration',unmatched_pickup_zone:'Unmatched pickup zone',unmatched_dropoff_zone:'Unmatched dropoff zone',invalid_distance:'Invalid / missing distance',speed_above_100mph:'Speed above 100 mph',invalid_base_fare:'Invalid / missing base fare',projected_duplicate_candidates:'Projected duplicate candidates'};
- $('quality').innerHTML=Object.entries(labels).filter(([key])=>checks.has(key)).map(([key,label])=>`<div class="quality-item">${label}<strong>${fmt(checks.get(key))}</strong><small>${percent(checks.get(key),raw)} of selected source-partition rows</small></div>`).join('');
+ const sources=db.source.filter(row=>match(row));const checks=aggregate(db.quality.filter(row=>match(row)),'check');
+ const labels={outside_2024_pickup:'Pickup outside 2024',invalid_duration:'Duration outside rule / missing',unmatched_pickup_zone:'Unmatched pickup zone',unmatched_dropoff_zone:'Unmatched dropoff zone',invalid_distance:'Distance outside rule / missing',speed_above_100mph:'Speed above 100 mph',invalid_base_fare:'Base fare outside rule / missing'};
+ $('quality').innerHTML=Object.entries(labels).filter(([key])=>checks.has(key)).map(([key,label])=>{
+  const denominator=taxiMetrics.qualityDenominator(key,sources);
+  const scope=['invalid_distance','invalid_base_fare','speed_above_100mph'].includes(key)?'source rows from services reporting this field':'selected source-partition rows';
+  return `<div class="quality-item" data-check="${key}">${label}<strong>${fmt(checks.get(key))}</strong><small>${percent(checks.get(key),denominator)} of ${fmt(denominator)} ${scope}</small></div>`;
+ }).join('');
  $('source-total').textContent=fmt(payload.meta.sourceRows);
 }
 function render(){
- const rows=db.time.filter(row=>match(row));const total=sum(rows,'n');const dn=sum(rows,'durationN');const mn=sum(rows,'distanceN');const sn=sum(rows,'speedN');
+ const rows=db.time.filter(row=>match(row));const total=sum(rows,'n');const dn=sum(rows,'durationN');const mn=sum(rows,'distanceN');
  $('selection').textContent=`${services[state.service]} · ${state.month?monthNames[state.month%100-1]+' 2024':'Full year 2024'}`;
- $('trips').textContent=fmt(total);$('trips-note').textContent='Records with pickup timestamps in 2024';
+ $('trips').textContent=fmt(total);$('trips-note').textContent=`${fmt(total/taxiMetrics.calendarExposure(state.month).days)} per calendar day in the selected period`;
  $('duration').textContent=dn?`${dec(sum(rows,'durationS')/dn/60)} min`:'—';$('duration-note').textContent=`${percent(dn,total)} have eligible duration`;
- $('distance').textContent=mn?`${dec(sum(rows,'distanceMi')/mn)} mi`:'—';$('distance-note').textContent=state.service===3?'Not reported for FHV':`${percent(mn,total)} have eligible distance; FHV unavailable`;
- $('speed').textContent=sn?`${dec(sum(rows,'speedMi')/sum(rows,'speedS')*3600)} mph`:'—';$('speed-note').textContent=`Eligible miles ÷ travel hours · ${percent(sn,total)} eligible`;
+ $('distance').textContent=mn?`${dec(sum(rows,'distanceMi')/mn)} mi`:'—';$('distance-note').textContent=state.service===3?'Not reported for FHV':`${percent(mn,total)} of selected records have eligible distance${!state.service?'; FHV has no distance field':''}`;
  const counts=monthlyChart();heatmap(rows);geography(rows,total);routes();bands();quality();
  const peak=[...counts].sort((a,b)=>b[1]-a[1])[0];const hour=[...aggregate(rows,'hour')].sort((a,b)=>b[1]-a[1])[0];
- $('insight').textContent=peak&&hour?`${monthNames[peak[0]%100-1]} was the busiest month for ${services[state.service].toLowerCase()} (${fmt(peak[1])} records). In the selected period, the busiest pickup hour begins at ${String(hour[0]).padStart(2,'0')}:00 NYC local time.`:'No records match this selection.';
+ $('insight').textContent=peak&&hour?`${monthNames[peak[0]%100-1]} had the highest daily pickup rate for ${services[state.service].toLowerCase()} (${fmt(peak[1])} per calendar day). In the selected period, the busiest pickup hour begins at ${String(hour[0]).padStart(2,'0')}:00 NYC local time.`:'No records match this selection.';
  document.querySelectorAll('[data-role]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.role===state.role)));
  document.querySelectorAll('[data-band]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.band===state.band)));
 }

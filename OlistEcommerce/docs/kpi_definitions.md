@@ -9,9 +9,9 @@
 | Customers | Distinct `customer_unique_id` represented by the filtered orders. |
 | Average Order Value | Sales / GMV divided by Sales Orders. |
 | Items per Order | Commercial order-item rows divided by Sales Orders. Olist item quantity is represented by one row per item sequence. |
-| Repeat Customer | A real customer (`customer_unique_id`) associated with more than one order in the full observed history. |
-| Repeat Customer Rate | Customers whose visible orders are their second-or-later lifetime purchase divided by customers in the current context. Identity is based on `customer_unique_id`, not order-specific `customer_id`. |
-| Customer Purchase Frequency | Sales Orders divided by Customers in the current filter context. |
+| Repeat Customer | A real customer (`customer_unique_id`) associated with more than one commercial order in the full observed history. |
+| Repeat Customer Rate | Customers whose visible orders are their second-or-later observed commercial purchase divided by commercial purchasing customers in the current context. Identity is based on `customer_unique_id`, not order-specific `customer_id`. |
+| Customer Purchase Frequency | Sales Orders divided by commercial purchasing Customers in the current filter context. |
 | Delivered Orders | Orders whose final source status is `delivered`. |
 | Cancelled Orders | Orders whose final source status is `canceled` (the source uses one L). |
 | Delivery Rate | Delivered Orders divided by all Orders. |
@@ -27,3 +27,7 @@
 | Retention Rate | Customers active in cohort month N divided by the original Month-0 cohort size. Only non-canceled/non-unavailable orders count as activity. Matrix grand totals are intentionally blank because rates across different cohorts and periods are not additive. |
 
 Currency is Brazilian real (R$). The dataset does not include currency conversion, refunds, cost of goods, or profit; the report therefore avoids profit terminology.
+
+Cohorts start with the first commercial purchase. Partial first/final commercial months are excluded from the cohort comparison. The matrix recomputes distinct customers from filtered orders so customer filters apply. Completed-purchase groups describe delivered-purchase counts (0, 1, 2, 3+); they do not predict loyalty or churn.
+
+Current DAX/report sources and exports were rebuilt during the calculation audit. Final SQL model assertions and the independent source/export checks passed on 2026-11-04; [validation evidence](qa.md) records their scope. Power BI Desktop refresh and rendered DAX/filter behavior remain unverified. Older screenshots do not validate the rebuilt report.

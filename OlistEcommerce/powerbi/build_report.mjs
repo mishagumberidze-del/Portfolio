@@ -210,7 +210,7 @@ function donut(pageId, key, category, value, title, x, y, width, height) {
   const query = { queryState: {
     Category: { projections: [column(category.entity, category.property)] },
     Y: { projections: [measure(value)] },
-    Tooltips: { projections: [measure('Sales / GMV'), measure('Average Review Score')] }
+    Tooltips: { projections: category.entity === 'Review' ? [measure('Reviews'), measure('Average Review Score')] : [measure('Sales / GMV'), measure('Average Review Score')] }
   } };
   return baseVisual(pageId, key, 'donutChart', x, y, width, height, title, query, {});
 }
@@ -243,10 +243,7 @@ function topNBySumFilter(pageId, key, entity, property, valueEntity, valueProper
                   OrderBy: [{
                     Direction: 2,
                     Expression: {
-                      Aggregation: {
-                        Expression: { Column: { Expression: { SourceRef: { Source: valueAlias } }, Property: valueProperty } },
-                        Function: 0
-                      }
+                      Measure: { Expression: { SourceRef: { Source: valueAlias } }, Property: valueProperty }
                     }
                   }],
                   Top: top
@@ -325,14 +322,14 @@ function page(id, displayName, visuals, extra = {}) {
 }
 
 const executive = [
-  ...headerVisuals(ids.executive, '01', 'Executive Overview', 'Customer & e-commerce performance'),
+  ...headerVisuals(ids.executive, '01', 'Executive Overview', 'How much was purchased, and were orders fulfilled reliably?'),
   slicer(ids.executive, 'year', 'Date', 'Year', 'Year', 24, 82, 180),
   slicer(ids.executive, 'state', 'Customer Geography', 'State', 'Customer state', 216, 82, 230),
   slicer(ids.executive, 'status', 'Order', 'Status', 'Order status', 458, 82, 230),
   slicer(ids.executive, 'metric', 'Metric Selector', 'Metric', 'Trend metric', 700, 82, 260, 'Sales / GMV'),
-  card(ids.executive, 'commercial-kpis', ['Sales / GMV', 'Orders', 'Customers', 'Average Order Value', 'Items per Order'], 'Commercial health', 24, 174, 1872, 140),
-  card(ids.executive, 'experience-kpis', ['Repeat Customer Rate', 'Delivery Rate', 'Cancellation Rate', 'Average Delivery Days', 'On-Time Delivery %', 'Average Review Score'], 'Customer & fulfilment health', 24, 324, 1872, 140),
-  chart(ids.executive, 'trend', 'lineChart', { entity: 'Date', property: 'Year Month' }, ['Selected Metric'], 'Dynamic monthly trend', 24, 476, 1150, 300, { tooltips: ['Sales / GMV', 'Orders', 'Customers', 'Sales MoM %'] }),
+  card(ids.executive, 'commercial-kpis', ['Sales / GMV', 'Sales Orders', 'Average Order Value'], 'Commercial value and volume — excludes canceled / unavailable', 24, 174, 1872, 140),
+  card(ids.executive, 'experience-kpis', ['Cancellation Rate', 'On-Time Delivery %', 'Average Review Score'], 'Fulfilment and experience — selected order population', 24, 324, 1872, 140),
+  chart(ids.executive, 'trend', 'lineChart', { entity: 'Date', property: 'Year Month' }, ['Selected Metric'], 'Dynamic monthly trend', 24, 476, 1150, 300, { tooltips: ['Sales / GMV', 'Orders', 'Customers', 'Sales Orders'] }),
   table(ids.executive, 'status-mix', [
     { entity: 'Order', property: 'Status' },
     { type: 'measure', property: 'Orders' },
@@ -342,17 +339,17 @@ const executive = [
 ];
 
 const customer = [
-  ...headerVisuals(ids.customer, '02', 'Customer Deep Dive', 'Value, repeat behavior, RFM and retention'),
+  ...headerVisuals(ids.customer, '02', 'Customer Deep Dive', 'Who purchases again within the observed window? Not lifetime retention.'),
   slicer(ids.customer, 'type', 'Customer', 'Customer Type', 'Customer type', 24, 82, 220),
-  slicer(ids.customer, 'rfm', 'Customer', 'RFM Segment', 'RFM segment', 256, 82, 260),
+  slicer(ids.customer, 'rfm', 'Customer', 'Completed Purchase Group', 'Completed purchases', 256, 82, 260),
   slicer(ids.customer, 'state', 'Customer', 'State', 'Home state', 528, 82, 210),
-  card(ids.customer, 'customer-kpis', ['Customers', 'Repeat Customers', 'Repeat Customer Rate', 'Customer Purchase Frequency', 'Revenue per Customer'], 'Customer economics', 24, 174, 1872, 140),
-  chart(ids.customer, 'new-repeat', 'columnChart', { entity: 'Date', property: 'Year Month' }, ['Sales / GMV'], 'New vs repeat customer sales', 24, 326, 910, 300, { series: { entity: 'Order', property: 'Customer Order Type' }, tooltips: ['Customers', 'Orders', 'Average Order Value'] }),
-  chart(ids.customer, 'rfm-sales', 'clusteredBarChart', { entity: 'Customer', property: 'RFM Segment' }, ['Sales / GMV'], 'Revenue by RFM segment', 950, 326, 946, 300, { sortMeasure: 'Sales / GMV', tooltips: ['Customers', 'Repeat Customer Rate', 'Revenue per Customer'] }),
-  matrix(ids.customer, 'cohort', { entity: 'Cohort Retention', property: 'Cohort Month' }, { entity: 'Cohort Retention', property: 'Months Since First Purchase' }, 'Retention Rate', 'Monthly customer retention cohort', 24, 640, 1080, 416),
+  card(ids.customer, 'customer-kpis', ['Sales Customers', 'Repeat Customers', 'Repeat Customer Rate', 'Customer Purchase Frequency', 'GMV per Sales Customer'], 'Customer economics', 24, 174, 1872, 140),
+  chart(ids.customer, 'new-repeat', 'columnChart', { entity: 'Date', property: 'Year Month' }, ['Sales / GMV'], 'First vs repeat commercial purchases', 24, 326, 910, 300, { series: { entity: 'Order', property: 'Customer Order Type' }, tooltips: ['Customers', 'Orders', 'Average Order Value'] }),
+  chart(ids.customer, 'rfm-sales', 'clusteredBarChart', { entity: 'Customer', property: 'Completed Purchase Group' }, ['Sales / GMV'], 'GMV by completed-purchase group', 950, 326, 946, 300, { sortMeasure: 'Sales / GMV', tooltips: ['Customers', 'Repeat Customer Rate', 'GMV per Sales Customer'] }),
+  matrix(ids.customer, 'cohort', { entity: 'Cohort Retention', property: 'Cohort Month' }, { entity: 'Cohort Retention', property: 'Months Since First Purchase' }, 'Retention Rate', 'Monthly repeat activity · complete months · selected customers', 24, 640, 1080, 416),
   table(ids.customer, 'top-customers', [
     { entity: 'Customer', property: 'Customer Display ID' },
-    { entity: 'Customer', property: 'RFM Segment' },
+    { entity: 'Customer', property: 'Completed Purchase Group' },
     { entity: 'Customer', property: 'Purchase Count' },
     { entity: 'Customer', property: 'First Purchase' },
     { entity: 'Customer', property: 'Last Purchase' },
@@ -362,7 +359,7 @@ const customer = [
 ];
 
 const product = [
-  ...headerVisuals(ids.product, '03', 'Product & Sales', 'Category contribution and product demand'),
+  ...headerVisuals(ids.product, '03', 'Product & Sales', 'Which categories drive merchandise value and purchased item volume?'),
   slicer(ids.product, 'category', 'Product', 'Category', 'Category', 24, 82, 280),
   slicer(ids.product, 'year', 'Date', 'Year', 'Year', 316, 82, 180),
   card(ids.product, 'product-kpis', ['Sales / GMV', 'Units', 'Product Orders', 'Average Selling Price', 'Customers in Item Context'], 'Product performance', 24, 174, 1872, 140),
@@ -378,25 +375,24 @@ const product = [
     { type: 'measure', property: 'Customers in Item Context' },
     { type: 'measure', property: 'Average Review Score in Item Context' }
   ], 'Top 25 products by sales', 24, 680, 1872, 376, 'Sales / GMV', {
-    topNBySum: ['Product', 'Product ID', 'Order Item', 'Item Gross Value', 25]
+    topNBySum: ['Product', 'Product ID', 'KPI Measures', 'Sales / GMV', 25]
   })
 ];
 
 const delivery = [
-  ...headerVisuals(ids.delivery, '04', 'Delivery & Customer Experience', 'Promise reliability, freight and review outcomes'),
+  ...headerVisuals(ids.delivery, '04', 'Delivery & Customer Experience', 'Which promise delays and freight burdens deserve investigation?'),
   slicer(ids.delivery, 'performance', 'Order', 'Delivery Performance', 'Delivery result', 24, 82, 250),
   slicer(ids.delivery, 'status', 'Order', 'Status', 'Order status', 286, 82, 220),
-  slicer(ids.delivery, 'review', 'Review', 'Review Score Group', 'Review group', 518, 82, 250),
   card(ids.delivery, 'delivery-kpis', ['Average Delivery Days', 'On-Time Delivery %', 'Average Delay Days', 'Freight Cost', 'Freight Ratio', 'Average Review Score'], 'Delivery experience', 24, 174, 1872, 140),
   donut(ids.delivery, 'promise', { entity: 'Order', property: 'Delivery Performance' }, 'Orders', 'Delivery outcome mix', 24, 326, 600, 340),
   chart(ids.delivery, 'delay-review', 'clusteredColumnChart', { entity: 'Review', property: 'Review Score Group' }, ['Average Delivery Days in Review Context', 'Average Delay Days in Review Context'], 'Delivery timing by review outcome', 640, 326, 620, 340, { tooltips: ['Reviewed Orders', 'Average Review Score', 'On-Time Delivery % in Review Context'] }),
   chart(ids.delivery, 'freight-state', 'clusteredBarChart', { entity: 'Customer Geography', property: 'State' }, ['Freight Ratio'], 'Freight burden by customer state', 1276, 326, 620, 340, { sortMeasure: 'Freight Ratio', tooltips: ['Freight Cost', 'Sales / GMV', 'Orders'] }),
   chart(ids.delivery, 'delivery-trend', 'lineChart', { entity: 'Date', property: 'Year Month' }, ['Average Delivery Days', 'Average Delay Days'], 'Delivery trend over time', 24, 680, 1150, 376, { tooltips: ['On-Time Delivery %', 'Average Review Score', 'Orders'] }),
-  donut(ids.delivery, 'reviews', { entity: 'Review', property: 'Review Score Group' }, 'Reviewed Orders', 'Review score mix', 1190, 680, 706, 376)
+  donut(ids.delivery, 'reviews', { entity: 'Review', property: 'Review Score Group' }, 'Reviews', 'Review mix (records; multiple per order)', 1190, 680, 706, 376)
 ];
 
 const seller = [
-  ...headerVisuals(ids.seller, '05', 'Seller & Geographic Performance', 'Seller scale, fulfilment and regional reach'),
+  ...headerVisuals(ids.seller, '05', 'Seller & Geographic Performance', 'Which sellers contribute value and need fulfilment review?'),
   slicer(ids.seller, 'state', 'Seller Geography', 'State', 'Seller state', 24, 82, 220),
   slicer(ids.seller, 'topn', 'Top N', 'Value', 'Top N sellers', 256, 82, 190, 10),
   card(ids.seller, 'seller-kpis', ['Active Sellers', 'Sales / GMV', 'Seller Orders', 'Seller Average Order Value', 'On-Time Delivery % in Item Context', 'Average Review Score in Item Context'], 'Seller network', 24, 174, 1872, 140),
@@ -422,7 +418,7 @@ const customerDetail = [
   table(ids.customerDetail, 'profile', [
     { entity: 'Customer', property: 'Customer Display ID' },
     { entity: 'Customer', property: 'Customer Type' },
-    { entity: 'Customer', property: 'RFM Segment' },
+    { entity: 'Customer', property: 'Completed Purchase Group' },
     { entity: 'Customer', property: 'State' },
     { entity: 'Customer', property: 'City' },
     { entity: 'Customer', property: 'First Purchase' },

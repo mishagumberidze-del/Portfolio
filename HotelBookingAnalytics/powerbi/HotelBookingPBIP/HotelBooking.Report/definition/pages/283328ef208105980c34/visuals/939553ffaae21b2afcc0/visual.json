@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "939553ffaae21b2afcc0",
   "position": {
     "x": 24,
@@ -27,8 +27,25 @@
                 }
               },
               "queryRef": "Booking.LeadTimeBand",
-              "nativeQueryRef": "LeadTimeBand",
-              "active": true
+              "nativeQueryRef": "LeadTimeBand"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Cancellation Rate"
+                }
+              },
+              "queryRef": "KPI Measures.Cancellation Rate",
+              "nativeQueryRef": "Cancellation Rate"
             }
           ]
         },
@@ -63,24 +80,6 @@
               "nativeQueryRef": "Cancellation Rate"
             }
           ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "KPI Measures"
-                    }
-                  },
-                  "Property": "Cancellation Rate"
-                }
-              },
-              "queryRef": "KPI Measures.Cancellation Rate",
-              "nativeQueryRef": "Cancellation Rate"
-            }
-          ]
         }
       },
       "sortDefinition": {
@@ -98,7 +97,8 @@
             },
             "direction": "Ascending"
           }
-        ]
+        ],
+        "isDefaultSort": false
       }
     },
     "visualContainerObjects": {

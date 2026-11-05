@@ -390,7 +390,7 @@
                       },
                       {
                         "Name": "value",
-                        "Entity": "Order Item",
+                        "Entity": "KPI Measures",
                         "Type": 0
                       }
                     ],
@@ -411,18 +411,13 @@
                       {
                         "Direction": 2,
                         "Expression": {
-                          "Aggregation": {
+                          "Measure": {
                             "Expression": {
-                              "Column": {
-                                "Expression": {
-                                  "SourceRef": {
-                                    "Source": "value"
-                                  }
-                                },
-                                "Property": "Item Gross Value"
+                              "SourceRef": {
+                                "Source": "value"
                               }
                             },
-                            "Function": 0
+                            "Property": "Sales / GMV"
                           }
                         }
                       }

@@ -81,27 +81,33 @@ public sealed class PreferenceModelService : IPreferenceModelService
             Signal = byTrack[x.TrackId].Value.PositiveWeight - byTrack[x.TrackId].Value.NegativeWeight + byTrack[x.TrackId].Value.SavedBoost,
         }).OrderBy(x => x.Signal).ToArray();
         var quartile = eligible.Length / 4;
-        var weakIds = eligible.Take(quartile).Select(x => x.TrackId).ToHashSet();
-        var strongIds = eligible.TakeLast(quartile).Select(x => x.TrackId).ToHashSet();
+        // Keep equal behavioral evidence in the same group; catalog order must
+        // never manufacture a strong/weak distinction at a quartile boundary.
+        var separable = quartile > 0 && eligible[quartile - 1].Signal < eligible[^quartile].Signal;
+        var weakIds = eligible.Where(x => separable && x.Signal <= eligible[quartile - 1].Signal).Select(x => x.TrackId).ToHashSet();
+        var strongIds = eligible.Where(x => separable && x.Signal >= eligible[^quartile].Signal).Select(x => x.TrackId).ToHashSet();
         var holdouts = eligible.Select(candidate =>
         {
             var strongNeighbors = eligible.Where(x => clusterByTrack[x.TrackId] != clusterByTrack[candidate.TrackId] && strongIds.Contains(x.TrackId)).Select(x => (x.Vector, Math.Max(.01, x.Signal)));
             var weakNeighbors = eligible.Where(x => clusterByTrack[x.TrackId] != clusterByTrack[candidate.TrackId] && weakIds.Contains(x.TrackId)).Select(x => (x.Vector, 1d));
             var strongSimilarity = PreferenceModel.WeightedSimilarity(candidate.Vector, strongNeighbors);
             var weakSimilarity = PreferenceModel.WeightedSimilarity(candidate.Vector, weakNeighbors);
-            return (candidate.TrackId, Score: Math.Clamp(10 * (.72 * strongSimilarity + .28 * (1 - weakSimilarity)), 0, 10));
-        }).ToArray();
-        var positives = holdouts.Where(x => strongIds.Contains(x.TrackId)).Select(x => x.Score).ToArray();
-        var negatives = holdouts.Where(x => weakIds.Contains(x.TrackId)).Select(x => x.Score).ToArray();
-        var pairCount = 0L;
-        var correctPairs = 0L;
+            double? score = strongSimilarity.HasValue && weakSimilarity.HasValue
+                ? Math.Clamp(10 * (.72 * strongSimilarity.Value + .28 * (1 - weakSimilarity.Value)), 0, 10) : null;
+            return (candidate.TrackId, Score: score);
+        }).Where(x => x.Score.HasValue).ToArray();
+        var positives = holdouts.Where(x => strongIds.Contains(x.TrackId)).Select(x => x.Score!.Value).ToArray();
+        var negatives = holdouts.Where(x => weakIds.Contains(x.TrackId)).Select(x => x.Score!.Value).ToArray();
+        return new PreferenceValidationDto(calculated.Count, positives.Length, negatives.Length, positives.Length == 0 ? null : Math.Round(positives.Average(), 3), negatives.Length == 0 ? null : Math.Round(negatives.Average(), 3), PairwiseConcordance(positives, negatives), options.ModelVersion, "Leave-one-recording-out feature-neighborhood validation (all equivalent releases excluded; tied behavioral evidence stays together; both neighborhoods required; score differences below 0.0001 receive half credit)");
+    }
+
+    public static double? PairwiseConcordance(IReadOnlyList<double> positives, IReadOnlyList<double> negatives)
+    {
+        if (positives.Count == 0 || negatives.Count == 0) return null;
+        double credit = 0;
         foreach (var positive in positives)
             foreach (var negative in negatives)
-            {
-                pairCount++;
-                if (positive > negative) correctPairs++;
-                else if (Math.Abs(positive - negative) < 0.0001) correctPairs += 0;
-            }
-        return new PreferenceValidationDto(calculated.Count, positives.Length, negatives.Length, positives.Length == 0 ? 0 : Math.Round(positives.Average(), 3), negatives.Length == 0 ? 0 : Math.Round(negatives.Average(), 3), pairCount == 0 ? 0 : Math.Round(correctPairs / (double)pairCount, 4), options.ModelVersion, "Leave-one-recording-out feature-neighborhood validation (all equivalent releases excluded; strong vs weaker historical behavior)");
+                credit += Math.Abs(positive - negative) < 0.0001 ? 0.5 : positive > negative ? 1 : 0;
+        return Math.Round(credit / ((long)positives.Count * negatives.Count), 4);
     }
 }
