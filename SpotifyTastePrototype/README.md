@@ -6,7 +6,7 @@ A React/TypeScript application backed by an ASP.NET Core API and SQL Server, com
 
 > Current fictional-event overview. Browser checks passed at 1,440 px desktop and 390 px mobile for the overview, last-30-day range, unavailable scorer and no page overflow. [Browser results](docs/qa/browser-results-2026-11-05.json) · [Mobile preview](docs/qa/reviewed-demo-mobile.jpg). This does not verify the separately hosted edition.
 
-[Hosted read-only portfolio edition](https://spotify-taste-demo.pages.dev/) · The hosted edition uses a separately managed snapshot; this repository contains synthetic demo data, not that snapshot.
+[Hosted read-only portfolio edition](https://spotify-taste-demo.pages.dev/) · The hosted edition uses a separately managed snapshot; this repository contains synthetic demo data, not that snapshot. The production deployment passed all ten route checks and content/asset integrity verification.
 
 ## What this demonstrates
 

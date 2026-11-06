@@ -10,15 +10,15 @@ A starter portfolio of five projects covering **SQL Server, Python, Power BI, st
 
 | Project | What to look for | Review the result | Explore the implementation |
 |---|---|---|---|
-| **Olist E-Commerce** | Customer identity, purchase cohorts, delivery analysis, star schema and 47 DAX measures | [Power BI preview](assets/olist-overview.png) | [Project guide](OlistEcommerce/README.md) · [SQL analysis](OlistEcommerce/sql/06_portfolio_analysis.sql) |
+| **Olist E-Commerce** | Customer identity, purchase cohorts, delivery analysis, star schema and 47 DAX measures | [Power BI preview](OlistEcommerce/docs/qa/reviewed-executive-2026-11-06.png) | [Project guide](OlistEcommerce/README.md) · [SQL analysis](OlistEcommerce/sql/06_portfolio_analysis.sql) |
 | **NYC in Motion** | Streaming 298.9M records into a compact SQL aggregate model; interactive zone mapping | [Live dashboard](https://mishagumberidze-del.github.io/Portfolio/NYCTaxiAnalytics/site/index.html) · [Current preview](NYCTaxiAnalytics/site/qa/reviewed-desktop.jpg) | [Project guide](NYCTaxiAnalytics/README.md) · [Pipeline](NYCTaxiAnalytics/etl/prepare_analytics.py) |
 | **Spotify Taste** | React/TypeScript UI, ASP.NET API, relational listening history, explainable preference scoring and discovery | [Current synthetic overview](SpotifyTastePrototype/docs/qa/reviewed-demo-desktop.jpg) · [Hosted read-only edition](https://spotify-taste-demo.pages.dev/) | [Application guide](SpotifyTastePrototype/README.md) · [Backend](SpotifyTastePrototype/backend) |
-| **Hotel Booking Analytics** | Commercial KPIs, cancellation patterns, meaningful data-quality rules and a three-page Power BI report | [Power BI preview](assets/hotel-overview.png) | [Project guide](HotelBookingAnalytics/README.md) · [DAX/model](HotelBookingAnalytics/powerbi/HotelBookingPBIP/HotelBooking.SemanticModel/definition/tables) |
+| **Hotel Booking Analytics** | Commercial KPIs, cancellation patterns, meaningful data-quality rules and a three-page Power BI report | [Current Power BI preview](HotelBookingAnalytics/docs/qa/reviewed-executive-2026-11-05.png) | [Project guide](HotelBookingAnalytics/README.md) · [DAX/model](HotelBookingAnalytics/powerbi/HotelBookingPBIP/HotelBooking.SemanticModel/definition/tables) |
 | **Online Retail** | Customer concentration, purchase cohorts, fixed 90-day repeat analysis and statistical interpretation | [Live report](https://mishagumberidze-del.github.io/Portfolio/OnlineRetailPython/report/online_retail_analysis.html) · [Current preview](OnlineRetailPython/report/qa/reviewed-desktop.jpg) | [Project guide](OnlineRetailPython/README.md) · [Python analysis](OnlineRetailPython/report/build_report.py) |
 
-![Pre-audit Olist Power BI visual preview](assets/olist-overview.png)
+![Reviewed Olist Power BI report](OlistEcommerce/docs/qa/reviewed-executive-2026-11-06.png)
 
-NYC, Retail and the Spotify synthetic overview have current browser-verified screenshots. Hotel and Olist screenshots are **pre-audit visual previews**. Current source definitions and generated reports incorporate the calculation review; older screenshots do not verify those changes.
+NYC, Retail and the Spotify synthetic overview have current browser-verified screenshots. Hotel and Olist screenshots show the refreshed and reviewed Power BI reports. Current source definitions and generated reports incorporate the calculation review; older screenshots do not verify those changes.
 
 ## Skills demonstrated
 

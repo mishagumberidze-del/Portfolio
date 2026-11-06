@@ -94,6 +94,7 @@ table Date
 			let
 				Source = Csv.Document(File.Contents(#"DataRoot" & "\date.tsv"), [Delimiter="#(tab)", Columns=13, Encoding=65001, QuoteStyle=QuoteStyle.None]),
 				Named = Table.RenameColumns(Source, {{"Column1","DateKey"},{"Column2","Date"},{"Column3","CalendarYear"},{"Column4","CalendarQuarter"},{"Column5","QuarterLabel"},{"Column6","MonthNumber"},{"Column7","MonthName"},{"Column8","YearMonth"},{"Column9","YearMonthSort"},{"Column10","WeekOfYear"},{"Column11","DayOfMonth"},{"Column12","DayName"},{"Column13","IsWeekend"}}),
-				DateTable = Table.TransformColumnTypes(Named, {{"DateKey", Int64.Type},{"Date", type date},{"CalendarYear", Int64.Type},{"CalendarQuarter", Int64.Type},{"QuarterLabel", type text},{"MonthNumber", Int64.Type},{"MonthName", type text},{"YearMonth", type text},{"YearMonthSort", Int64.Type},{"WeekOfYear", Int64.Type},{"DayOfMonth", Int64.Type},{"DayName", type text},{"IsWeekend", type logical}}, "en-US")
+				DateTable = Table.TransformColumnTypes(Named, {{"DateKey", Int64.Type},{"Date", type date},{"CalendarYear", Int64.Type},{"CalendarQuarter", Int64.Type},{"QuarterLabel", type text},{"MonthNumber", Int64.Type},{"MonthName", type text},{"YearMonth", type text},{"YearMonthSort", Int64.Type},{"WeekOfYear", Int64.Type},{"DayOfMonth", Int64.Type},{"DayName", type text},{"IsWeekend", Int64.Type}}, "en-US"),
+				WeekendFlags = Table.TransformColumns(DateTable, {{"IsWeekend", each _ = 1, type logical}})
 			in
-				DateTable
+				WeekendFlags

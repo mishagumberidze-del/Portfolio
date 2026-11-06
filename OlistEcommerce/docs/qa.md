@@ -1,6 +1,6 @@
 # Calculation validation
 
-Validated on 2026-11-04. The checks cover the SQL model, refreshed exports, and report source definitions. Native Power BI Desktop refresh and interactive DAX/filter evaluation have not been verified.
+Source calculations were validated on 2026-11-04. The current report subsequently passed native Power BI Desktop refresh on 2026-11-06 after correcting the Date import's numeric-to-logical conversion. All six pages, a São Paulo cross-filter and customer drill-through were checked and saved; [native evidence](qa/powerbi_native_validation_2026-11-06.md) records the exact scope and current screenshots.
 
 | Check | Result |
 |---|---|
@@ -21,4 +21,4 @@ Important population checks:
 - Repeat customers and cohorts start with commercial purchases. Forty-four customers had a canceled/unavailable order before their first commercial purchase; those earlier orders do not advance purchase sequence or cohort assignment.
 - Cohort data includes eligible zero-activity cells and omits partial boundary months. Month-1 retention is 428/88,779 = 0.48% across cohorts with a full Month 1.
 
-See [KPI usefulness](kpi_usefulness.md) for the purpose and limitations of the six headline measures, and [findings](findings.md) for verified results. No publication or deployment was performed as part of these checks.
+See [KPI usefulness](kpi_usefulness.md) for the purpose and limitations of the six headline measures, and [findings](findings.md) for verified results. The reviewed source and current previews are included in the published portfolio.

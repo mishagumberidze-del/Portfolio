@@ -13,4 +13,4 @@ Recomputed on 2026-11-04 from the refreshed, source-reconciled exports. SQL mode
 - The top ten sellers contributed **13.20% of commercial GMV**. This quantifies seller concentration without implying a target or an investment recommendation.
 - Commercial freight totaled **R$2,241,126.29**, or **16.61% of merchandise GMV**. This is the ratio of aggregate freight to aggregate GMV, not an average of order ratios.
 
-Power BI Desktop refresh and rendered DAX/filter behavior remain a separate validation step. These findings are verified against SQL/export data and do not claim that the native Power BI report was exercised.
+These findings reconcile to SQL/export data. The current report subsequently passed native Power BI Desktop refresh, six-page rendering, a São Paulo filter and customer drill-through; [native evidence](qa/powerbi_native_validation_2026-11-06.md) records the checked scope.

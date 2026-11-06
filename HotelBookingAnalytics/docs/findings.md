@@ -1,6 +1,6 @@
 # Verified findings
 
-Figures below were checked on 2026-11-03 against the untouched source CSV, SQL core/reporting views and the SQL-produced booking extract. The regenerated DAX uses these definitions; the saved Desktop screenshots predate this audit.
+Figures below were checked on 2026-11-03 against the untouched source CSV, SQL core/reporting views and the SQL-produced booking extract. The regenerated DAX uses these definitions. Current Desktop refresh, page review and City Hotel filter evidence are recorded in [native validation](qa/powerbi_native_validation_2026-11-05.md); older images under `powerbi/qa/` predate this audit.
 
 - 119,390 bookings; 44,224 canceled, a 37.04% cancellation rate.
 - The eligible room value proxy is **25,996,324.21 CU**, using non-canceled, positive-night bookings with nonnegative ADR. It is not audited revenue.

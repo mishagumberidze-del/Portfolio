@@ -2,9 +2,9 @@
 
 SQL Server + Python + Power BI analysis of customer value, repeat purchasing, products, sellers and delivery experience.
 
-![Power BI overview](powerbi/qa/Executive%20Overview.png)
+![Power BI overview](docs/qa/reviewed-executive-2026-11-06.png)
 
-> Pre-audit visual preview. See the current source and metric documentation for the reviewed calculations.
+> Current Power BI Desktop report. All six pages rendered after refresh; the São Paulo filter and customer drill-through passed. [Native validation and screenshots](docs/qa/powerbi_native_validation_2026-11-06.md).
 
 ## What this demonstrates
 

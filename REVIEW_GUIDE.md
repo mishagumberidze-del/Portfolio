@@ -20,7 +20,7 @@
 
 ## Starter-pack boundaries
 
-- Reports, source, current NYC/Retail/Spotify demo screenshots and Power BI pre-audit visual previews are included. Older screenshots do not verify the audited calculations. Large raw data, SQL database files and Power BI cache/PBIX files are not.
+- Reports, source, current Hotel/Olist/NYC/Retail/Spotify demo screenshots are included. Older screenshots do not verify the audited calculations. Large raw data, SQL database files and Power BI cache/PBIX files are not.
 - Analytical aggregates in the Taxi/Retail HTML artifacts derive from public datasets. Spotify private snapshots are not included.
 - Existing project QA notes describe local verification; they do not imply that a hosted service or a fresh machine has been tested automatically.
 - Third-party packages and datasets retain their own terms. Dataset references are listed separately.

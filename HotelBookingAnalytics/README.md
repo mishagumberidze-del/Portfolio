@@ -2,9 +2,9 @@
 
 A three-page Power BI report backed by Python validation and a relational SQL Server model.
 
-![Hotel Power BI overview](powerbi/qa/overview-page.png)
+![Current Hotel Power BI overview](docs/qa/reviewed-executive-2026-11-05.png)
 
-> Pre-audit visual preview. See the current source and metric documentation for the reviewed calculations.
+> Current Power BI Desktop report. All three pages were refreshed, reviewed and saved; the [City Hotel filter](docs/qa/reviewed-city-filter-2026-11-05.png) recalculated weighted ADR to 106.50 CU.
 
 ## Business questions
 

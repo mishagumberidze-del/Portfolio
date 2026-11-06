@@ -1,4 +1,6 @@
-# Power BI runtime handoff — 2026-11-05
+# Earlier Power BI runtime handoff — 2026-11-05
+
+**Resolved later on 2026-11-05:** the corrected report was refreshed, all three pages reviewed and saved, and the City Hotel filter matched the checked weighted ADR. See [native validation and current screenshots](powerbi_native_validation_2026-11-05.md). The remaining text preserves the earlier attempt and its limits.
 
 Power BI Desktop 2.159.1231.0 opened successfully during this pass. Opening the current Hotel PBIP exposed this native model error:
 
